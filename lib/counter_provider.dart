@@ -33,7 +33,7 @@ class CounterProvider with ChangeNotifier {
     final name = _counters[index].name;
     final type = _counters[index].type;
     final stepSize = _counters[index].stepSize;
-    final lastUpdatedParsed = DateFormat('E, MMM d, yyyy – hh:mm a')
+    final lastUpdatedParsed = DateFormat('E, MMM d, yyyy hh:mm a')
         .format(_counters[index].lastUpdated!);
 
     // Show confirmation dialog before updating
