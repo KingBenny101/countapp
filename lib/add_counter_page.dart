@@ -105,6 +105,7 @@ class AddCounterPageState extends State<AddCounterPage> {
               value: _initialCount,
               type: _isIncrement ? 'increment' : 'decrement',
               stepSize: _stepSize,
+              lastUpdated: DateTime.now(),
             );
             Provider.of<CounterProvider>(context, listen: false)
                 .addCounter(newCounter);
