@@ -16,10 +16,14 @@ class Counter {
   @HiveField(3)
   int stepSize;
 
+  @HiveField(4)
+  DateTime? lastUpdated;
+
   Counter({
     required this.name,
     required this.value,
     required this.type,
     required this.stepSize,
+    required this.lastUpdated,
   });
 }
