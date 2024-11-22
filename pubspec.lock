@@ -297,10 +297,10 @@ packages:
     dependency: "direct main"
     description:
       name: hive_ce
-      sha256: ab1b79ce8d479cd3a8f9b90fe70219f368ca846f86eb4a1e84f4f11483cef65f
+      sha256: "9a2bc9c36d26e5c442032de0d915ef10c65a655377c2708a68a72d1963bd8ae5"
       url: "https://pub.dev"
     source: hosted
-    version: "2.7.0+1"
+    version: "2.8.0+1"
   hive_ce_flutter:
     dependency: "direct main"
     description:
@@ -313,10 +313,10 @@ packages:
     dependency: "direct dev"
     description:
       name: hive_ce_generator
-      sha256: "28fe71d313de16e33352a2844de94b5f8dd64a4ad6a00e7954b9794d757a1ca6"
+      sha256: f461693194b7e683f2a9b9d56d16729fc9c3051720bd60f7fa0532383f487ce0
       url: "https://pub.dev"
     source: hosted
-    version: "1.7.0"
+    version: "1.8.0"
   html:
     dependency: transitive
     description:
@@ -417,10 +417,10 @@ packages:
     dependency: transitive
     description:
       name: logger
-      sha256: "697d067c60c20999686a0add96cf6aba723b3aa1f83ecf806a8097231529ec32"
+      sha256: be4b23575aac7ebf01f225a241eb7f6b5641eeaf43c6a8613510fc2f8cf187d1
       url: "https://pub.dev"
     source: hosted
-    version: "2.4.0"
+    version: "2.5.0"
   logging:
     dependency: transitive
     description:
@@ -786,6 +786,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.2"
+  yaml_writer:
+    dependency: transitive
+    description:
+      name: yaml_writer
+      sha256: "2ae2cd5f5a612a930ef2b1b40df540c819ab85e301f26dfaf0b6201b857db825"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.1"
 sdks:
   dart: ">=3.5.0 <4.0.0"
   flutter: ">=3.24.0"
