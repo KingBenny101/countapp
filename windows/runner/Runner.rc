@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "countapp" "\0"
+            VALUE "CompanyName", "KingBenny101" "\0"
+            VALUE "FileDescription", "Count App Dev" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "countapp" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2024 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "countapp.exe" "\0"
-            VALUE "ProductName", "countapp" "\0"
+            VALUE "InternalName", "Count App Dev" "\0"
+            VALUE "LegalCopyright", "© 2024 KingBenny101. All rights reserved." "\0"
+            VALUE "OriginalFilename", "countappdev.exe" "\0"
+            VALUE "ProductName", "Count App Dev" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END
