@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
-import 'counter_model.dart';
-import 'theme_notifier.dart';
-import 'counter_provider.dart';
-import 'home_page.dart';
+import 'models/counter_model.dart';
+import 'theme/theme_notifier.dart';
+import 'providers/counter_provider.dart';
+import 'screens/home_page.dart';
 
 void main() async {
   // Ensure Flutter is initialized

@@ -3,11 +3,11 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hive_ce/hive.dart';
 import 'package:provider/provider.dart';
 import 'add_counter_page.dart';
-import 'counter_model.dart';
+import '../models/counter_model.dart';
 import 'how_to_use_page.dart';
-import 'theme_notifier.dart';
+import '../theme/theme_notifier.dart';
 import 'about_page.dart';
-import 'counter_provider.dart';
+import '../providers/counter_provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
