@@ -293,14 +293,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.2"
-  hive:
-    dependency: transitive
-    description:
-      name: hive
-      sha256: "8dcf6db979d7933da8217edcec84e9df1bdb4e4edc7fc77dbd5aa74356d6d941"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.2.3"
   hive_ce:
     dependency: "direct main"
     description:
@@ -397,14 +389,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.9.0"
-  json_hive_generator:
-    dependency: "direct main"
-    description:
-      name: json_hive_generator
-      sha256: adf176076fe8953e87a623848a1d43d07db5f8d5f5b808e053169e2de15ee38d
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.2"
   leak_tracker:
     dependency: transitive
     description:

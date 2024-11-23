@@ -1,3 +1,4 @@
+import 'package:countapp/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hive_ce/hive.dart';
@@ -26,7 +27,7 @@ class HomePageState extends State<HomePage> {
     final counterProvider =
         Provider.of<CounterProvider>(context, listen: false);
     counterProvider
-        .loadCounters(); // Load counters when the home page initializes
+        .loadCounters(); 
   }
 
   @override
@@ -292,6 +293,28 @@ class HomePageState extends State<HomePage> {
               ),
             ),
             ListTile(
+              leading: const Icon(Icons.file_download),
+              title: Container(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                child: const Text('Import', style: TextStyle(fontSize: 18)),
+              ),
+              onTap: () {
+                importJSON(counterProvider,'D:/Code/countapp/export.json');
+              },
+              splashColor: Colors.transparent,
+            ),ListTile(
+              leading: const Icon(Icons.file_upload),
+              title: Container(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                child: const Text('Export', style: TextStyle(fontSize: 18)),
+              ),
+              onTap: () {
+                exportJSON('D:/Code/countapp/export.json');
+              },
+              splashColor: Colors.transparent,
+            ),ListTile(
               leading: const Icon(Icons.help_outline),
               title: Container(
                 padding:
