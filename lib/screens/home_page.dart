@@ -1,4 +1,5 @@
 import 'package:countapp/utils.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hive_ce/hive.dart';
@@ -26,8 +27,7 @@ class HomePageState extends State<HomePage> {
     super.initState();
     final counterProvider =
         Provider.of<CounterProvider>(context, listen: false);
-    counterProvider
-        .loadCounters(); 
+    counterProvider.loadCounters();
   }
 
   @override
@@ -299,22 +299,44 @@ class HomePageState extends State<HomePage> {
                     const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                 child: const Text('Import', style: TextStyle(fontSize: 18)),
               ),
-              onTap: () {
-                importJSON(counterProvider,'D:/Code/countapp/export.json');
+              onTap: () async {
+                FilePickerResult? result = await FilePicker.platform.pickFiles(
+                    type: FileType.custom, allowedExtensions: ['json']);
+
+                if (result != null) {
+                  String filePath = result.files.single.path!;
+                  await importJSON(counterProvider, filePath);
+                  Fluttertoast.showToast(
+                    msg: "Counters Imported Successfully!",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    timeInSecForIosWeb: 1,
+                    backgroundColor: Colors.green,
+                    textColor: Colors.white,
+                    fontSize: 16.0,
+                  );
+                }
               },
               splashColor: Colors.transparent,
-            ),ListTile(
+            ),
+            ListTile(
               leading: const Icon(Icons.file_upload),
               title: Container(
                 padding:
                     const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                 child: const Text('Export', style: TextStyle(fontSize: 18)),
               ),
-              onTap: () {
-                exportJSON('D:/Code/countapp/export.json');
+              onTap: () async {
+                String? selectedDirectory =
+                    await FilePicker.platform.getDirectoryPath();
+
+                if (selectedDirectory != null) {
+                  exportJSON(selectedDirectory);
+                }
               },
               splashColor: Colors.transparent,
-            ),ListTile(
+            ),
+            ListTile(
               leading: const Icon(Icons.help_outline),
               title: Container(
                 padding:
@@ -343,7 +365,7 @@ class HomePageState extends State<HomePage> {
                   MaterialPageRoute(builder: (context) => const AboutPage()),
                 );
               },
-               splashColor: Colors.transparent,
+              splashColor: Colors.transparent,
             ),
           ],
         ),

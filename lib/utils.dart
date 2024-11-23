@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:hive_ce/hive.dart';
+import 'package:intl/intl.dart';
 
 import 'models/counter_model.dart';
 import 'providers/counter_provider.dart';
@@ -21,16 +22,19 @@ Widget buildStepCard(String step) {
   );
 }
 
-void exportJSON(String exportFilePath) async {
+Future<void> exportJSON(String exportDirPath) async {
+  DateTime now = DateTime.now();
+  DateFormat formatter = DateFormat('yyyy-MM-dd_HH-mm-ss');
+  final exportFilePath = '$exportDirPath/counters_${formatter.format(now)}.json';
   final box = await Hive.openBox<Counter>('countersBox');
   final file = File(exportFilePath);
   final events = box.values.toList();
   final jsonEvents = json.encode(events);
-  
+
   await file.writeAsString(jsonEvents);
 }
 
-void importJSON(CounterProvider counterProvider, importFilePath) async {
+Future<void> importJSON(CounterProvider counterProvider, importFilePath) async {
   final box = await Hive.openBox<Counter>('countersBox');
   final file = File(importFilePath);
   final jsonEvents = await file.readAsString();
