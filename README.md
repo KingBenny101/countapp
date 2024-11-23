@@ -12,7 +12,6 @@ A simple application to help users keep track of their counts effortlessly.
 ## Platforms
 
 - Android
-- Web
 - Windows
 
 ## Developer
