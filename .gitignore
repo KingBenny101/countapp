@@ -11,6 +11,7 @@
 migrate_working_dir/
 .vscode/
 release/
+export.json
 
 # IntelliJ related
 *.iml
