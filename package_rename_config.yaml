@@ -1,17 +1,12 @@
 package_rename_config:
   android:
-    app_name: Count App Dev
-    package_name: com.kingbenny101.countappdev
-    override_old_package: # (Optional) (String) Use this to delete the old folder structure of MainActivity or to use the existing code with the new package name
-    lang: # (Optional) (String) The android development language {kotlin(default) or java}
-
-  web:
-    app_name: Count App Dev
-    short_app_name: # (String) The short display name of the PWA (Optional, defaults to app_name if not set)
-    description: A simple application to help users keep track of their counts effortlessly.
+    app_name: Count App
+    package_name: com.kingbenny101.countapp
+    override_old_package: com.kingbenny101.countappdev
+    lang: kotlin
 
   windows:
-    app_name: Count App Dev
+    app_name: Count App
     organization: KingBenny101
     copyright_notice: © 2024 KingBenny101. All rights reserved.
-    exe_name: countappdev
+    exe_name: countapp

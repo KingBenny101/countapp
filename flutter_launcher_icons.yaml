@@ -17,7 +17,7 @@ flutter_launcher_icons:
   # desaturate_tinted_to_grayscale_ios: true
 
   web:
-    generate: true
+    generate: false
     image_path: 'assets/icon/android/icon.png'
     background_color: '#ffffff'
     theme_color: '#ffffff'

@@ -1,4 +1,4 @@
-package com.kingbenny101.countappdev
+package com.kingbenny101.countapp
 
 import io.flutter.embedding.android.FlutterActivity
 

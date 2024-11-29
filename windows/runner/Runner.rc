@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "KingBenny101" "\0"
-            VALUE "FileDescription", "Count App Dev" "\0"
+            VALUE "FileDescription", "Count App" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "Count App Dev" "\0"
+            VALUE "InternalName", "Count App" "\0"
             VALUE "LegalCopyright", "© 2024 KingBenny101. All rights reserved." "\0"
-            VALUE "OriginalFilename", "countappdev.exe" "\0"
-            VALUE "ProductName", "Count App Dev" "\0"
+            VALUE "OriginalFilename", "countapp.exe" "\0"
+            VALUE "ProductName", "Count App" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

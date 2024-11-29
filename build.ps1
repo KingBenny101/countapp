@@ -30,7 +30,7 @@ flutter build windows --release
 
 
 $androidFilePath = "build\app\outputs\flutter-apk\app-release.apk"
-$windowsFilePath = "build\windows\x64\runner\Release\countappdev.exe"
+$windowsFilePath = "build\windows\x64\runner\Release\countapp.exe"
 
 if (Test-Path $androidFilePath) {
     Copy-Item -Path $androidFilePath -Destination $releaseFolderPath -Force
