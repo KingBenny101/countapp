@@ -44,10 +44,11 @@ class MainApp extends StatelessWidget {
       systemNavigationBarIconBrightness: Brightness.light,
     ));
 
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
+    // SystemChrome.setPreferredOrientations([
+    //   DeviceOrientation.portraitUp,
+    //   DeviceOrientation.portraitDown,
+    // ]);
+
     return Consumer<ThemeNotifier>(
       builder: (context, themeNotifier, child) {
         return MaterialApp(

@@ -3,6 +3,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hive_ce/hive.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'add_counter_page.dart';
 import '../models/counter_model.dart';
@@ -331,7 +332,82 @@ class HomePageState extends State<HomePage> {
                     await FilePicker.platform.getDirectoryPath();
 
                 if (selectedDirectory != null) {
-                  exportJSON(selectedDirectory);
+                  final TextEditingController fileNameController =
+                      TextEditingController();
+                  final _formKey = GlobalKey<FormState>();
+
+                  DateTime now = DateTime.now();
+                  DateFormat formatter = DateFormat('yyyy-MM-dd_HH-mm-ss');
+                  String fileNameLabel = formatter.format(now);
+
+                  bool? confirmExport = await showDialog<bool>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text('Export Counters to JSON'),
+                        content: Form(
+                          key: _formKey,
+                          child: TextFormField(
+                            controller: fileNameController,
+                            decoration: InputDecoration(
+                              labelText: 'File Name',
+                              hintText: '$fileNameLabel.json',
+                            ),
+                            validator: (value) {
+                              final invalidCharacters = RegExp(r'[<>:"/\\|?*]');
+                              if (value != null &&
+                                  invalidCharacters.hasMatch(value)) {
+                                return 'Invalid characters in file name';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop(false); // User canceled
+                            },
+                            child: const Text('Cancel'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              if (_formKey.currentState!.validate()) {
+                                Navigator.of(context)
+                                    .pop(true); // User confirmed
+                              }
+                            },
+                            child: const Text('Confirm'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+
+                  if (confirmExport == true) {
+                    String fileName = fileNameController.text.trim();
+
+                    if (fileName.isEmpty) {
+                      fileName = fileNameLabel;
+                    }
+
+                    if (!fileName.endsWith('.json')) {
+                      fileName += '.json';
+                    }
+
+                    final exportFilePath = '$selectedDirectory/$fileName';
+                    await exportJSON(exportFilePath);
+
+                    Fluttertoast.showToast(
+                    msg: "Counters Exported Successfully!",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    timeInSecForIosWeb: 1,
+                    backgroundColor: Colors.green,
+                    textColor: Colors.white,
+                    fontSize: 16.0,
+                  );
+                  }
                 }
               },
               splashColor: Colors.transparent,
