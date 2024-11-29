@@ -78,21 +78,92 @@ class AddCounterPageState extends State<AddCounterPage> {
                   },
                 ),
                 const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('Type: ${_isIncrement ? 'Increment' : 'Decrement'}',
-                        style: const TextStyle(fontSize: 16)),
-                    Switch(
-                      value: _isIncrement,
-                      onChanged: (value) {
-                        setState(() {
-                          _isIncrement = value;
-                        });
-                      },
-                    ),
-                  ],
-                ),
+                LayoutBuilder(builder: (context, constraints) {
+                  if (MediaQuery.of(context).orientation == Orientation.landscape) {
+                    print('landscape');
+                    return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Text(
+                            'Type: ${_isIncrement ? 'Increment' : 'Decrement'}',
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          Switch(
+                            value: _isIncrement,
+                            onChanged: (value) {
+                              setState(() {
+                                _isIncrement = value;
+                              });
+                            },
+                          ),
+                        ]);
+                  } else {
+                    print('portrait');
+
+                    return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Type: ${_isIncrement ? 'Increment' : 'Decrement'}',
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          Switch(
+                            value: _isIncrement,
+                            onChanged: (value) {
+                              setState(() {
+                                _isIncrement = value;
+                              });
+                            },
+                          ),
+                        ]);
+                  }
+                }),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //   children: [
+                //     Text(
+                //       'Type: ${_isIncrement ? 'Increment' : 'Decrement'}',
+                //       style: const TextStyle(fontSize: 16),
+                //     ),
+                //     Switch(
+                //       value: _isIncrement,
+                //       onChanged: (value) {
+                //         setState(() {
+                //           _isIncrement = value;
+                //         });
+                //       },
+                //     ),
+                //     LayoutBuilder(
+                //       builder: (context, constraints) {
+                //         if (constraints.maxWidth > constraints.maxHeight) {
+                //           return Padding(
+                //             padding: const EdgeInsets.only(right: 200),
+                //             child: Switch(
+                //               value: _isIncrement,
+                //               onChanged: (value) {
+                //                 setState(() {
+                //                   _isIncrement = value;
+                //                 });
+                //               },
+                //             ),
+                //           );
+                //         } else {
+                //           return Padding(
+                //             padding: const EdgeInsets.only(left: 100),
+                //             child: Switch(
+                //               value: _isIncrement,
+                //               onChanged: (value) {
+                //                 setState(() {
+                //                   _isIncrement = value;
+                //                 });
+                //               },
+                //             ),
+                //           );
+                //         }
+                //       },
+                //     ),
+                //   ],
+                // ),
               ],
             ),
           ),
