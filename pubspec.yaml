@@ -1,25 +1,26 @@
-name: countapp2
-description: "A simple application to help users keep track of their counts effortlessly."
+name: countapp
+description: 'A simple application to help users keep track of their counts effortlessly.'
 publish_to: 'none'
-version: 1.0.1
+version: 1.1.0
 
 environment:
   sdk: '>=3.3.3 <4.0.0'
 
 dependencies:
+  file_picker: ^8.1.4
   flutter:
     sdk: flutter
   fluttertoast: ^8.2.8
   hive_ce: ^2.7.0+1
   hive_ce_flutter: ^2.1.0
   intl: ^0.19.0
+  package_info_plus: ^8.1.1
   provider: ^6.1.2
-  
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  build_runner: ^2.4.13  
+  build_runner: ^2.4.13
   flutter_launcher_icons: 0.14.1
   hive_ce_generator: ^1.7.0
   flutter_lints: ^5.0.0
@@ -28,10 +29,4 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-      - assets/icon/android/icon.png
-
-package_rename_config:
-  android:
-    app_name: Count App
-    package_name: com.kingbenny101.countapp
-    
+    - assets/icon/android/icon.png
