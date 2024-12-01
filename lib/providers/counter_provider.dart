@@ -1,7 +1,7 @@
 import 'package:hive_ce/hive.dart';
 import '../models/counter_model.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:toastification/toastification.dart';
 import 'package:intl/intl.dart';
 
 class CounterProvider with ChangeNotifier {
@@ -76,15 +76,10 @@ class CounterProvider with ChangeNotifier {
       await box.putAt(index, _counters[index]);
       notifyListeners();
 
-      // Show a toast message for successful update
-      Fluttertoast.showToast(
-        msg: 'Counter Updated Successfully!',
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.green,
-        textColor: Colors.white,
-        fontSize: 16.0,
+      toastification.show(
+        type: ToastificationType.success,
+        title: Text('Counter Updated Successfully!'),
+        autoCloseDuration: const Duration(seconds: 5),
       );
     }
   }

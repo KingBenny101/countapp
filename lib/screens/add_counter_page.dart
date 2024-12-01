@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import '../models/counter_model.dart';
 import 'package:provider/provider.dart';
 import '../providers/counter_provider.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:toastification/toastification.dart';
 
 class AddCounterPage extends StatefulWidget {
   const AddCounterPage({super.key});
@@ -79,7 +79,8 @@ class AddCounterPageState extends State<AddCounterPage> {
                 ),
                 const SizedBox(height: 16),
                 LayoutBuilder(builder: (context, constraints) {
-                  if (MediaQuery.of(context).orientation == Orientation.landscape) {
+                  if (MediaQuery.of(context).orientation ==
+                      Orientation.landscape) {
                     print('landscape');
                     return Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -182,14 +183,12 @@ class AddCounterPageState extends State<AddCounterPage> {
             Provider.of<CounterProvider>(context, listen: false)
                 .addCounter(newCounter);
             Navigator.pop(context);
-            Fluttertoast.showToast(
-              msg: "Counter Added Successfully!",
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              timeInSecForIosWeb: 1,
-              backgroundColor: Colors.green,
-              textColor: Colors.white,
-              fontSize: 16.0,
+            
+            toastification.show(
+              context: context, // optional if you use ToastificationWrapper
+              type: ToastificationType.success,
+              title: Text('Counter Added Successfully!'),
+              autoCloseDuration: const Duration(seconds: 5),
             );
           }
         },

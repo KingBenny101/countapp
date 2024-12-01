@@ -2,7 +2,7 @@ import 'package:countapp/screens/options_page.dart';
 import 'package:countapp/utils.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:toastification/toastification.dart';
 import 'package:hive_ce/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -215,15 +215,12 @@ class HomePageState extends State<HomePage> {
                         isSelecting = false;
                       });
 
-                      // Show a toast message for successful delete
-                      Fluttertoast.showToast(
-                        msg: '$selectedCount Counters Deleted Successfully!',
-                        toastLength: Toast.LENGTH_SHORT,
-                        gravity: ToastGravity.BOTTOM,
-                        timeInSecForIosWeb: 1,
-                        backgroundColor: Colors.green,
-                        textColor: Colors.white,
-                        fontSize: 16.0,
+
+                      toastification.show(
+                        type: ToastificationType.success,
+                        title: Text(
+                            '$selectedCount Counters Deleted Successfully!'),
+                        autoCloseDuration: const Duration(seconds: 5),
                       );
                     }
                   }
@@ -270,177 +267,170 @@ class HomePageState extends State<HomePage> {
                 ),
               ),
               ListTile(
-                  leading: const Icon(Icons.settings),
-                  title: Container(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                    child: const Text('Options', style: TextStyle(fontSize: 18)),
-                  ),
-                  onTap: () {
-                    FocusScope.of(context).unfocus();
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const OptionsPage()),
+                leading: const Icon(Icons.settings),
+                title: Container(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                  child: const Text('Options', style: TextStyle(fontSize: 18)),
+                ),
+                onTap: () {
+                  FocusScope.of(context).unfocus();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const OptionsPage()),
+                  );
+                },
+                splashColor: Colors.transparent,
+              ),
+              ListTile(
+                leading: const Icon(Icons.file_download),
+                title: Container(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                  child: const Text('Import', style: TextStyle(fontSize: 18)),
+                ),
+                onTap: () async {
+                  FilePickerResult? result = await FilePicker.platform
+                      .pickFiles(
+                          type: FileType.custom, allowedExtensions: ['json']);
+
+                  if (result != null) {
+                    String filePath = result.files.single.path!;
+                    await importJSON(counterProvider, filePath);
+                    
+                    toastification.show(
+                      type: ToastificationType.success,
+                      title: Text('Counters Imported Successfully!'),
+                      autoCloseDuration: const Duration(seconds: 5),
                     );
-                  },
-                  splashColor: Colors.transparent,
+                  }
+                },
+                splashColor: Colors.transparent,
+              ),
+              ListTile(
+                leading: const Icon(Icons.file_upload),
+                title: Container(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                  child: const Text('Export', style: TextStyle(fontSize: 18)),
                 ),
-                ListTile(
-                  leading: const Icon(Icons.file_download),
-                  title: Container(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                    child: const Text('Import', style: TextStyle(fontSize: 18)),
-                  ),
-                  onTap: () async {
-                    FilePickerResult? result = await FilePicker.platform
-                        .pickFiles(
-                            type: FileType.custom, allowedExtensions: ['json']);
+                onTap: () async {
+                  String? selectedDirectory =
+                      await FilePicker.platform.getDirectoryPath();
 
-                    if (result != null) {
-                      String filePath = result.files.single.path!;
-                      await importJSON(counterProvider, filePath);
-                      Fluttertoast.showToast(
-                        msg: "Counters Imported Successfully!",
-                        toastLength: Toast.LENGTH_SHORT,
-                        gravity: ToastGravity.BOTTOM,
-                        timeInSecForIosWeb: 1,
-                        backgroundColor: Colors.green,
-                        textColor: Colors.white,
-                        fontSize: 16.0,
-                      );
-                    }
-                  },
-                  splashColor: Colors.transparent,
-                ),
-                ListTile(
-                  leading: const Icon(Icons.file_upload),
-                  title: Container(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                    child: const Text('Export', style: TextStyle(fontSize: 18)),
-                  ),
-                  onTap: () async {
-                    String? selectedDirectory =
-                        await FilePicker.platform.getDirectoryPath();
+                  if (selectedDirectory != null) {
+                    final TextEditingController fileNameController =
+                        TextEditingController();
+                    final _formKey = GlobalKey<FormState>();
 
-                    if (selectedDirectory != null) {
-                      final TextEditingController fileNameController =
-                          TextEditingController();
-                      final _formKey = GlobalKey<FormState>();
+                    DateTime now = DateTime.now();
+                    DateFormat formatter = DateFormat('yyyy-MM-dd_HH-mm-ss');
+                    String fileNameLabel = formatter.format(now);
 
-                      DateTime now = DateTime.now();
-                      DateFormat formatter = DateFormat('yyyy-MM-dd_HH-mm-ss');
-                      String fileNameLabel = formatter.format(now);
-
-                      bool? confirmExport = await showDialog<bool>(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text('Export Counters to JSON'),
-                            content: Form(
-                              key: _formKey,
-                              child: TextFormField(
-                                controller: fileNameController,
-                                decoration: InputDecoration(
-                                  labelText: 'File Name',
-                                  hintText: '$fileNameLabel.json',
-                                ),
-                                validator: (value) {
-                                  final invalidCharacters =
-                                      RegExp(r'[<>:"/\\|?*]');
-                                  if (value != null &&
-                                      invalidCharacters.hasMatch(value)) {
-                                    return 'Invalid characters in file name';
-                                  }
-                                  return null;
-                                },
+                    bool? confirmExport = await showDialog<bool>(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text('Export Counters to JSON'),
+                          content: Form(
+                            key: _formKey,
+                            child: TextFormField(
+                              controller: fileNameController,
+                              decoration: InputDecoration(
+                                labelText: 'File Name',
+                                hintText: '$fileNameLabel.json',
                               ),
+                              validator: (value) {
+                                final invalidCharacters =
+                                    RegExp(r'[<>:"/\\|?*]');
+                                if (value != null &&
+                                    invalidCharacters.hasMatch(value)) {
+                                  return 'Invalid characters in file name';
+                                }
+                                return null;
+                              },
                             ),
-                            actions: <Widget>[
-                              TextButton(
-                                onPressed: () {
+                          ),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context)
+                                    .pop(false); // User canceled
+                              },
+                              child: const Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                if (_formKey.currentState!.validate()) {
                                   Navigator.of(context)
-                                      .pop(false); // User canceled
-                                },
-                                child: const Text('Cancel'),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  if (_formKey.currentState!.validate()) {
-                                    Navigator.of(context)
-                                        .pop(true); // User confirmed
-                                  }
-                                },
-                                child: const Text('Confirm'),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-
-                      if (confirmExport == true) {
-                        String fileName = fileNameController.text.trim();
-
-                        if (fileName.isEmpty) {
-                          fileName = fileNameLabel;
-                        }
-
-                        if (!fileName.endsWith('.json')) {
-                          fileName += '.json';
-                        }
-
-                        final exportFilePath = '$selectedDirectory/$fileName';
-                        await exportJSON(exportFilePath);
-
-                        Fluttertoast.showToast(
-                          msg: "Counters Exported Successfully!",
-                          toastLength: Toast.LENGTH_SHORT,
-                          gravity: ToastGravity.BOTTOM,
-                          timeInSecForIosWeb: 1,
-                          backgroundColor: Colors.green,
-                          textColor: Colors.white,
-                          fontSize: 16.0,
+                                      .pop(true); // User confirmed
+                                }
+                              },
+                              child: const Text('Confirm'),
+                            ),
+                          ],
                         );
+                      },
+                    );
+
+                    if (confirmExport == true) {
+                      String fileName = fileNameController.text.trim();
+
+                      if (fileName.isEmpty) {
+                        fileName = fileNameLabel;
                       }
+
+                      if (!fileName.endsWith('.json')) {
+                        fileName += '.json';
+                      }
+
+                      final exportFilePath = '$selectedDirectory/$fileName';
+                      await exportJSON(exportFilePath);
+
+                      toastification.show(
+                        type: ToastificationType.success,
+                        title: Text('Counters Exported Successfully!'),
+                        autoCloseDuration: const Duration(seconds: 5),
+                      );
                     }
-                  },
-                  splashColor: Colors.transparent,
+                  }
+                },
+                splashColor: Colors.transparent,
+              ),
+              ListTile(
+                leading: const Icon(Icons.help_outline),
+                title: Container(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                  child:
+                      const Text('How to Use', style: TextStyle(fontSize: 18)),
                 ),
-                ListTile(
-                  leading: const Icon(Icons.help_outline),
-                  title: Container(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                    child:
-                        const Text('How to Use', style: TextStyle(fontSize: 18)),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const HowToUsePage()),
-                    );
-                  },
-                  splashColor: Colors.transparent,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const HowToUsePage()),
+                  );
+                },
+                splashColor: Colors.transparent,
+              ),
+              ListTile(
+                leading: const Icon(Icons.info),
+                title: Container(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                  child: const Text('About', style: TextStyle(fontSize: 18)),
                 ),
-                ListTile(
-                  leading: const Icon(Icons.info),
-                  title: Container(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                    child: const Text('About', style: TextStyle(fontSize: 18)),
-                  ),
-                  onTap: () {
-                    FocusScope.of(context).unfocus();
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const AboutPage()),
-                    );
-                  },
-                  splashColor: Colors.transparent,
-                ),
-              
+                onTap: () {
+                  FocusScope.of(context).unfocus();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const AboutPage()),
+                  );
+                },
+                splashColor: Colors.transparent,
+              ),
             ],
           ),
         ),
