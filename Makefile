@@ -2,8 +2,7 @@ RELEASE_FOLDER = release
 ANDROID_BUILD = build\app\outputs\flutter-apk\app-release.apk
 WINDOWS_BUILD = build\windows\x64\runner\Release\countapp.exe
 
-
-all: generate flutter_launcher_icons clean_release build_android build_windows copy_files
+all: generate clean_release build_android build_windows copy_files
 
 run:
 	@flutter run
@@ -30,4 +29,4 @@ copy_files:
 	@if exist "$(ANDROID_BUILD)" (copy "$(ANDROID_BUILD)" "$(RELEASE_FOLDER)\" && echo APK file copied successfully.) || echo APK file not found at $(ANDROID_BUILD)
 	@if exist "$(WINDOWS_BUILD)" (copy "$(WINDOWS_BUILD)" "$(RELEASE_FOLDER)\" && echo EXE file copied successfully.) || echo EXE file not found at $(WINDOWS_BUILD)
 
-.PHONY: all generate flutter_launcher_icons clean_release build_android build_windows copy_files
+.PHONY: all generate clean_release build_android build_windows copy_files
