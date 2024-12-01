@@ -1,7 +1,7 @@
 name: countapp
 description: 'A simple application to help users keep track of their counts effortlessly.'
 publish_to: 'none'
-version: 1.1.0
+version: 1.1.1
 
 environment:
   sdk: '>=3.3.3 <4.0.0'
@@ -16,6 +16,7 @@ dependencies:
   intl: ^0.19.0
   package_info_plus: ^8.1.1
   provider: ^6.1.2
+  toastification: ^2.3.0
 
 dev_dependencies:
   flutter_test:

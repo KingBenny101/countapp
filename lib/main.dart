@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
+import 'package:toastification/toastification.dart';
 import 'models/counter_model.dart';
 import 'theme/theme_notifier.dart';
 import 'providers/counter_provider.dart';
@@ -26,7 +27,6 @@ void main() async {
       child: const MainApp(),
     ),
   );
-    
 }
 
 class MainApp extends StatelessWidget {
@@ -51,14 +51,21 @@ class MainApp extends StatelessWidget {
 
     return Consumer<ThemeNotifier>(
       builder: (context, themeNotifier, child) {
-        return MaterialApp(
-          theme: ThemeData.light(),
-          darkTheme: ThemeData.dark(),
-          themeMode: themeNotifier.themeMode,
-          home: const HomePage(),
+        return ToastificationWrapper(
+          child: MaterialApp(
+            theme: ThemeData.light(),
+            darkTheme: ThemeData.dark(),
+            themeMode: themeNotifier.themeMode,
+            home: const HomePage(),
+          ),
         );
+        // return MaterialApp(
+        //   theme: ThemeData.light(),
+        //   darkTheme: ThemeData.dark(),
+        //   themeMode: themeNotifier.themeMode,
+        //   home: const HomePage(),
+        // );
       },
     );
   }
 }
-
