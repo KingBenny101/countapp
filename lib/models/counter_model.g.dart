@@ -22,13 +22,14 @@ class CounterAdapter extends TypeAdapter<Counter> {
       type: fields[2] as String,
       stepSize: (fields[3] as num).toInt(),
       lastUpdated: fields[4] as DateTime?,
+      updates: (fields[5] as List?)?.cast<DateTime>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, Counter obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)
@@ -38,7 +39,9 @@ class CounterAdapter extends TypeAdapter<Counter> {
       ..writeByte(3)
       ..write(obj.stepSize)
       ..writeByte(4)
-      ..write(obj.lastUpdated);
+      ..write(obj.lastUpdated)
+      ..writeByte(5)
+      ..write(obj.updates);
   }
 
   @override

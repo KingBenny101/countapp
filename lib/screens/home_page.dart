@@ -1,3 +1,4 @@
+import 'package:countapp/screens/info_page.dart';
 import 'package:countapp/screens/options_page.dart';
 import 'package:countapp/utils.dart';
 import 'package:file_picker/file_picker.dart';
@@ -47,6 +48,22 @@ class HomePageState extends State<HomePage> {
         title: const Text('Count App'),
         actions: isSelecting
             ? [
+                selectedCounters.where((selected) => selected).length == 1
+                    ? IconButton(
+                        icon: const Icon(Icons.bar_chart),
+                        onPressed: () {
+                          final index = selectedCounters
+                              .indexWhere((selected) => selected);
+                          FocusScope.of(context).unfocus();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => InfoPage(index: index)),
+                          );
+                        },
+                      )
+                    : const SizedBox.shrink(),
+                SizedBox(width: 10),
                 IconButton(
                   icon: const Icon(Icons.close),
                   onPressed: () {
@@ -215,9 +232,10 @@ class HomePageState extends State<HomePage> {
                         isSelecting = false;
                       });
 
-
                       toastification.show(
                         type: ToastificationType.success,
+                        alignment: Alignment.bottomCenter,
+                        style: ToastificationStyle.simple,
                         title: Text(
                             '$selectedCount Counters Deleted Successfully!'),
                         autoCloseDuration: const Duration(seconds: 5),
@@ -298,9 +316,11 @@ class HomePageState extends State<HomePage> {
                   if (result != null) {
                     String filePath = result.files.single.path!;
                     await importJSON(counterProvider, filePath);
-                    
+
                     toastification.show(
                       type: ToastificationType.success,
+                      alignment: Alignment.bottomCenter,
+                      style: ToastificationStyle.simple,
                       title: Text('Counters Imported Successfully!'),
                       autoCloseDuration: const Duration(seconds: 5),
                     );
@@ -390,6 +410,8 @@ class HomePageState extends State<HomePage> {
 
                       toastification.show(
                         type: ToastificationType.success,
+                        alignment: Alignment.bottomCenter,
+                        style: ToastificationStyle.simple,
                         title: Text('Counters Exported Successfully!'),
                         autoCloseDuration: const Duration(seconds: 5),
                       );
@@ -431,6 +453,22 @@ class HomePageState extends State<HomePage> {
                 },
                 splashColor: Colors.transparent,
               ),
+              // ListTile(
+              //   leading: const Icon(Icons.info),
+              //   title: Container(
+              //     padding:
+              //         const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+              //     child: const Text('Test', style: TextStyle(fontSize: 18)),
+              //   ),
+              //   onTap: () {
+              //     FocusScope.of(context).unfocus();
+              //     Navigator.push(
+              //       context,
+              //       MaterialPageRoute(builder: (context) => InfoPage()),
+              //     );
+              //   },
+              //   splashColor: Colors.transparent,
+              // ),
             ],
           ),
         ),

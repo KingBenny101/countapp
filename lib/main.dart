@@ -9,10 +9,8 @@ import 'providers/counter_provider.dart';
 import 'screens/home_page.dart';
 
 void main() async {
-  // Ensure Flutter is initialized
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Hive
   await Hive.initFlutter();
   await Hive.openBox('settings');
 
@@ -44,11 +42,6 @@ class MainApp extends StatelessWidget {
       systemNavigationBarIconBrightness: Brightness.light,
     ));
 
-    // SystemChrome.setPreferredOrientations([
-    //   DeviceOrientation.portraitUp,
-    //   DeviceOrientation.portraitDown,
-    // ]);
-
     return Consumer<ThemeNotifier>(
       builder: (context, themeNotifier, child) {
         return ToastificationWrapper(
@@ -59,12 +52,6 @@ class MainApp extends StatelessWidget {
             home: const HomePage(),
           ),
         );
-        // return MaterialApp(
-        //   theme: ThemeData.light(),
-        //   darkTheme: ThemeData.dark(),
-        //   themeMode: themeNotifier.themeMode,
-        //   home: const HomePage(),
-        // );
       },
     );
   }
