@@ -183,10 +183,12 @@ class AddCounterPageState extends State<AddCounterPage> {
             Provider.of<CounterProvider>(context, listen: false)
                 .addCounter(newCounter);
             Navigator.pop(context);
-            
+
             toastification.show(
               context: context, // optional if you use ToastificationWrapper
               type: ToastificationType.success,
+              alignment: Alignment.bottomCenter,
+              style: ToastificationStyle.simple,
               title: Text('Counter Added Successfully!'),
               autoCloseDuration: const Duration(seconds: 5),
             );

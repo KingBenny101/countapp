@@ -71,13 +71,17 @@ class CounterProvider with ChangeNotifier {
         _counters[index].value = _counters[index].value - stepSize;
       }
 
-      _counters[index].lastUpdated = DateTime.now();
+      final currTime = DateTime.now();
+      _counters[index].lastUpdated = currTime;
+      _counters[index].updates.insert(0, currTime);
       final box = await Hive.openBox<Counter>('countersBox');
       await box.putAt(index, _counters[index]);
       notifyListeners();
 
       toastification.show(
         type: ToastificationType.success,
+        alignment: Alignment.bottomCenter,
+        style: ToastificationStyle.simple,
         title: Text('Counter Updated Successfully!'),
         autoCloseDuration: const Duration(seconds: 5),
       );
