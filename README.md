@@ -17,7 +17,7 @@ A simple application to help users keep track of their counts effortlessly.
 
 ## Development
 
-- Run ```.\build.ps1 all``` first to generate the necessary files.
+- Run ```.\build.ps1 generate``` first to generate the necessary files.
 
 ## Developer
 
