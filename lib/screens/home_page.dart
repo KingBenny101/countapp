@@ -342,7 +342,7 @@ class HomePageState extends State<HomePage> {
                   if (selectedDirectory != null) {
                     final TextEditingController fileNameController =
                         TextEditingController();
-                    final _formKey = GlobalKey<FormState>();
+                    final formKey = GlobalKey<FormState>();
 
                     DateTime now = DateTime.now();
                     DateFormat formatter = DateFormat('yyyy-MM-dd_HH-mm-ss');
@@ -354,7 +354,7 @@ class HomePageState extends State<HomePage> {
                         return AlertDialog(
                           title: const Text('Export Counters to JSON'),
                           content: Form(
-                            key: _formKey,
+                            key: formKey,
                             child: TextFormField(
                               controller: fileNameController,
                               decoration: InputDecoration(
@@ -382,7 +382,7 @@ class HomePageState extends State<HomePage> {
                             ),
                             TextButton(
                               onPressed: () {
-                                if (_formKey.currentState!.validate()) {
+                                if (formKey.currentState!.validate()) {
                                   Navigator.of(context)
                                       .pop(true); // User confirmed
                                 }
