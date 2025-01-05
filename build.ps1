@@ -65,7 +65,7 @@ function All {
 $task = $args[0] 
 
 switch ($task) {
-    "generate" { Generate }
+    "generate" { GenerateEnvironment }
     "clean" { CleanRelease }
     "build_android" { BuildAndroid }
     "build_windows" { BuildWindows }
