@@ -46,3 +46,7 @@ app.*.map.json
 /android/app/release
 
 pubspec.lock
+
+# Screw it we ball
+/android
+/windows
