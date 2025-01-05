@@ -50,3 +50,4 @@ pubspec.lock
 # Screw it we ball
 /android
 /windows
+/certificates
