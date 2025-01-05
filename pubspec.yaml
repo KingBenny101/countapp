@@ -26,6 +26,7 @@ dev_dependencies:
   hive_ce_generator: ^1.7.0
   flutter_lints: ^5.0.0
   package_rename: ^1.7.1
+  msix: ^3.16.8
 
 flutter:
   uses-material-design: true
