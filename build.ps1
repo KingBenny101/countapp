@@ -26,9 +26,6 @@ function CleanEnvironment {
         New-Item -ItemType Directory -Path $RELEASE_FOLDER | Out-Null
         Write-Host "`nCreated release folder."
     }
-
-    Write-Host "`nCleaning build folder..."
-    flutter clean
 }
 
 function BuildAndroid {
