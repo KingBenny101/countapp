@@ -2,7 +2,7 @@ package_rename_config:
   android:
     app_name: Count App
     package_name: com.kingbenny101.countapp
-    lang: kotlin
+    lang: java
 
   windows:
     app_name: Count App
