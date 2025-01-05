@@ -32,3 +32,11 @@ flutter:
   uses-material-design: true
   assets:
     - assets/icon/android/icon.png
+
+msix_config:
+  display_name: Counnt App
+  publisher_display_name: KingBenny101
+  identity_name: com.kingbenny101.countapp
+  logo_path: assets/icon/windows/icon.png
+  certificate_path: certificates/KingBenny101.pfx
+  certificate_password: 9090
