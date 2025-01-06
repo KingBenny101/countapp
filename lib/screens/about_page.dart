@@ -1,6 +1,5 @@
 import "package:countapp/utils.dart";
 import "package:flutter/material.dart";
-import "package:package_info_plus/package_info_plus.dart";
 
 class AboutPage extends StatefulWidget {
   const AboutPage({super.key});
@@ -19,9 +18,9 @@ class _AboutPageState extends State<AboutPage> {
   }
 
   Future<void> _loadVersion() async {
-    final packageInfo = await PackageInfo.fromPlatform();
+    final tmp = await getVersion();
     setState(() {
-      version = packageInfo.version; 
+      version = tmp; 
     });
   }
 

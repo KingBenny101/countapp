@@ -6,6 +6,12 @@ import "package:countapp/providers/counter_provider.dart";
 import "package:flutter/material.dart";
 import "package:hive_ce/hive.dart";
 import "package:intl/intl.dart";
+import "package:package_info_plus/package_info_plus.dart";
+
+Future<String> getVersion() async {
+  final packageInfo = await PackageInfo.fromPlatform();
+  return packageInfo.version;
+}
 
 Widget buildStepCard(String step) {
   return Card(
@@ -51,7 +57,8 @@ List<dynamic> generateUpdateStatistics(List<DateTime> updatesData) {
 
   // Group updates by date
   final Map<String, int> updatesPerDay = {};
-  final Map<String, List<int>> updatesPerDayWithTimes = {}; // To track times of day
+  final Map<String, List<int>> updatesPerDayWithTimes =
+      {}; // To track times of day
 
   for (final update in updatesData) {
     // Format the date to "yyyy-MM-dd" to group by day
@@ -67,7 +74,8 @@ List<dynamic> generateUpdateStatistics(List<DateTime> updatesData) {
         .add(update.hour * 60 + update.minute); // Store time in minutes
   }
 
-  final DateTime firstDate = updatesData.reduce((a, b) => a.isBefore(b) ? a : b);
+  final DateTime firstDate =
+      updatesData.reduce((a, b) => a.isBefore(b) ? a : b);
   final DateTime lastDate = updatesData.reduce((a, b) => a.isAfter(b) ? a : b);
   final double totalDays =
       (lastDate.difference(firstDate).inHours / 24).roundToDouble() + 1;
@@ -107,7 +115,8 @@ List<dynamic> generateUpdateStatistics(List<DateTime> updatesData) {
     rollingUpdates.add(updatesList[i]);
     if (rollingUpdates.length > 7) {
       rollingUpdates.removeAt(
-          0,); // Remove the first element to maintain the size of the last 7 days
+        0,
+      ); // Remove the first element to maintain the size of the last 7 days
     }
     final double rollingAverage =
         rollingUpdates.fold(0, (sum, updates) => sum + updates) /
@@ -123,12 +132,14 @@ List<dynamic> generateUpdateStatistics(List<DateTime> updatesData) {
   final double percentDaysWithNoUpdates = (daysWithNoUpdates / totalDays) * 100;
 
   // Find the highest update time window (e.g., 60-minute window)
-  const int windowSize = 180; // Define the window size (e.g., 60 minutes = 1 hour)
+  const int windowSize =
+      180; // Define the window size (e.g., 60 minutes = 1 hour)
   final Map<int, int> updateWindows =
       {}; // key: start of window in minutes, value: number of updates in that window
 
   for (final time in updatesData) {
-    final int windowStart = (time.hour * 60 + time.minute) ~/ windowSize * windowSize;
+    final int windowStart =
+        (time.hour * 60 + time.minute) ~/ windowSize * windowSize;
     updateWindows[windowStart] = (updateWindows[windowStart] ?? 0) + 1;
   }
 
@@ -162,7 +173,8 @@ Future<void> exportJSON(String exportFilePath) async {
   await file.writeAsString(jsonEvents);
 }
 
-Future<void> importJSON(CounterProvider counterProvider, String importFilePath) async {
+Future<void> importJSON(
+    CounterProvider counterProvider, String importFilePath) async {
   final box = await Hive.openBox<Counter>("countersBox");
   final file = File(importFilePath);
   final jsonEvents = await file.readAsString();
