@@ -1,5 +1,6 @@
+import "dart:ui";
+
 import "package:flutter/material.dart";
-import "package:flutter/scheduler.dart";
 import "package:flutter/services.dart";
 import "package:hive_ce/hive.dart";
 
@@ -11,11 +12,10 @@ class ThemeNotifier extends ChangeNotifier {
   final Box _settingsBox = Hive.box("settings");
 
   static ThemeMode _loadThemeMode() {
-    // Load theme mode from Hive, default to system brightness if unset
     final theme = Hive.box("settings").get("themeMode");
     if (theme == "light") return ThemeMode.light;
     if (theme == "dark") return ThemeMode.dark;
-    return SchedulerBinding.instance.window.platformBrightness == Brightness.dark
+    return PlatformDispatcher.instance.platformBrightness == Brightness.dark
         ? ThemeMode.dark
         : ThemeMode.light;
   }
@@ -37,12 +37,10 @@ class ThemeNotifier extends ChangeNotifier {
   }
 
   void _saveThemeMode() {
-    // Save the current theme mode to Hive
     _settingsBox.put("themeMode", _themeMode == ThemeMode.dark ? "dark" : "light");
   }
 
   void _updateSystemUiOverlay() {
-    // Update system UI colors based on theme mode
     final backgroundColor = _themeMode == ThemeMode.dark
         ? ThemeData.dark().scaffoldBackgroundColor
         : ThemeData.light().scaffoldBackgroundColor;
