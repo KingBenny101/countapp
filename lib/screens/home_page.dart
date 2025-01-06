@@ -1,17 +1,17 @@
-import 'package:countapp/screens/info_page.dart';
-import 'package:countapp/screens/options_page.dart';
-import 'package:countapp/utils.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:flutter/material.dart';
-import 'package:toastification/toastification.dart';
-import 'package:hive_ce/hive.dart';
-import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
-import 'add_counter_page.dart';
-import '../models/counter_model.dart';
-import 'how_to_use_page.dart';
-import 'about_page.dart';
-import '../providers/counter_provider.dart';
+import "package:countapp/models/counter_model.dart";
+import "package:countapp/providers/counter_provider.dart";
+import "package:countapp/screens/about_page.dart";
+import "package:countapp/screens/add_counter_page.dart";
+import "package:countapp/screens/how_to_use_page.dart";
+import "package:countapp/screens/info_page.dart";
+import "package:countapp/screens/options_page.dart";
+import "package:countapp/utils.dart";
+import "package:file_picker/file_picker.dart";
+import "package:flutter/material.dart";
+import "package:hive_ce/hive.dart";
+import "package:intl/intl.dart";
+import "package:provider/provider.dart";
+import "package:toastification/toastification.dart";
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -45,11 +45,10 @@ class HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Count App'),
+        title: const Text("Count App"),
         actions: isSelecting
             ? [
-                selectedCounters.where((selected) => selected).length == 1
-                    ? IconButton(
+                if (selectedCounters.where((selected) => selected).length == 1) IconButton(
                         icon: const Icon(Icons.bar_chart),
                         onPressed: () {
                           final index = selectedCounters
@@ -58,19 +57,18 @@ class HomePageState extends State<HomePage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => InfoPage(index: index)),
+                                builder: (context) => InfoPage(index: index),),
                           );
                         },
-                      )
-                    : const SizedBox.shrink(),
-                SizedBox(width: 10),
+                      ) else const SizedBox.shrink(),
+                const SizedBox(width: 10),
                 IconButton(
                   icon: const Icon(Icons.close),
                   onPressed: () {
                     setState(() {
                       isSelecting = false;
                       selectedCounters = List<bool>.filled(
-                          counterProvider.counters.length, false);
+                          counterProvider.counters.length, false,);
                     });
                   },
                 ),
@@ -119,25 +117,23 @@ class HomePageState extends State<HomePage> {
                       leading: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          isSelecting
-                              ? Checkbox(
+                          if (isSelecting) Checkbox(
                                   value: selectedCounters[index],
                                   onChanged: (value) {
                                     setState(() {
                                       selectedCounters[index] = value!;
                                     });
                                   },
-                                )
-                              : const SizedBox(width: 8),
+                                ) else const SizedBox(width: 8),
                           const SizedBox(width: 8),
                           CircleAvatar(
                             backgroundColor: Colors.blueAccent,
                             child: Text(
-                              counter.type == 'increment' ? '+' : '-',
+                              counter.type == "increment" ? "+" : "-",
                               style: const TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 24),
+                                  fontSize: 24,),
                             ),
                           ),
                           const SizedBox(width: 8),
@@ -146,12 +142,12 @@ class HomePageState extends State<HomePage> {
                       title: Text(
                         counter.name,
                         style: const TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
+                            fontSize: 20, fontWeight: FontWeight.bold,),
                       ),
                       subtitle: Text(
-                        counter.type == 'increment'
-                            ? 'Step Size: +${counter.stepSize}'
-                            : 'Step Size: -${counter.stepSize}',
+                        counter.type == "increment"
+                            ? "Step Size: +${counter.stepSize}"
+                            : "Step Size: -${counter.stepSize}",
                         style:
                             const TextStyle(fontSize: 14, color: Colors.grey),
                       ),
@@ -159,9 +155,9 @@ class HomePageState extends State<HomePage> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            '${counter.value}',
+                            "${counter.value}",
                             style: const TextStyle(
-                                fontSize: 30, fontWeight: FontWeight.bold),
+                                fontSize: 30, fontWeight: FontWeight.bold,),
                           ),
                           const SizedBox(width: 8),
                         ],
@@ -179,27 +175,27 @@ class HomePageState extends State<HomePage> {
               child: ElevatedButton(
                 onPressed: () async {
                   // Show confirmation dialog before deleting
-                  bool? confirmDelete = await showDialog<bool>(
+                  final bool? confirmDelete = await showDialog<bool>(
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
-                        title: const Text('Confirm Deletion'),
+                        title: const Text("Confirm Deletion"),
                         content: const Text(
-                          'Delete the selected Counters?',
+                          "Delete the selected Counters?",
                         ),
                         actions: <Widget>[
                           TextButton(
                             onPressed: () {
                               Navigator.of(context).pop(false); // Cancel delete
                             },
-                            child: const Text('Cancel'),
+                            child: const Text("Cancel"),
                           ),
                           TextButton(
                             onPressed: () {
                               Navigator.of(context)
                                   .pop(true); // Proceed with delete
                             },
-                            child: const Text('Confirm'),
+                            child: const Text("Confirm"),
                           ),
                         ],
                       );
@@ -212,7 +208,7 @@ class HomePageState extends State<HomePage> {
 
                     if (selectedCount > 0) {
                       // Get the Hive box
-                      var box = Hive.box<Counter>('countersBox');
+                      final box = Hive.box<Counter>("countersBox");
 
                       // Remove selected counters from the Hive box and in-memory list
                       for (int index = counterProvider.counters.length - 1;
@@ -228,7 +224,7 @@ class HomePageState extends State<HomePage> {
 
                       setState(() {
                         selectedCounters = List<bool>.filled(
-                            counterProvider.counters.length, false);
+                            counterProvider.counters.length, false,);
                         isSelecting = false;
                       });
 
@@ -237,7 +233,7 @@ class HomePageState extends State<HomePage> {
                         alignment: Alignment.bottomCenter,
                         style: ToastificationStyle.simple,
                         title: Text(
-                            '$selectedCount Counters Deleted Successfully!'),
+                            "$selectedCount Counters Deleted Successfully!",),
                         autoCloseDuration: const Duration(seconds: 5),
                       );
                     }
@@ -265,15 +261,15 @@ class HomePageState extends State<HomePage> {
                     children: [
                       ClipOval(
                         child: Image.asset(
-                          'assets/icon/android/icon.png',
+                          "assets/icon/android/icon.png",
                           width: 70,
                           height: 70,
                           fit: BoxFit.cover,
                         ),
                       ),
                       const SizedBox(height: 12),
-                      Text(
-                        'Count App',
+                      const Text(
+                        "Count App",
                         style: TextStyle(
                           fontSize: 26,
                           fontWeight: FontWeight.w600,
@@ -289,14 +285,14 @@ class HomePageState extends State<HomePage> {
                 title: Container(
                   padding:
                       const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                  child: const Text('Options', style: TextStyle(fontSize: 18)),
+                  child: const Text("Options", style: TextStyle(fontSize: 18)),
                 ),
                 onTap: () {
                   FocusScope.of(context).unfocus();
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const OptionsPage()),
+                        builder: (context) => const OptionsPage(),),
                   );
                 },
                 splashColor: Colors.transparent,
@@ -306,22 +302,22 @@ class HomePageState extends State<HomePage> {
                 title: Container(
                   padding:
                       const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                  child: const Text('Import', style: TextStyle(fontSize: 18)),
+                  child: const Text("Import", style: TextStyle(fontSize: 18)),
                 ),
                 onTap: () async {
-                  FilePickerResult? result = await FilePicker.platform
+                  final FilePickerResult? result = await FilePicker.platform
                       .pickFiles(
-                          type: FileType.custom, allowedExtensions: ['json']);
+                          type: FileType.custom, allowedExtensions: ["json"],);
 
                   if (result != null) {
-                    String filePath = result.files.single.path!;
+                    final String filePath = result.files.single.path!;
                     await importJSON(counterProvider, filePath);
 
                     toastification.show(
                       type: ToastificationType.success,
                       alignment: Alignment.bottomCenter,
                       style: ToastificationStyle.simple,
-                      title: Text('Counters Imported Successfully!'),
+                      title: const Text("Counters Imported Successfully!"),
                       autoCloseDuration: const Duration(seconds: 5),
                     );
                   }
@@ -333,10 +329,10 @@ class HomePageState extends State<HomePage> {
                 title: Container(
                   padding:
                       const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                  child: const Text('Export', style: TextStyle(fontSize: 18)),
+                  child: const Text("Export", style: TextStyle(fontSize: 18)),
                 ),
                 onTap: () async {
-                  String? selectedDirectory =
+                  final String? selectedDirectory =
                       await FilePicker.platform.getDirectoryPath();
 
                   if (selectedDirectory != null) {
@@ -344,29 +340,29 @@ class HomePageState extends State<HomePage> {
                         TextEditingController();
                     final formKey = GlobalKey<FormState>();
 
-                    DateTime now = DateTime.now();
-                    DateFormat formatter = DateFormat('yyyy-MM-dd_HH-mm-ss');
-                    String fileNameLabel = formatter.format(now);
+                    final DateTime now = DateTime.now();
+                    final DateFormat formatter = DateFormat("yyyy-MM-dd_HH-mm-ss");
+                    final String fileNameLabel = formatter.format(now);
 
-                    bool? confirmExport = await showDialog<bool>(
+                    final bool? confirmExport = await showDialog<bool>(
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
-                          title: const Text('Export Counters to JSON'),
+                          title: const Text("Export Counters to JSON"),
                           content: Form(
                             key: formKey,
                             child: TextFormField(
                               controller: fileNameController,
                               decoration: InputDecoration(
-                                labelText: 'File Name',
-                                hintText: '$fileNameLabel.json',
+                                labelText: "File Name",
+                                hintText: "$fileNameLabel.json",
                               ),
                               validator: (value) {
                                 final invalidCharacters =
                                     RegExp(r'[<>:"/\\|?*]');
                                 if (value != null &&
                                     invalidCharacters.hasMatch(value)) {
-                                  return 'Invalid characters in file name';
+                                  return "Invalid characters in file name";
                                 }
                                 return null;
                               },
@@ -378,7 +374,7 @@ class HomePageState extends State<HomePage> {
                                 Navigator.of(context)
                                     .pop(false); // User canceled
                               },
-                              child: const Text('Cancel'),
+                              child: const Text("Cancel"),
                             ),
                             TextButton(
                               onPressed: () {
@@ -387,7 +383,7 @@ class HomePageState extends State<HomePage> {
                                       .pop(true); // User confirmed
                                 }
                               },
-                              child: const Text('Confirm'),
+                              child: const Text("Confirm"),
                             ),
                           ],
                         );
@@ -401,18 +397,18 @@ class HomePageState extends State<HomePage> {
                         fileName = fileNameLabel;
                       }
 
-                      if (!fileName.endsWith('.json')) {
-                        fileName += '.json';
+                      if (!fileName.endsWith(".json")) {
+                        fileName += ".json";
                       }
 
-                      final exportFilePath = '$selectedDirectory/$fileName';
+                      final exportFilePath = "$selectedDirectory/$fileName";
                       await exportJSON(exportFilePath);
 
                       toastification.show(
                         type: ToastificationType.success,
                         alignment: Alignment.bottomCenter,
                         style: ToastificationStyle.simple,
-                        title: Text('Counters Exported Successfully!'),
+                        title: const Text("Counters Exported Successfully!"),
                         autoCloseDuration: const Duration(seconds: 5),
                       );
                     }
@@ -426,13 +422,13 @@ class HomePageState extends State<HomePage> {
                   padding:
                       const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                   child:
-                      const Text('How to Use', style: TextStyle(fontSize: 18)),
+                      const Text("How to Use", style: TextStyle(fontSize: 18)),
                 ),
                 onTap: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const HowToUsePage()),
+                        builder: (context) => const HowToUsePage(),),
                   );
                 },
                 splashColor: Colors.transparent,
@@ -442,7 +438,7 @@ class HomePageState extends State<HomePage> {
                 title: Container(
                   padding:
                       const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                  child: const Text('About', style: TextStyle(fontSize: 18)),
+                  child: const Text("About", style: TextStyle(fontSize: 18)),
                 ),
                 onTap: () {
                   FocusScope.of(context).unfocus();
@@ -481,7 +477,7 @@ class HomePageState extends State<HomePage> {
             MaterialPageRoute(builder: (context) => const AddCounterPage()),
           );
         },
-        tooltip: 'Add Counter',
+        tooltip: "Add Counter",
         child: const Icon(Icons.add),
       ),
     );

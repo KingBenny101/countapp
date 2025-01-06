@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import '../utils.dart';
+import "package:countapp/utils.dart";
+import "package:flutter/material.dart";
 
 class HowToUsePage extends StatelessWidget {
   const HowToUsePage({super.key});
@@ -8,62 +8,62 @@ class HowToUsePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('How to Use'),
+        title: const Text("How to Use"),
       ),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
         child: ListView(
           children: [
-            Text(
-              'A simple guide to using the features of Count App.',
+            const Text(
+              "A simple guide to using the features of Count App.",
               style: TextStyle(fontSize: 18, fontStyle: FontStyle.italic),
             ),
             const SizedBox(height: 20),
             const Divider(),
             const SizedBox(height: 20),
-            Text(
-              'Adding Counters:',
+            const Text(
+              "Adding Counters:",
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
             buildStepCard(
-              'You can add counters by pressing the floating action button on the home page.',
+              "You can add counters by pressing the floating action button on the home page.",
             ),
             const SizedBox(height: 10),
-            Text(
-              'Updating Counters:',
+            const Text(
+              "Updating Counters:",
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
             buildStepCard(
-              'You can update a counter by simply tapping on it. This will allow you to increment or decrement the value.',
+              "You can update a counter by simply tapping on it. This will allow you to increment or decrement the value.",
             ),
             const SizedBox(height: 10),
-            Text(
-              'Deleting Counters:',
+            const Text(
+              "Deleting Counters:",
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
             buildStepCard(
-              'To delete a counter, long-press on the counter, and it will become available for deletion.',
+              "To delete a counter, long-press on the counter, and it will become available for deletion.",
             ),
             const SizedBox(height: 20),
-            Text(
-              'Exporting Counters:',
+            const Text(
+              "Exporting Counters:",
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
             buildStepCard(
-              'Use the Export option in the menu to save your counters to a JSON file. You can specify the file name or let the app create one for you.',
+              "Use the Export option in the menu to save your counters to a JSON file. You can specify the file name or let the app create one for you.",
             ),
             const SizedBox(height: 10),
-            Text(
-              'Importing Counters:',
+            const Text(
+              "Importing Counters:",
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
             buildStepCard(
-              'Use the Import option in the menu to load counters from a JSON file. Ensure the file is correctly formatted.',
+              "Use the Import option in the menu to load counters from a JSON file. Ensure the file is correctly formatted.",
             ),
           ],
         ),

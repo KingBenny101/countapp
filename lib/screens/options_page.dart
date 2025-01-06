@@ -1,7 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-import '../theme/theme_notifier.dart';
+import "package:countapp/theme/theme_notifier.dart";
+import "package:flutter/material.dart";
+import "package:provider/provider.dart";
 
 class OptionsPage extends StatelessWidget {
   const OptionsPage({super.key});
@@ -11,7 +10,7 @@ class OptionsPage extends StatelessWidget {
     final themeNotifier = Provider.of<ThemeNotifier>(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Options'),
+        title: const Text("Options"),
       ),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
@@ -29,7 +28,7 @@ class OptionsPage extends StatelessWidget {
                   horizontal: 20.0,
                 ),
                 title: const Text(
-                  'Toggle Theme',
+                  "Toggle Theme",
                   style: TextStyle(fontSize: 18),
                 ),
                 trailing: Switch(

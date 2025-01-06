@@ -1,14 +1,13 @@
-import 'package:countapp/providers/counter_provider.dart';
-import 'package:countapp/utils.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
+import "package:countapp/providers/counter_provider.dart";
+import "package:countapp/utils.dart";
+import "package:fl_chart/fl_chart.dart";
+import "package:flutter/material.dart";
+import "package:intl/intl.dart";
+import "package:provider/provider.dart";
 
 class InfoPage extends StatefulWidget {
-  final int index;
-
   const InfoPage({super.key, required this.index});
+  final int index;
 
   @override
   InfoPageState createState() => InfoPageState();
@@ -35,9 +34,9 @@ class InfoPageState extends State<InfoPage> {
     statsWidget = generateStatsWidgets(updateStatistics);
 
     updatesPerDay = Map<String, int>.fromEntries(
-      updateStatistics[7].entries.toList()
+      (updateStatistics[7] as Map<String, int>).entries.toList()
         ..sort((MapEntry<String, int> a, MapEntry<String, int> b) =>
-            a.key.compareTo(b.key)),
+            a.key.compareTo(b.key),),
     ).entries.toList();
 
     indexOfEndDate = updatesPerDay.length - 1;
@@ -45,15 +44,15 @@ class InfoPageState extends State<InfoPage> {
 
   @override
   Widget build(BuildContext context) {
-    int startIndex =
+    final int startIndex =
         (indexOfEndDate - numberOfDates + 1).clamp(0, updatesPerDay.length);
 
-    int endIndex = (indexOfEndDate + 1).clamp(0, updatesPerDay.length);
+    final int endIndex = (indexOfEndDate + 1).clamp(0, updatesPerDay.length);
 
     final plotData = updatesPerDay.sublist(startIndex, endIndex);
 
     return Scaffold(
-      appBar: AppBar(title: Text('Info for $counterName')),
+      appBar: AppBar(title: Text("Info for $counterName")),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -70,7 +69,7 @@ class InfoPageState extends State<InfoPage> {
                         }
                       });
                     },
-                    child: const Text('Previous')),
+                    child: const Text("Previous"),),
                 const SizedBox(width: 30),
                 ElevatedButton(
                     onPressed: () {
@@ -82,7 +81,7 @@ class InfoPageState extends State<InfoPage> {
                         }
                       });
                     },
-                    child: const Text('Next')),
+                    child: const Text("Next"),),
               ],
             ),
             const SizedBox(height: 16),
@@ -99,7 +98,7 @@ class InfoPageState extends State<InfoPage> {
                       x: index,
                       barRods: [
                         BarChartRodData(
-                            toY: plotData[index].value.toDouble(), width: 16)
+                            toY: plotData[index].value.toDouble(), width: 16,),
                       ],
                     );
                   }),
@@ -121,8 +120,8 @@ class InfoPageState extends State<InfoPage> {
 
   FlTitlesData customAxisTitles(List<MapEntry<String, int>> dates) {
     return FlTitlesData(
-      topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-      rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+      topTitles: const AxisTitles(),
+      rightTitles: const AxisTitles(),
       leftTitles: AxisTitles(
         sideTitles: SideTitles(
           showTitles: true,
@@ -135,7 +134,7 @@ class InfoPageState extends State<InfoPage> {
                     Alignment.centerRight, // Align titles closer to the axis
                 child: Padding(
                   padding:
-                      const EdgeInsets.only(right: 0.0), // Adjust the padding
+                      EdgeInsets.zero, // Adjust the padding
                   child: Text(
                     value.toInt().toString(),
                     style: const TextStyle(fontSize: 16),
@@ -151,19 +150,19 @@ class InfoPageState extends State<InfoPage> {
         sideTitles: SideTitles(
           showTitles: true,
           getTitlesWidget: (value, meta) {
-            int index = value.toInt();
+            final int index = value.toInt();
             if (index < 0 || index >= dates.length) {
               return Container(); // Return an empty container if out of range
             }
 
             // Format the date to "MM/dd"
-            String formattedDate =
-                DateFormat('MMM dd').format(DateTime.parse(dates[index].key));
+            final String formattedDate =
+                DateFormat("MMM dd").format(DateTime.parse(dates[index].key));
             return RotatedBox(
               quarterTurns: 3,
               child: Text(
                 formattedDate,
-                style: TextStyle(fontSize: 12),
+                style: const TextStyle(fontSize: 12),
               ),
             );
           },
@@ -174,15 +173,26 @@ class InfoPageState extends State<InfoPage> {
   }
 
   List<Widget> generateStatsWidgets(List<dynamic> stats) {
+
+    final stats0 = stats[0] as double;
+    final stats1 = stats[1] as String;
+    final stats2 = stats[2] as int;
+    final stats3 = stats[3] as String;
+    final stats4 = stats[4] as double;
+    final stats5 = stats[5] as double;
+    final stats6 = stats[6] as String;
+
+
+
     return [
-      buildInfoCard("Average Updates per Day", stats[0].toStringAsFixed(2)),
-      buildInfoCard("Most Updates Day", stats[1]),
-      buildInfoCard("Most Updates Count", stats[2].toString()),
-      buildInfoCard("Time with the Most Updates", stats[3]),
-      buildInfoCard("Most Updates during", stats[6]),
+      buildInfoCard("Average Updates per Day", stats0.toStringAsFixed(2)),
+      buildInfoCard("Most Updates Day", stats1),
+      buildInfoCard("Most Updates Count", stats2.toString()),
+      buildInfoCard("Time with the Most Updates", stats3),
+      buildInfoCard("Most Updates during", stats6),
       buildInfoCard(
-          "Average over the Last 7 Days", stats[4].toStringAsFixed(2)),
-      buildInfoCard("Days with No Updates", '${stats[5].toStringAsFixed(2)}%'),
+          "Average over the Last 7 Days", stats4.toStringAsFixed(2),),
+      buildInfoCard("Days with No Updates", "${stats5.toStringAsFixed(2)}%"),
     ];
   }
 }

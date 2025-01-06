@@ -1,18 +1,18 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
-import 'package:hive_ce_flutter/hive_flutter.dart';
-import 'package:toastification/toastification.dart';
-import 'models/counter_model.dart';
-import 'theme/theme_notifier.dart';
-import 'providers/counter_provider.dart';
-import 'screens/home_page.dart';
+import "package:countapp/models/counter_model.dart";
+import "package:countapp/providers/counter_provider.dart";
+import "package:countapp/screens/home_page.dart";
+import "package:countapp/theme/theme_notifier.dart";
+import "package:flutter/material.dart";
+import "package:flutter/services.dart";
+import "package:hive_ce_flutter/hive_flutter.dart";
+import "package:provider/provider.dart";
+import "package:toastification/toastification.dart";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Hive.initFlutter();
-  await Hive.openBox('settings');
+  await Hive.openBox("settings");
 
   Hive.registerAdapter(CounterAdapter());
 
@@ -40,7 +40,7 @@ class MainApp extends StatelessWidget {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       systemNavigationBarColor: backgroundColor,
       systemNavigationBarIconBrightness: Brightness.light,
-    ));
+    ),);
 
     return Consumer<ThemeNotifier>(
       builder: (context, themeNotifier, child) {

@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import '../models/counter_model.dart';
-import 'package:provider/provider.dart';
-import '../providers/counter_provider.dart';
-import 'package:toastification/toastification.dart';
+import "package:countapp/models/counter_model.dart";
+import "package:countapp/providers/counter_provider.dart";
+import "package:flutter/material.dart";
+import "package:flutter/services.dart";
+import "package:provider/provider.dart";
+import "package:toastification/toastification.dart";
 
 class AddCounterPage extends StatefulWidget {
   const AddCounterPage({super.key});
@@ -14,7 +14,7 @@ class AddCounterPage extends StatefulWidget {
 
 class AddCounterPageState extends State<AddCounterPage> {
   final _formKey = GlobalKey<FormState>();
-  String _name = '';
+  String _name = "";
   int _stepSize = 1;
   int _initialCount = 0;
   bool _isIncrement = true;
@@ -22,7 +22,7 @@ class AddCounterPageState extends State<AddCounterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Create a New Counter')),
+      appBar: AppBar(title: const Text("Create a New Counter")),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
@@ -33,7 +33,7 @@ class AddCounterPageState extends State<AddCounterPage> {
               children: [
                 TextFormField(
                   decoration: const InputDecoration(
-                    labelText: 'Counter Name',
+                    labelText: "Counter Name",
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.edit),
                   ),
@@ -42,7 +42,7 @@ class AddCounterPageState extends State<AddCounterPage> {
                   },
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter a name';
+                      return "Please enter a name";
                     }
                     return null;
                   },
@@ -50,7 +50,7 @@ class AddCounterPageState extends State<AddCounterPage> {
                 const SizedBox(height: 16),
                 TextFormField(
                   decoration: const InputDecoration(
-                    labelText: 'Step Size',
+                    labelText: "Step Size",
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.add_circle_outline_rounded),
                   ),
@@ -65,7 +65,7 @@ class AddCounterPageState extends State<AddCounterPage> {
                 const SizedBox(height: 16),
                 TextFormField(
                   decoration: const InputDecoration(
-                    labelText: 'Initial Count',
+                    labelText: "Initial Count",
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.looks_one),
                   ),
@@ -81,7 +81,6 @@ class AddCounterPageState extends State<AddCounterPage> {
                 LayoutBuilder(builder: (context, constraints) {
                   if (MediaQuery.of(context).orientation ==
                       Orientation.landscape) {
-                    print('landscape');
                     return Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
@@ -97,10 +96,8 @@ class AddCounterPageState extends State<AddCounterPage> {
                               });
                             },
                           ),
-                        ]);
+                        ],);
                   } else {
-                    print('portrait');
-
                     return Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -116,9 +113,9 @@ class AddCounterPageState extends State<AddCounterPage> {
                               });
                             },
                           ),
-                        ]);
+                        ],);
                   }
-                }),
+                },),
                 // Row(
                 //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 //   children: [
@@ -176,7 +173,7 @@ class AddCounterPageState extends State<AddCounterPage> {
             final newCounter = Counter(
               name: _name,
               value: _initialCount,
-              type: _isIncrement ? 'increment' : 'decrement',
+              type: _isIncrement ? "increment" : "decrement",
               stepSize: _stepSize,
               lastUpdated: DateTime.now(),
             );
@@ -189,12 +186,12 @@ class AddCounterPageState extends State<AddCounterPage> {
               type: ToastificationType.success,
               alignment: Alignment.bottomCenter,
               style: ToastificationStyle.simple,
-              title: Text('Counter Added Successfully!'),
+              title: const Text("Counter Added Successfully!"),
               autoCloseDuration: const Duration(seconds: 5),
             );
           }
         },
-        tooltip: 'Add Counter',
+        tooltip: "Add Counter",
         child: const Icon(Icons.add),
       ),
     );
