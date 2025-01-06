@@ -5,7 +5,8 @@ import "package:countapp/screens/add_counter_page.dart";
 import "package:countapp/screens/how_to_use_page.dart";
 import "package:countapp/screens/info_page.dart";
 import "package:countapp/screens/options_page.dart";
-import "package:countapp/utils.dart";
+import "package:countapp/screens/update_page.dart";
+import "package:countapp/utils/files.dart";
 import "package:file_picker/file_picker.dart";
 import "package:flutter/material.dart";
 import "package:hive_ce/hive.dart";
@@ -281,6 +282,22 @@ class HomePageState extends State<HomePage> {
                 ),
               ),
               ListTile(
+                leading: const Icon(Icons.update),
+                title: Container(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                  child: const Text("Updates", style: TextStyle(fontSize: 18)),
+                ),
+                onTap: () {
+                  FocusScope.of(context).unfocus();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const UpdatePage()),
+                  );
+                },
+                splashColor: Colors.transparent,
+              ),
+              ListTile(
                 leading: const Icon(Icons.settings),
                 title: Container(
                   padding:
@@ -405,14 +422,6 @@ class HomePageState extends State<HomePage> {
 
                       final exportFilePath = "$selectedDirectory/$fileName";
                       await exportJSON(exportFilePath);
-
-                      toastification.show(
-                        type: ToastificationType.success,
-                        alignment: Alignment.bottomCenter,
-                        style: ToastificationStyle.simple,
-                        title: const Text("Counters Exported Successfully!"),
-                        autoCloseDuration: const Duration(seconds: 5),
-                      );
                     }
                   }
                 },
@@ -451,22 +460,7 @@ class HomePageState extends State<HomePage> {
                 },
                 splashColor: Colors.transparent,
               ),
-              // ListTile(
-              //   leading: const Icon(Icons.info),
-              //   title: Container(
-              //     padding:
-              //         const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-              //     child: const Text('Test', style: TextStyle(fontSize: 18)),
-              //   ),
-              //   onTap: () {
-              //     FocusScope.of(context).unfocus();
-              //     Navigator.push(
-              //       context,
-              //       MaterialPageRoute(builder: (context) => InfoPage()),
-              //     );
-              //   },
-              //   splashColor: Colors.transparent,
-              // ),
+              
             ],
           ),
         ),

@@ -1,48 +1,4 @@
-import "dart:convert";
-import "dart:io";
-
-import "package:countapp/models/counter_model.dart";
-import "package:countapp/providers/counter_provider.dart";
-import "package:flutter/material.dart";
-import "package:hive_ce/hive.dart";
 import "package:intl/intl.dart";
-
-Widget buildStepCard(String step) {
-  return Card(
-    margin: const EdgeInsets.symmetric(vertical: 8.0),
-    elevation: 4,
-    child: Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Text(
-        step,
-        style: const TextStyle(fontSize: 16),
-      ),
-    ),
-  );
-}
-
-Widget buildInfoCard(String infoName, String infoValue) {
-  return Card(
-    margin: const EdgeInsets.symmetric(vertical: 8.0),
-    elevation: 4,
-    child: Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            infoName,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          Text(
-            infoValue,
-            style: const TextStyle(fontSize: 16),
-          ),
-        ],
-      ),
-    ),
-  );
-}
 
 List<dynamic> generateUpdateStatistics(List<DateTime> updatesData) {
   if (updatesData.isEmpty) {
@@ -51,7 +7,8 @@ List<dynamic> generateUpdateStatistics(List<DateTime> updatesData) {
 
   // Group updates by date
   final Map<String, int> updatesPerDay = {};
-  final Map<String, List<int>> updatesPerDayWithTimes = {}; // To track times of day
+  final Map<String, List<int>> updatesPerDayWithTimes =
+      {}; // To track times of day
 
   for (final update in updatesData) {
     // Format the date to "yyyy-MM-dd" to group by day
@@ -67,7 +24,8 @@ List<dynamic> generateUpdateStatistics(List<DateTime> updatesData) {
         .add(update.hour * 60 + update.minute); // Store time in minutes
   }
 
-  final DateTime firstDate = updatesData.reduce((a, b) => a.isBefore(b) ? a : b);
+  final DateTime firstDate =
+      updatesData.reduce((a, b) => a.isBefore(b) ? a : b);
   final DateTime lastDate = updatesData.reduce((a, b) => a.isAfter(b) ? a : b);
   final double totalDays =
       (lastDate.difference(firstDate).inHours / 24).roundToDouble() + 1;
@@ -107,7 +65,8 @@ List<dynamic> generateUpdateStatistics(List<DateTime> updatesData) {
     rollingUpdates.add(updatesList[i]);
     if (rollingUpdates.length > 7) {
       rollingUpdates.removeAt(
-          0,); // Remove the first element to maintain the size of the last 7 days
+        0,
+      ); // Remove the first element to maintain the size of the last 7 days
     }
     final double rollingAverage =
         rollingUpdates.fold(0, (sum, updates) => sum + updates) /
@@ -123,12 +82,14 @@ List<dynamic> generateUpdateStatistics(List<DateTime> updatesData) {
   final double percentDaysWithNoUpdates = (daysWithNoUpdates / totalDays) * 100;
 
   // Find the highest update time window (e.g., 60-minute window)
-  const int windowSize = 180; // Define the window size (e.g., 60 minutes = 1 hour)
+  const int windowSize =
+      180; // Define the window size (e.g., 60 minutes = 1 hour)
   final Map<int, int> updateWindows =
       {}; // key: start of window in minutes, value: number of updates in that window
 
   for (final time in updatesData) {
-    final int windowStart = (time.hour * 60 + time.minute) ~/ windowSize * windowSize;
+    final int windowStart =
+        (time.hour * 60 + time.minute) ~/ windowSize * windowSize;
     updateWindows[windowStart] = (updateWindows[windowStart] ?? 0) + 1;
   }
 
@@ -151,27 +112,4 @@ List<dynamic> generateUpdateStatistics(List<DateTime> updatesData) {
     "$mostUpdatesWindowStartTime - $mostUpdatesWindowEndTime", // Time Window with the Most Updates
     updatesPerDay,
   ];
-}
-
-Future<void> exportJSON(String exportFilePath) async {
-  final box = await Hive.openBox<Counter>("countersBox");
-  final file = File(exportFilePath);
-  final events = box.values.toList();
-  final jsonEvents = json.encode(events);
-
-  await file.writeAsString(jsonEvents);
-}
-
-Future<void> importJSON(CounterProvider counterProvider, String importFilePath) async {
-  final box = await Hive.openBox<Counter>("countersBox");
-  final file = File(importFilePath);
-  final jsonEvents = await file.readAsString();
-  final events = json.decode(jsonEvents) as List<dynamic>;
-  final List<Counter> counters = events.map((data) {
-    return Counter.fromJson(data as Map<String, dynamic>);
-  }).toList();
-
-  await box.clear();
-  await box.addAll(counters);
-  await counterProvider.loadCounters();
 }
