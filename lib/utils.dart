@@ -13,6 +13,12 @@ Future<String> getVersion() async {
   return packageInfo.version;
 }
 
+Future<String> getLatestVersion() async {
+  // Simulate fetching the latest version from a remote server
+  await Future.delayed(const Duration(seconds: 3));
+  return "1.2.1";
+}
+
 Widget buildStepCard(String step) {
   return Card(
     margin: const EdgeInsets.symmetric(vertical: 8.0),
