@@ -286,7 +286,7 @@ class HomePageState extends State<HomePage> {
                 title: Container(
                   padding:
                       const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                  child: const Text("Update Check", style: TextStyle(fontSize: 18)),
+                  child: const Text("Updates", style: TextStyle(fontSize: 18)),
                 ),
                 onTap: () {
                   FocusScope.of(context).unfocus();
@@ -422,14 +422,6 @@ class HomePageState extends State<HomePage> {
 
                       final exportFilePath = "$selectedDirectory/$fileName";
                       await exportJSON(exportFilePath);
-
-                      toastification.show(
-                        type: ToastificationType.success,
-                        alignment: Alignment.bottomCenter,
-                        style: ToastificationStyle.simple,
-                        title: const Text("Counters Exported Successfully!"),
-                        autoCloseDuration: const Duration(seconds: 5),
-                      );
                     }
                   }
                 },
