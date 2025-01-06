@@ -1,7 +1,7 @@
 name: countapp
 description: 'A simple application to help users keep track of their counts effortlessly.'
 publish_to: 'none'
-version: 1.2.0
+version: 1.2.1
 
 environment:
   sdk: '>=3.3.3 <4.0.0'
