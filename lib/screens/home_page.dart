@@ -6,7 +6,7 @@ import "package:countapp/screens/how_to_use_page.dart";
 import "package:countapp/screens/info_page.dart";
 import "package:countapp/screens/options_page.dart";
 import "package:countapp/screens/update_page.dart";
-import "package:countapp/utils.dart";
+import "package:countapp/utils/files.dart";
 import "package:file_picker/file_picker.dart";
 import "package:flutter/material.dart";
 import "package:hive_ce/hive.dart";

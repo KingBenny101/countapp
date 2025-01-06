@@ -1,4 +1,5 @@
-import "package:countapp/utils.dart";
+import "package:countapp/utils/updates.dart";
+import "package:countapp/utils/widgets.dart";
 import "package:flutter/material.dart";
 
 class AboutPage extends StatefulWidget {
