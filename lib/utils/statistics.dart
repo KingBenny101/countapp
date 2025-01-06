@@ -1,61 +1,4 @@
-import "dart:convert";
-import "dart:io";
-
-import "package:countapp/models/counter_model.dart";
-import "package:countapp/providers/counter_provider.dart";
-import "package:flutter/material.dart";
-import "package:hive_ce/hive.dart";
 import "package:intl/intl.dart";
-import "package:package_info_plus/package_info_plus.dart";
-import "package:pub_semver/pub_semver.dart";
-
-Future<Version> getVersion() async {
-  final packageInfo = await PackageInfo.fromPlatform();
-  return Version.parse(packageInfo.version);
-}
-
-Future<Version> getLatestVersion() async {
-  await Future.delayed(const Duration(seconds: 3));
-  const latestVersion = "1.2.3";
-  return Version.parse(latestVersion);
-}
-
-Widget buildStepCard(String step) {
-  return Card(
-    margin: const EdgeInsets.symmetric(vertical: 8.0),
-    elevation: 4,
-    child: Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Text(
-        step,
-        style: const TextStyle(fontSize: 16),
-      ),
-    ),
-  );
-}
-
-Widget buildInfoCard(String infoName, String infoValue) {
-  return Card(
-    margin: const EdgeInsets.symmetric(vertical: 8.0),
-    elevation: 4,
-    child: Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            infoName,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          Text(
-            infoValue,
-            style: const TextStyle(fontSize: 16),
-          ),
-        ],
-      ),
-    ),
-  );
-}
 
 List<dynamic> generateUpdateStatistics(List<DateTime> updatesData) {
   if (updatesData.isEmpty) {
@@ -169,28 +112,4 @@ List<dynamic> generateUpdateStatistics(List<DateTime> updatesData) {
     "$mostUpdatesWindowStartTime - $mostUpdatesWindowEndTime", // Time Window with the Most Updates
     updatesPerDay,
   ];
-}
-
-Future<void> exportJSON(String exportFilePath) async {
-  final box = await Hive.openBox<Counter>("countersBox");
-  final file = File(exportFilePath);
-  final events = box.values.toList();
-  final jsonEvents = json.encode(events);
-
-  await file.writeAsString(jsonEvents);
-}
-
-Future<void> importJSON(
-    CounterProvider counterProvider, String importFilePath) async {
-  final box = await Hive.openBox<Counter>("countersBox");
-  final file = File(importFilePath);
-  final jsonEvents = await file.readAsString();
-  final events = json.decode(jsonEvents) as List<dynamic>;
-  final List<Counter> counters = events.map((data) {
-    return Counter.fromJson(data as Map<String, dynamic>);
-  }).toList();
-
-  await box.clear();
-  await box.addAll(counters);
-  await counterProvider.loadCounters();
 }
