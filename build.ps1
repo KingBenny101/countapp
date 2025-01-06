@@ -2,12 +2,27 @@ $RELEASE_FOLDER = "release"
 $ANDROID_BUILD = "build\app\outputs\flutter-apk\app-release.apk"
 $WINDOWS_BUILD = "build\windows\x64\runner\Release\countapp.msix"
 
+$MANIFEST_PATH = "android\app\src\main\AndroidManifest.xml"
+$PERMISSIONS = @"
+<uses-permission android:name="android.permission.INTERNET"/>
+<uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/>
+"@
 
 function GenerateEnvironment {
     Write-Host "`nInstalling dependencies..."
     flutter pub get
     Write-Host "`nCreating Android platform..."
     flutter create --platforms=android --android-language=java .
+    Write-Host "`nAdding Permissions..."
+
+    (Get-Content $MANIFEST_PATH) | ForEach-Object {
+        if ($_ -match "</manifest>") {
+            $PERMISSIONS
+        }
+        $_
+    } | Set-Content $MANIFEST_PATH
+
+
     Write-Host "`nCreating Windows platform..."
     flutter create --platforms=windows .
     Write-Host "`nRemoving Test folder..."
@@ -22,7 +37,8 @@ function CleanEnvironment {
     if (Test-Path $RELEASE_FOLDER) {
         Remove-Item "$RELEASE_FOLDER\*" -Force -ErrorAction SilentlyContinue
         Write-Host "`nCleaned release folder."
-    } else {
+    }
+    else {
         New-Item -ItemType Directory -Path $RELEASE_FOLDER | Out-Null
         Write-Host "`nCreated release folder."
     }
@@ -35,7 +51,8 @@ function BuildAndroid {
     if (Test-Path $ANDROID_BUILD) {
         Copy-Item $ANDROID_BUILD -Destination $RELEASE_FOLDER
         Write-Host "`nAPK file copied successfully."
-    } else {
+    }
+    else {
         Write-Host "`nAPK file not found at $ANDROID_BUILD"
     }
 }
@@ -47,7 +64,8 @@ function BuildWindows {
     if (Test-Path $WINDOWS_BUILD) {
         Copy-Item $WINDOWS_BUILD -Destination $RELEASE_FOLDER
         Write-Host "`nEXE file copied successfully."
-    } else {
+    }
+    else {
         Write-Host "`nEXE file not found at $WINDOWS_BUILD"
     }
 }
