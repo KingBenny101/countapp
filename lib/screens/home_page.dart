@@ -344,6 +344,8 @@ class HomePageState extends State<HomePage> {
                     final DateFormat formatter = DateFormat("yyyy-MM-dd_HH-mm-ss");
                     final String fileNameLabel = formatter.format(now);
 
+                    if (!context.mounted) return;
+
                     final bool? confirmExport = await showDialog<bool>(
                       context: context,
                       builder: (BuildContext context) {
