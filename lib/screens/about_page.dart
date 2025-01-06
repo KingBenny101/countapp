@@ -20,7 +20,7 @@ class _AboutPageState extends State<AboutPage> {
   Future<void> _loadVersion() async {
     final tmp = await getVersion();
     setState(() {
-      version = tmp; 
+      version = tmp.canonicalizedVersion; 
     });
   }
 

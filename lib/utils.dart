@@ -7,16 +7,17 @@ import "package:flutter/material.dart";
 import "package:hive_ce/hive.dart";
 import "package:intl/intl.dart";
 import "package:package_info_plus/package_info_plus.dart";
+import "package:pub_semver/pub_semver.dart";
 
-Future<String> getVersion() async {
+Future<Version> getVersion() async {
   final packageInfo = await PackageInfo.fromPlatform();
-  return packageInfo.version;
+  return Version.parse(packageInfo.version);
 }
 
-Future<String> getLatestVersion() async {
-  // Simulate fetching the latest version from a remote server
+Future<Version> getLatestVersion() async {
   await Future.delayed(const Duration(seconds: 3));
-  return "1.2.1";
+  const latestVersion = "1.2.3";
+  return Version.parse(latestVersion);
 }
 
 Widget buildStepCard(String step) {
