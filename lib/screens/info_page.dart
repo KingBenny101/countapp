@@ -1,4 +1,5 @@
 import "package:countapp/providers/counter_provider.dart";
+import "package:countapp/screens/all_updates.dart";
 import "package:countapp/utils/statistics.dart";
 import "package:countapp/utils/widgets.dart";
 import "package:fl_chart/fl_chart.dart";
@@ -116,6 +117,21 @@ class InfoPageState extends State<InfoPage> {
                 children: _statsWidget,
               ),
             ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AllUpdatesPage(
+                      name: _counterName,
+                      data: _updatesData,
+                    ),
+                  ),
+                );
+              },
+              child: const Text("View All Updates"),
+            ),
+            const SizedBox(height: 16),
           ],
         ),
       ),
@@ -126,7 +142,7 @@ class InfoPageState extends State<InfoPage> {
     final maxValue =
         dates.reduce((a, b) => a.value > b.value ? a : b).value.toDouble();
     const maxTiles = 5;
-    final interval = maxValue~/maxTiles;
+    final interval = maxValue ~/ maxTiles;
 
     return FlTitlesData(
       topTitles: const AxisTitles(),
