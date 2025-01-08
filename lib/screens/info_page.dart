@@ -123,6 +123,11 @@ class InfoPageState extends State<InfoPage> {
   }
 
   FlTitlesData customAxisTitles(List<MapEntry<String, int>> dates) {
+    final maxValue =
+        dates.reduce((a, b) => a.value > b.value ? a : b).value.toDouble();
+    const maxTiles = 5;
+    final interval = maxValue~/maxTiles;
+
     return FlTitlesData(
       topTitles: const AxisTitles(),
       rightTitles: const AxisTitles(),
@@ -131,17 +136,32 @@ class InfoPageState extends State<InfoPage> {
           showTitles: true,
           interval: 1,
           getTitlesWidget: (double value, TitleMeta meta) {
-            if (value % 1 == 0) {
-              return Align(
-                alignment: Alignment.centerRight,
-                child: Padding(
-                  padding: EdgeInsets.zero,
-                  child: Text(
-                    value.toInt().toString(),
-                    style: const TextStyle(fontSize: 16),
+            if (maxValue <= maxTiles) {
+              if (value % 1 == 0) {
+                return Align(
+                  alignment: Alignment.centerRight,
+                  child: Padding(
+                    padding: EdgeInsets.zero,
+                    child: Text(
+                      value.toInt().toString(),
+                      style: const TextStyle(fontSize: 16),
+                    ),
                   ),
-                ),
-              );
+                );
+              }
+            } else {
+              if (value % interval == 0) {
+                return Align(
+                  alignment: Alignment.centerRight,
+                  child: Padding(
+                    padding: EdgeInsets.zero,
+                    child: Text(
+                      value.toInt().toString(),
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ),
+                );
+              }
             }
             return const SizedBox();
           },
