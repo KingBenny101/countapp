@@ -36,3 +36,19 @@ Widget buildInfoCard(String infoName, String infoValue) {
     ),
   );
 }
+
+Widget buildCustomListTile(DateTime date) {
+  return Column(
+    children: [
+      ListTile(
+        title: Text(
+          date.toLocal().toString(),
+        ),
+      ),
+      const Divider(
+        indent: 16,
+        endIndent: 16,
+      ),
+    ],
+  );
+}
