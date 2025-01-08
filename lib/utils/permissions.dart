@@ -6,7 +6,7 @@ Future<bool> checkAndRequestStoragePermission() async {
   if (status.isGranted) {
     return true;
   } else {
-    PermissionStatus newStatus = await Permission.manageExternalStorage.request();
+    final PermissionStatus newStatus = await Permission.manageExternalStorage.request();
 
     return newStatus.isGranted;
   }

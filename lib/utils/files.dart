@@ -9,7 +9,7 @@ import "package:hive_ce/hive.dart";
 import "package:toastification/toastification.dart";
 
 Future<void> exportJSON(String exportFilePath) async {
-  bool hasPermission = await checkAndRequestStoragePermission();
+  final bool hasPermission = await checkAndRequestStoragePermission();
 
   if (hasPermission) {
     final box = await Hive.openBox<Counter>("countersBox");
@@ -38,7 +38,7 @@ Future<void> exportJSON(String exportFilePath) async {
 }
 
 Future<void> importJSON(
-    CounterProvider counterProvider, String importFilePath) async {
+    CounterProvider counterProvider, String importFilePath,) async {
   final box = await Hive.openBox<Counter>("countersBox");
   final file = File(importFilePath);
   final jsonEvents = await file.readAsString();

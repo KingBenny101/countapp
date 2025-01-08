@@ -15,45 +15,45 @@ class InfoPage extends StatefulWidget {
 }
 
 class InfoPageState extends State<InfoPage> {
-  final int numberOfDates = 7;
-  late CounterProvider counterProvider;
-  late int index;
-  late String counterName;
-  late List<DateTime> updatesData;
-  late List<Widget> statsWidget;
-  late List<MapEntry<String, int>> updatesPerDay;
-  late int indexOfEndDate;
+  final int _numberOfDates = 7;
+  late CounterProvider _counterProvider;
+  late String _counterName;
+  late List<DateTime> _updatesData;
+  late List<Widget> _statsWidget;
+  late List<MapEntry<String, int>> _updatesPerDay;
+  late int _indexOfEndDate;
 
   @override
   void initState() {
     super.initState();
-    counterProvider = Provider.of<CounterProvider>(context, listen: false);
-    index = widget.index;
-    counterName = counterProvider.counters[index].name;
-    updatesData = counterProvider.counters[index].updates;
-    final updateStatistics = generateUpdateStatistics(updatesData);
-    statsWidget = generateStatsWidgets(updateStatistics);
+    _counterProvider = Provider.of<CounterProvider>(context, listen: false);
+    _counterName = _counterProvider.counters[widget.index].name;
+    _updatesData = _counterProvider.counters[widget.index].updates;
+    final updateStatistics = generateUpdateStatistics(_updatesData);
+    _statsWidget = generateStatsWidgets(updateStatistics);
 
-    updatesPerDay = Map<String, int>.fromEntries(
+    _updatesPerDay = Map<String, int>.fromEntries(
       (updateStatistics[7] as Map<String, int>).entries.toList()
-        ..sort((MapEntry<String, int> a, MapEntry<String, int> b) =>
-            a.key.compareTo(b.key),),
+        ..sort(
+          (MapEntry<String, int> a, MapEntry<String, int> b) =>
+              a.key.compareTo(b.key),
+        ),
     ).entries.toList();
 
-    indexOfEndDate = updatesPerDay.length - 1;
+    _indexOfEndDate = _updatesPerDay.length - 1;
   }
 
   @override
   Widget build(BuildContext context) {
     final int startIndex =
-        (indexOfEndDate - numberOfDates + 1).clamp(0, updatesPerDay.length);
+        (_indexOfEndDate - _numberOfDates + 1).clamp(0, _updatesPerDay.length);
 
-    final int endIndex = (indexOfEndDate + 1).clamp(0, updatesPerDay.length);
+    final int endIndex = (_indexOfEndDate + 1).clamp(0, _updatesPerDay.length);
 
-    final plotData = updatesPerDay.sublist(startIndex, endIndex);
+    final plotData = _updatesPerDay.sublist(startIndex, endIndex);
 
     return Scaffold(
-      appBar: AppBar(title: Text("Info for $counterName")),
+      appBar: AppBar(title: Text("Info for $_counterName")),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -61,28 +61,30 @@ class InfoPageState extends State<InfoPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        indexOfEndDate -= numberOfDates;
+                  onPressed: () {
+                    setState(() {
+                      _indexOfEndDate -= _numberOfDates;
 
-                        if (indexOfEndDate < 0) {
-                          indexOfEndDate += numberOfDates;
-                        }
-                      });
-                    },
-                    child: const Text("Previous"),),
+                      if (_indexOfEndDate < 0) {
+                        _indexOfEndDate += _numberOfDates;
+                      }
+                    });
+                  },
+                  child: const Text("Previous"),
+                ),
                 const SizedBox(width: 30),
                 ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        indexOfEndDate += numberOfDates;
+                  onPressed: () {
+                    setState(() {
+                      _indexOfEndDate += _numberOfDates;
 
-                        if (indexOfEndDate >= updatesPerDay.length) {
-                          indexOfEndDate = updatesPerDay.length - 1;
-                        }
-                      });
-                    },
-                    child: const Text("Next"),),
+                      if (_indexOfEndDate >= _updatesPerDay.length) {
+                        _indexOfEndDate = _updatesPerDay.length - 1;
+                      }
+                    });
+                  },
+                  child: const Text("Next"),
+                ),
               ],
             ),
             const SizedBox(height: 16),
@@ -99,18 +101,19 @@ class InfoPageState extends State<InfoPage> {
                       x: index,
                       barRods: [
                         BarChartRodData(
-                            toY: plotData[index].value.toDouble(), width: 16,),
+                          toY: plotData[index].value.toDouble(),
+                          width: 16,
+                        ),
                       ],
                     );
                   }),
                 ),
               ),
             ),
-            // Info cards section
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
-                children: statsWidget,
+                children: _statsWidget,
               ),
             ),
           ],
@@ -129,13 +132,10 @@ class InfoPageState extends State<InfoPage> {
           interval: 1,
           getTitlesWidget: (double value, TitleMeta meta) {
             if (value % 1 == 0) {
-              // Show only integer values
               return Align(
-                alignment:
-                    Alignment.centerRight, // Align titles closer to the axis
+                alignment: Alignment.centerRight,
                 child: Padding(
-                  padding:
-                      EdgeInsets.zero, // Adjust the padding
+                  padding: EdgeInsets.zero,
                   child: Text(
                     value.toInt().toString(),
                     style: const TextStyle(fontSize: 16),
@@ -143,7 +143,7 @@ class InfoPageState extends State<InfoPage> {
                 ),
               );
             }
-            return const SizedBox(); // Hide non-integer values
+            return const SizedBox();
           },
         ),
       ),
@@ -153,10 +153,9 @@ class InfoPageState extends State<InfoPage> {
           getTitlesWidget: (value, meta) {
             final int index = value.toInt();
             if (index < 0 || index >= dates.length) {
-              return Container(); // Return an empty container if out of range
+              return Container();
             }
 
-            // Format the date to "MM/dd"
             final String formattedDate =
                 DateFormat("MMM dd").format(DateTime.parse(dates[index].key));
             return RotatedBox(
@@ -174,7 +173,6 @@ class InfoPageState extends State<InfoPage> {
   }
 
   List<Widget> generateStatsWidgets(List<dynamic> stats) {
-
     final stats0 = stats[0] as double;
     final stats1 = stats[1] as String;
     final stats2 = stats[2] as int;
@@ -183,8 +181,6 @@ class InfoPageState extends State<InfoPage> {
     final stats5 = stats[5] as double;
     final stats6 = stats[6] as String;
 
-
-
     return [
       buildInfoCard("Average Updates per Day", stats0.toStringAsFixed(2)),
       buildInfoCard("Most Updates Day", stats1),
@@ -192,7 +188,9 @@ class InfoPageState extends State<InfoPage> {
       buildInfoCard("Time with the Most Updates", stats3),
       buildInfoCard("Most Updates during", stats6),
       buildInfoCard(
-          "Average over the Last 7 Days", stats4.toStringAsFixed(2),),
+        "Average over the Last 7 Days",
+        stats4.toStringAsFixed(2),
+      ),
       buildInfoCard("Days with No Updates", "${stats5.toStringAsFixed(2)}%"),
     ];
   }

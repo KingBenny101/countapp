@@ -11,9 +11,9 @@ class UpdatePage extends StatefulWidget {
 }
 
 class _UpdatePageState extends State<UpdatePage> {
-  String updateText = "";
-  bool isLoading = true;
-  bool updateAvailable = false;
+  String _updateText = "";
+  bool _isLoading = true;
+  bool _updateAvailable = false;
 
   @override
   void initState() {
@@ -23,18 +23,18 @@ class _UpdatePageState extends State<UpdatePage> {
 
   Future<void> _updateCheck() async {
     setState(() {
-      updateText = "Checking for updates...";
-      isLoading = true;
-      updateAvailable = false;
+      _updateText = "Checking for updates...";
+      _isLoading = true;
+      _updateAvailable = false;
     });
 
     final checkInternet = await checkConnectivity();
 
     if (!checkInternet) {
       setState(() {
-        updateText = "No internet connection. Please check your connection.";
+        _updateText = "No internet connection. Please check your connection.";
       });
-      isLoading = false;
+      _isLoading = false;
       return;
     }
 
@@ -43,32 +43,30 @@ class _UpdatePageState extends State<UpdatePage> {
 
     if (latestVersion == Version.parse("0.0.0")) {
       setState(() {
-        updateText = "Failed to check for updates. Please try again later.";
+        _updateText = "Failed to check for updates. Please try again later.";
       });
-      isLoading = false;
+      _isLoading = false;
       return;
     }
 
     if (currentVersion < latestVersion) {
       setState(() {
-        updateText =
+        _updateText =
             "A newer version of the app is available. Please update to version $latestVersion.";
-        updateAvailable = true;
+        _updateAvailable = true;
       });
-      isLoading = false;
+      _isLoading = false;
       return;
     }
 
     setState(() {
-      updateText =
+      _updateText =
           "You are running the latest version $currentVersion of the app.";
     });
-    isLoading = false;
+    _isLoading = false;
   }
 
   Future<void> _downloadUpdate() async {
-    // Download the update
-    print("Downloading update...");
     final url = Uri.parse("https://github.com/KingBenny101/countapp/releases");
     await launchUrl(url);
   }
@@ -87,7 +85,7 @@ class _UpdatePageState extends State<UpdatePage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               // Loading indicator or success icon based on the loading state
-              if (isLoading)
+              if (_isLoading)
                 const CircularProgressIndicator()
               else
                 const Icon(
@@ -99,7 +97,7 @@ class _UpdatePageState extends State<UpdatePage> {
 
               // Update text
               Text(
-                updateText,
+                _updateText,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 18,
@@ -111,13 +109,13 @@ class _UpdatePageState extends State<UpdatePage> {
               // Button to trigger update check
               ElevatedButton(
                 onPressed: () {
-                  if (updateAvailable) {
+                  if (_updateAvailable) {
                     _downloadUpdate();
-                  } else if (!isLoading) {
+                  } else if (!_isLoading) {
                     _updateCheck();
                   }
                 },
-                child: updateAvailable
+                child: _updateAvailable
                     ? const Text("Download")
                     : const Text("Check for Updates"),
               ),
