@@ -58,24 +58,24 @@ List<dynamic> generateUpdateStatistics(List<DateTime> updatesData) {
   final String mostUpdatesTimeFormatted =
       '${(mostUpdatesTime ~/ 60).toString().padLeft(2, '0')}:${(mostUpdatesTime % 60).toString().padLeft(2, '0')}';
 
-  // Rolling average over the last 7 days
-  final List<int> rollingUpdates = [];
-  final List<double> rollingAverages = [];
-  for (int i = 0; i < updatesList.length; i++) {
-    rollingUpdates.add(updatesList[i]);
-    if (rollingUpdates.length > 7) {
-      rollingUpdates.removeAt(
-        0,
-      ); // Remove the first element to maintain the size of the last 7 days
+  // Average of last 7 days
+  final today = DateTime.now();
+  final last7Days = today.subtract(const Duration(days: 7));
+
+  final List<int> updatesLast7Days = [];
+  for (final date in updatesPerDay.keys) {
+    final DateTime dateObj = DateFormat("yyyy-MM-dd").parse(date);
+    if (dateObj.isAfter(last7Days) && dateObj.isBefore(today)) {
+      updatesLast7Days.add(updatesPerDay[date]!);
     }
-    final double rollingAverage =
-        rollingUpdates.fold(0, (sum, updates) => sum + updates) /
-            rollingUpdates.length;
-    rollingAverages.add(rollingAverage);
   }
 
-  final double rollingAvgLast7Days =
-      rollingAverages.isEmpty ? 0.0 : rollingAverages.last;
+  final totalUpdatesLast7Days = updatesLast7Days.fold(0, (sum, updates) => sum + updates);
+
+  final double avgUpdatesLast7Days = updatesLast7Days.isEmpty
+      ? 0.0
+      : totalUpdatesLast7Days / 7;
+
 
   // Calculate percentage of days with no updates
   final double daysWithNoUpdates = totalDays - updatesPerDay.length;
@@ -107,7 +107,7 @@ List<dynamic> generateUpdateStatistics(List<DateTime> updatesData) {
     mostUpdatesDay, // Most Updates Day
     mostUpdatesCount, // Most Updates Count
     mostUpdatesTimeFormatted, // Time of Day with the Most Updates
-    rollingAvgLast7Days, // Rolling Average over the Last 7 Days
+    avgUpdatesLast7Days, // Average over the Last 7 Days
     percentDaysWithNoUpdates, // Percentage of Days with No Updates
     "$mostUpdatesWindowStartTime - $mostUpdatesWindowEndTime", // Time Window with the Most Updates
     updatesPerDay,
