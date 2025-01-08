@@ -14,6 +14,7 @@ class _UpdatePageState extends State<UpdatePage> {
   String _updateText = "";
   bool _isLoading = true;
   bool _updateAvailable = false;
+  bool _checkFailed = false;
 
   @override
   void initState() {
@@ -26,6 +27,7 @@ class _UpdatePageState extends State<UpdatePage> {
       _updateText = "Checking for updates...";
       _isLoading = true;
       _updateAvailable = false;
+      _checkFailed = false;
     });
 
     final checkInternet = await checkConnectivity();
@@ -35,6 +37,7 @@ class _UpdatePageState extends State<UpdatePage> {
         _updateText = "No internet connection. Please check your connection.";
       });
       _isLoading = false;
+      _checkFailed = true;
       return;
     }
 
@@ -43,16 +46,16 @@ class _UpdatePageState extends State<UpdatePage> {
 
     if (latestVersion == Version.parse("0.0.0")) {
       setState(() {
-        _updateText = "Failed to check for updates. Please try again later.";
+        _updateText = "Failed to check for updates. Please try again later";
       });
       _isLoading = false;
+      _checkFailed = true;
       return;
     }
 
     if (currentVersion < latestVersion) {
       setState(() {
-        _updateText =
-            "A newer version of the app is available. Please update to version $latestVersion.";
+        _updateText = "A newer version $latestVersion is available";
         _updateAvailable = true;
       });
       _isLoading = false;
@@ -60,8 +63,7 @@ class _UpdatePageState extends State<UpdatePage> {
     }
 
     setState(() {
-      _updateText =
-          "You are running the latest version $currentVersion of the app.";
+      _updateText = "You are running the latest version $currentVersion";
     });
     _isLoading = false;
   }
@@ -84,9 +86,14 @@ class _UpdatePageState extends State<UpdatePage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Loading indicator or success icon based on the loading state
               if (_isLoading)
                 const CircularProgressIndicator()
+              else if (_checkFailed)
+                const Icon(
+                  Icons.error_outline,
+                  color: Colors.red,
+                  size: 60,
+                )
               else
                 const Icon(
                   Icons.check_circle_outline,
@@ -94,8 +101,6 @@ class _UpdatePageState extends State<UpdatePage> {
                   size: 60,
                 ),
               const SizedBox(height: 20),
-
-              // Update text
               Text(
                 _updateText,
                 textAlign: TextAlign.center,
@@ -105,8 +110,6 @@ class _UpdatePageState extends State<UpdatePage> {
                 ),
               ),
               const SizedBox(height: 30),
-
-              // Button to trigger update check
               ElevatedButton(
                 onPressed: () {
                   if (_updateAvailable) {
