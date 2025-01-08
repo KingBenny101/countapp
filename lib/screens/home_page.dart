@@ -22,8 +22,8 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
-  List<bool> selectedCounters = [];
-  bool isSelecting = false;
+  List<bool> _selectedCounters = [];
+  bool _isSelecting = false;
 
   @override
   void initState() {
@@ -39,37 +39,43 @@ class HomePageState extends State<HomePage> {
 
     bool isUpdating = false;
 
-    if (selectedCounters.length != counterProvider.counters.length) {
-      selectedCounters =
+    if (_selectedCounters.length != counterProvider.counters.length) {
+      _selectedCounters =
           List<bool>.filled(counterProvider.counters.length, false);
     }
 
     return Scaffold(
       appBar: AppBar(
         title: const Text("Count App"),
-        actions: isSelecting
+        actions: _isSelecting
             ? [
-                if (selectedCounters.where((selected) => selected).length == 1) IconButton(
-                        icon: const Icon(Icons.bar_chart),
-                        onPressed: () {
-                          final index = selectedCounters
-                              .indexWhere((selected) => selected);
-                          FocusScope.of(context).unfocus();
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => InfoPage(index: index),),
-                          );
-                        },
-                      ) else const SizedBox.shrink(),
+                if (_selectedCounters.where((selected) => selected).length == 1)
+                  IconButton(
+                    icon: const Icon(Icons.bar_chart),
+                    onPressed: () {
+                      final index =
+                          _selectedCounters.indexWhere((selected) => selected);
+                      FocusScope.of(context).unfocus();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => InfoPage(index: index),
+                        ),
+                      );
+                    },
+                  )
+                else
+                  const SizedBox.shrink(),
                 const SizedBox(width: 10),
                 IconButton(
                   icon: const Icon(Icons.close),
                   onPressed: () {
                     setState(() {
-                      isSelecting = false;
-                      selectedCounters = List<bool>.filled(
-                          counterProvider.counters.length, false,);
+                      _isSelecting = false;
+                      _selectedCounters = List<bool>.filled(
+                        counterProvider.counters.length,
+                        false,
+                      );
                     });
                   },
                 ),
@@ -86,9 +92,9 @@ class HomePageState extends State<HomePage> {
                 final counter = counterProvider.counters[index];
                 return GestureDetector(
                   onTap: () async {
-                    if (isSelecting) {
+                    if (_isSelecting) {
                       setState(() {
-                        selectedCounters[index] = !selectedCounters[index];
+                        _selectedCounters[index] = !_selectedCounters[index];
                       });
                     } else if (!isUpdating) {
                       setState(() {
@@ -104,9 +110,9 @@ class HomePageState extends State<HomePage> {
                     }
                   },
                   onLongPress: () {
-                    selectedCounters[index] = true;
+                    _selectedCounters[index] = true;
                     setState(() {
-                      isSelecting = true;
+                      _isSelecting = true;
                     });
                   },
                   child: Card(
@@ -118,23 +124,27 @@ class HomePageState extends State<HomePage> {
                       leading: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          if (isSelecting) Checkbox(
-                                  value: selectedCounters[index],
-                                  onChanged: (value) {
-                                    setState(() {
-                                      selectedCounters[index] = value!;
-                                    });
-                                  },
-                                ) else const SizedBox(width: 8),
+                          if (_isSelecting)
+                            Checkbox(
+                              value: _selectedCounters[index],
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedCounters[index] = value!;
+                                });
+                              },
+                            )
+                          else
+                            const SizedBox(width: 8),
                           const SizedBox(width: 8),
                           CircleAvatar(
                             backgroundColor: Colors.blueAccent,
                             child: Text(
                               counter.type == "increment" ? "+" : "-",
                               style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 24,),
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 24,
+                              ),
                             ),
                           ),
                           const SizedBox(width: 8),
@@ -143,7 +153,9 @@ class HomePageState extends State<HomePage> {
                       title: Text(
                         counter.name,
                         style: const TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold,),
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       subtitle: Text(
                         counter.type == "increment"
@@ -158,7 +170,9 @@ class HomePageState extends State<HomePage> {
                           Text(
                             "${counter.value}",
                             style: const TextStyle(
-                                fontSize: 30, fontWeight: FontWeight.bold,),
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           const SizedBox(width: 8),
                         ],
@@ -169,7 +183,7 @@ class HomePageState extends State<HomePage> {
               },
             ),
           ),
-          if (isSelecting && selectedCounters.any((selected) => selected))
+          if (_isSelecting && _selectedCounters.any((selected) => selected))
             Padding(
               padding:
                   const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
@@ -205,7 +219,7 @@ class HomePageState extends State<HomePage> {
 
                   if (confirmDelete == true) {
                     final selectedCount =
-                        selectedCounters.where((selected) => selected).length;
+                        _selectedCounters.where((selected) => selected).length;
 
                     if (selectedCount > 0) {
                       // Get the Hive box
@@ -215,7 +229,7 @@ class HomePageState extends State<HomePage> {
                       for (int index = counterProvider.counters.length - 1;
                           index >= 0;
                           index--) {
-                        if (selectedCounters[index]) {
+                        if (_selectedCounters[index]) {
                           // Remove from Hive
                           box.deleteAt(index);
                           // Remove from the in-memory list
@@ -224,9 +238,11 @@ class HomePageState extends State<HomePage> {
                       }
 
                       setState(() {
-                        selectedCounters = List<bool>.filled(
-                            counterProvider.counters.length, false,);
-                        isSelecting = false;
+                        _selectedCounters = List<bool>.filled(
+                          counterProvider.counters.length,
+                          false,
+                        );
+                        _isSelecting = false;
                       });
 
                       toastification.show(
@@ -234,7 +250,8 @@ class HomePageState extends State<HomePage> {
                         alignment: Alignment.bottomCenter,
                         style: ToastificationStyle.simple,
                         title: Text(
-                            "$selectedCount Counters Deleted Successfully!",),
+                          "$selectedCount Counters Deleted Successfully!",
+                        ),
                         autoCloseDuration: const Duration(seconds: 5),
                       );
                     }
@@ -309,7 +326,8 @@ class HomePageState extends State<HomePage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const OptionsPage(),),
+                      builder: (context) => const OptionsPage(),
+                    ),
                   );
                 },
                 splashColor: Colors.transparent,
@@ -322,9 +340,11 @@ class HomePageState extends State<HomePage> {
                   child: const Text("Import", style: TextStyle(fontSize: 18)),
                 ),
                 onTap: () async {
-                  final FilePickerResult? result = await FilePicker.platform
-                      .pickFiles(
-                          type: FileType.custom, allowedExtensions: ["json"],);
+                  final FilePickerResult? result =
+                      await FilePicker.platform.pickFiles(
+                    type: FileType.custom,
+                    allowedExtensions: ["json"],
+                  );
 
                   if (result != null) {
                     final String filePath = result.files.single.path!;
@@ -358,7 +378,8 @@ class HomePageState extends State<HomePage> {
                     final formKey = GlobalKey<FormState>();
 
                     final DateTime now = DateTime.now();
-                    final DateFormat formatter = DateFormat("yyyy-MM-dd_HH-mm-ss");
+                    final DateFormat formatter =
+                        DateFormat("yyyy-MM-dd_HH-mm-ss");
                     final String fileNameLabel = formatter.format(now);
 
                     if (!context.mounted) return;
@@ -439,7 +460,8 @@ class HomePageState extends State<HomePage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const HowToUsePage(),),
+                      builder: (context) => const HowToUsePage(),
+                    ),
                   );
                 },
                 splashColor: Colors.transparent,
@@ -460,14 +482,13 @@ class HomePageState extends State<HomePage> {
                 },
                 splashColor: Colors.transparent,
               ),
-              
             ],
           ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          isSelecting = false;
+          _isSelecting = false;
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const AddCounterPage()),
