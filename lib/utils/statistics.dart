@@ -61,21 +61,30 @@ List<dynamic> generateUpdateStatistics(List<DateTime> updatesData) {
   // Average of last 7 days
   final today = DateTime.now();
   final last7Days = today.subtract(const Duration(days: 7));
+  final last30Days = today.subtract(const Duration(days: 30));
 
   final List<int> updatesLast7Days = [];
+  final List<int> updatesLast30Days = [];
   for (final date in updatesPerDay.keys) {
     final DateTime dateObj = DateFormat("yyyy-MM-dd").parse(date);
     if (dateObj.isAfter(last7Days) && dateObj.isBefore(today)) {
       updatesLast7Days.add(updatesPerDay[date]!);
     }
+    if (dateObj.isAfter(last30Days) && dateObj.isBefore(today)) {
+      updatesLast30Days.add(updatesPerDay[date]!);
+    }
   }
 
-  final totalUpdatesLast7Days = updatesLast7Days.fold(0, (sum, updates) => sum + updates);
+  final totalUpdatesLast7Days =
+      updatesLast7Days.fold(0, (sum, updates) => sum + updates);
+  final totalUpdatesLast30Days =
+      updatesLast30Days.fold(0, (sum, updates) => sum + updates);
 
-  final double avgUpdatesLast7Days = updatesLast7Days.isEmpty
-      ? 0.0
-      : totalUpdatesLast7Days / 7;
+  final double avgUpdatesLast7Days =
+      updatesLast7Days.isEmpty ? 0.0 : totalUpdatesLast7Days / 7;
 
+  final double avgUpdatesLast30Days =
+      updatesLast30Days.isEmpty ? 0.0 : totalUpdatesLast30Days / 30;
 
   // Calculate percentage of days with no updates
   final double daysWithNoUpdates = totalDays - updatesPerDay.length;
@@ -111,5 +120,6 @@ List<dynamic> generateUpdateStatistics(List<DateTime> updatesData) {
     percentDaysWithNoUpdates, // Percentage of Days with No Updates
     "$mostUpdatesWindowStartTime - $mostUpdatesWindowEndTime", // Time Window with the Most Updates
     updatesPerDay,
+    avgUpdatesLast30Days, // Average over the Last 30 Days
   ];
 }
