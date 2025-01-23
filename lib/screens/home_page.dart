@@ -133,34 +133,58 @@ class HomePageState extends State<HomePage> {
                     child: Card(
                       elevation: 4,
                       margin: const EdgeInsets.symmetric(
-                          vertical: 8, horizontal: 16),
+                        vertical: 8,
+                        horizontal: 16,
+                      ),
                       child: ListTile(
                         contentPadding: const EdgeInsets.all(12),
                         leading: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            if (_isSelecting)
-                              Checkbox(
-                                value: _selectedCounters[index],
-                                onChanged: (value) {
-                                  setState(() {
-                                    _selectedCounters[index] = value!;
-                                  });
-                                },
-                              )
-                            else
-                              const SizedBox(width: 8),
+                            AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 300),
+                              transitionBuilder:
+                                  (Widget child, Animation<double> animation) {
+                                return FadeTransition(
+                                  opacity: animation,
+                                  child: SizeTransition(
+                                    sizeFactor: animation,
+                                    axis: Axis.horizontal,
+                                    child: child,
+                                  ),
+                                );
+                              },
+                              child: _isSelecting
+                                  ? Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Checkbox(
+                                        value: _selectedCounters[index],
+                                        onChanged: (value) {
+                                          setState(() {
+                                            _selectedCounters[index] = value!;
+                                          });
+                                        },
+                                      ),
+                                    )
+                                  : const SizedBox(
+                                      width: 8,
+                                    ),
+                            ),
                             const SizedBox(width: 8),
-                            CircleAvatar(
-                              backgroundColor: Colors.blueAccent,
-                              child: Text(
-                                counter.type == "increment" ? "+" : "-",
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 24,
-                                ),
-                              ),
+                            AnimatedContainer(
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.easeInOut,
+                              width: _isSelecting ? 40 : 48,
+                              height: _isSelecting ? 40 : 48,
+                              child: CircleAvatar(
+                                  backgroundColor: Colors.blueAccent,
+                                  child: Icon(
+                                    counter.type == "increment"
+                                        ? Icons.add
+                                        : Icons.remove,
+                                    color: Colors.white,
+                                    size: 24,
+                                  ),),
                             ),
                             const SizedBox(width: 8),
                           ],
