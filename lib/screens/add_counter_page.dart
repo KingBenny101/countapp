@@ -144,7 +144,7 @@ class AddCounterPageState extends State<AddCounterPage> {
               alignment: Alignment.bottomCenter,
               style: ToastificationStyle.simple,
               title: const Text("Counter Added Successfully!"),
-              autoCloseDuration: const Duration(seconds: 5),
+              autoCloseDuration: const Duration(seconds: 2),
             );
           }
         },
