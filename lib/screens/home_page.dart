@@ -53,6 +53,7 @@ class HomePageState extends State<HomePage> {
                   IconButton(
                     icon: const Icon(Icons.bar_chart),
                     onPressed: () {
+                      _isSelecting = false;
                       final index =
                           _selectedCounters.indexWhere((selected) => selected);
                       FocusScope.of(context).unfocus();
