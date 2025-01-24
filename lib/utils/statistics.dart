@@ -153,9 +153,9 @@ class StatisticsGenerator {
     final String shortDate =
         DateFormat("MM/dd").format(DateTime.parse(mostActiveDate));
     final String shortStartTime =
-        '${mostActiveWindowStart ~/ 60}:${(mostActiveWindowStart % 60).toString().padLeft(2, '0')}';
+        '${(mostActiveWindowStart ~/ 60).toString().padLeft(2, '0')}:${(mostActiveWindowStart % 60).toString().padLeft(2, '0')}';
     final String shortEndTime =
-        '${(mostActiveWindowStart + windowSize) ~/ 60 % 24}:${((mostActiveWindowStart + windowSize) % 60).toString().padLeft(2, '0')}';
+        '${((mostActiveWindowStart + windowSize) ~/ 60 % 24).toString().padLeft(2, '0')}:${((mostActiveWindowStart + windowSize) % 60).toString().padLeft(2, '0')}';
 
     return "$maxUpdates | $shortDate $shortStartTime-$shortEndTime";
   }
@@ -168,9 +168,9 @@ class StatisticsGenerator {
       ),
       buildInfoCard("Most Updates Day", _mostUpdatesDay),
       buildInfoCard("Most Updates Count", _mostUpdatesCount.toString()),
-      buildInfoCard("Most Updates in 1 Hour", _mostActive60TimeWindow),
-      buildInfoCard("Most Updates in 3 Hours", _mostActive180TimeWindow),
-      buildInfoCard("Most Updates in 6 Hours", _mostActive360TimeWindow),
+      buildInfoCard("Most Updates in 01 Hour", _mostActive60TimeWindow),
+      buildInfoCard("Most Updates in 03 Hours", _mostActive180TimeWindow),
+      buildInfoCard("Most Updates in 06 Hours", _mostActive360TimeWindow),
       buildInfoCard("Most Updates in 12 Hours", _mostActive720TimeWindow),
       buildInfoCard("Most Updates in 24 Hours", _mostActive1440TimeWindow),
       buildInfoCard(
