@@ -1,3 +1,5 @@
+import "dart:math";
+
 import "package:countapp/providers/counter_provider.dart";
 import "package:countapp/screens/all_updates.dart";
 import "package:countapp/utils/statistics.dart";
@@ -21,6 +23,7 @@ class InfoPageState extends State<InfoPage> {
   late List<DateTime> _updatesData;
   late List<Widget> _statsWidget;
   late List<MapEntry<String, int>> _updatesPerDay;
+  late List<MapEntry<int, int>> _daysPerUpdateCount;
   late int _indexOfEndDate;
 
   @override
@@ -29,10 +32,9 @@ class InfoPageState extends State<InfoPage> {
     _counterProvider = Provider.of<CounterProvider>(context, listen: false);
     _counterName = _counterProvider.counters[widget.index].name;
     _updatesData = _counterProvider.counters[widget.index].updates;
-    // final updateStatistics = generateUpdateStatistics(_updatesData);
-    // _statsWidget = generateStatsWidgets(updateStatistics);
 
-    final StatisticsGenerator statisticsGenerator = StatisticsGenerator(_updatesData);
+    final StatisticsGenerator statisticsGenerator =
+        StatisticsGenerator(_updatesData);
     _statsWidget = statisticsGenerator.generateStatsWidgets();
 
     _updatesPerDay = Map<String, int>.fromEntries(
@@ -44,6 +46,9 @@ class InfoPageState extends State<InfoPage> {
     ).entries.toList();
 
     _indexOfEndDate = _updatesPerDay.length - 1;
+    _daysPerUpdateCount = statisticsGenerator.daysPerUpdateCount.entries
+        .toList()
+      ..sort((a, b) => a.key.compareTo(b.key));
   }
 
   @override
@@ -54,6 +59,7 @@ class InfoPageState extends State<InfoPage> {
     final int endIndex = (_indexOfEndDate + 1).clamp(0, _updatesPerDay.length);
 
     final plotData = _updatesPerDay.sublist(startIndex, endIndex);
+    final histogramData = _daysPerUpdateCount;
 
     return Scaffold(
       appBar: AppBar(title: Text("Info for $_counterName")),
@@ -134,6 +140,66 @@ class InfoPageState extends State<InfoPage> {
               child: const Text("View All Updates"),
             ),
             const SizedBox(height: 16),
+            Container(
+                height: 300,
+                padding: const EdgeInsets.all(16.0),
+                child: BarChart(
+                  BarChartData(
+                    alignment: BarChartAlignment.spaceAround,
+                    maxY: histogramData
+                        .map((e) => e.value)
+                        .reduce(max)
+                        .toDouble(),
+                    titlesData: FlTitlesData(
+                      leftTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          reservedSize: 30,
+                          getTitlesWidget: (value, meta) {
+                            return Text(
+                              value.toInt().toString(),
+                              style: const TextStyle(fontSize: 10),
+                            );
+                          },
+                        ),
+                      ),
+                      bottomTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          getTitlesWidget: (value, meta) {
+                            return Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: Text(
+                                value.toInt().toString(),
+                                style: const TextStyle(fontSize: 10),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      rightTitles:
+                          const AxisTitles(),
+                      topTitles:
+                          const AxisTitles(),
+                    ),
+                    borderData: FlBorderData(show: false),
+                    gridData: const FlGridData(show: false),
+                    barGroups: List.generate(histogramData.length, (index) {
+                      return BarChartGroupData(
+                        x: histogramData[index].key,
+                        barRods: [
+                          BarChartRodData(
+                            toY: histogramData[index].value.toDouble(),
+                            width: 16,
+                            color: Colors.blue,
+                            borderRadius: const BorderRadius.vertical(
+                                top: Radius.circular(4),),
+                          ),
+                        ],
+                      );
+                    }),
+                  ),
+                ),),
           ],
         ),
       ),
