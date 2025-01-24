@@ -1,7 +1,6 @@
 import "package:countapp/providers/counter_provider.dart";
 import "package:countapp/screens/all_updates.dart";
 import "package:countapp/utils/statistics.dart";
-import "package:countapp/utils/widgets.dart";
 import "package:fl_chart/fl_chart.dart";
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
@@ -30,11 +29,14 @@ class InfoPageState extends State<InfoPage> {
     _counterProvider = Provider.of<CounterProvider>(context, listen: false);
     _counterName = _counterProvider.counters[widget.index].name;
     _updatesData = _counterProvider.counters[widget.index].updates;
-    final updateStatistics = generateUpdateStatistics(_updatesData);
-    _statsWidget = generateStatsWidgets(updateStatistics);
+    // final updateStatistics = generateUpdateStatistics(_updatesData);
+    // _statsWidget = generateStatsWidgets(updateStatistics);
+
+    final StatisticsGenerator statisticsGenerator = StatisticsGenerator(_updatesData);
+    _statsWidget = statisticsGenerator.generateStatsWidgets();
 
     _updatesPerDay = Map<String, int>.fromEntries(
-      (updateStatistics[7] as Map<String, int>).entries.toList()
+      (statisticsGenerator.updatesPerDay).entries.toList()
         ..sort(
           (MapEntry<String, int> a, MapEntry<String, int> b) =>
               a.key.compareTo(b.key),
@@ -207,6 +209,4 @@ class InfoPageState extends State<InfoPage> {
       ),
     );
   }
-
-
 }
