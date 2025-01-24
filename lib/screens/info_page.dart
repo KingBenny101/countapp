@@ -139,7 +139,7 @@ class InfoPageState extends State<InfoPage> {
             ),
             const SizedBox(height: 16),
             const Text("Days vs Update Counts",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
             Container(
               height: 300,
               padding: const EdgeInsets.all(16.0),
