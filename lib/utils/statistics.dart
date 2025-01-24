@@ -9,6 +9,7 @@ class StatisticsGenerator {
   final List<DateTime> updatesData;
   late Map<String, int> updatesPerDay;
   late Map<String, List<int>> updatesPerDayWithTimes;
+  late Map<int, int> daysPerUpdateCount;
   late DateTime _firstDate;
   late DateTime _lastDate;
   late double _totalDays;
@@ -28,6 +29,7 @@ class StatisticsGenerator {
   void _processUpdates() {
     updatesPerDay = {};
     updatesPerDayWithTimes = {};
+    daysPerUpdateCount = {};
 
     for (final update in updatesData) {
       final String formattedDate = DateFormat("yyyy-MM-dd").format(update);
@@ -37,6 +39,12 @@ class StatisticsGenerator {
       updatesPerDayWithTimes[formattedDate]!
           .add(update.hour * 60 + update.minute);
     }
+
+    for (final updateCount in updatesPerDay.values) {
+      daysPerUpdateCount[updateCount] =
+          (daysPerUpdateCount[updateCount] ?? 0) + 1;
+    }
+
 
     _firstDate = updatesData.reduce((a, b) => a.isBefore(b) ? a : b);
     _lastDate = updatesData.reduce((a, b) => a.isAfter(b) ? a : b);
@@ -53,7 +61,6 @@ class StatisticsGenerator {
     _mostActive360TimeWindow = _calcMostActiveTimeWindow(360);
     _mostActive720TimeWindow = _calcMostActiveTimeWindow(720);
     _mostActive1440TimeWindow = _calcMostActiveTimeWindow(1440);
-
   }
 
   // Average Updates per Day
