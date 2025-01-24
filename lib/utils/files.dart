@@ -24,7 +24,7 @@ Future<void> exportJSON(String exportFilePath) async {
       alignment: Alignment.bottomCenter,
       style: ToastificationStyle.simple,
       title: const Text("Counters Exported Successfully!"),
-      autoCloseDuration: const Duration(seconds: 5),
+      autoCloseDuration: const Duration(seconds: 2),
     );
   } else {
     toastification.show(
@@ -32,7 +32,7 @@ Future<void> exportJSON(String exportFilePath) async {
       alignment: Alignment.bottomCenter,
       style: ToastificationStyle.simple,
       title: const Text("No permission!"),
-      autoCloseDuration: const Duration(seconds: 5),
+      autoCloseDuration: const Duration(seconds: 2),
     );
   }
 }
