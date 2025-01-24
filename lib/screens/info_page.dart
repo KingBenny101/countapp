@@ -138,59 +138,62 @@ class InfoPageState extends State<InfoPage> {
               child: const Text("View All Updates"),
             ),
             const SizedBox(height: 16),
-            const Text("Days vs Update Count", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            const Text("Days vs Update Counts",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             Container(
-                height: 300,
-                padding: const EdgeInsets.all(16.0),
-                child: BarChart(
-                  BarChartData(
-                    titlesData: FlTitlesData(
-                      leftTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          reservedSize: 48,
-                          getTitlesWidget: (value, meta) {
-                            return Text(
-                              value.toInt().toString(),
-                              style: const TextStyle(fontSize: 16),
-                            );
-                          },
-                        ),
-                      ),
-                      bottomTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          getTitlesWidget: (value, meta) {
-                            return Padding(
+              height: 300,
+              padding: const EdgeInsets.all(16.0),
+              child: BarChart(
+                BarChartData(
+                  titlesData: FlTitlesData(
+                    leftTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        reservedSize: 48,
+                        getTitlesWidget: (value, meta) {
+                          return Align(
+                            alignment: Alignment.centerRight,
+                            child: Padding(
                               padding: EdgeInsets.zero,
                               child: Text(
                                 value.toInt().toString(),
-                                style: const TextStyle(fontSize: 12),
+                                style: const TextStyle(fontSize: 16),
                               ),
-                            );
-                          },
-                        ),
+                            ),
+                          );
+                        },
                       ),
-                      rightTitles:
-                          const AxisTitles(),
-                      topTitles:
-                          const AxisTitles(),
                     ),
-                    borderData: FlBorderData(show: false),
-                    gridData: const FlGridData(show: false),
-                    barGroups: List.generate(histogramData.length, (index) {
-                      return BarChartGroupData(
-                        x: histogramData[index].key,
-                        barRods: [
-                          BarChartRodData(
-                            toY: histogramData[index].value.toDouble(),
-                            width: 32,
-                          ),
-                        ],
-                      );
-                    }),
+                    bottomTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true,
+                        getTitlesWidget: (value, meta) {
+                          return Text(
+                            value.toInt().toString(),
+                            style: const TextStyle(fontSize: 12),
+                          );
+                        },
+                      ),
+                    ),
+                    rightTitles: const AxisTitles(),
+                    topTitles: const AxisTitles(),
                   ),
-                ),),
+                  borderData: FlBorderData(show: false),
+                  gridData: const FlGridData(show: false),
+                  barGroups: List.generate(histogramData.length, (index) {
+                    return BarChartGroupData(
+                      x: histogramData[index].key,
+                      barRods: [
+                        BarChartRodData(
+                          toY: histogramData[index].value.toDouble(),
+                          width: 32,
+                        ),
+                      ],
+                    );
+                  }),
+                ),
+              ),
+            ),
           ],
         ),
       ),
