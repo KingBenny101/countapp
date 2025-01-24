@@ -69,6 +69,10 @@ class HomePageState extends State<HomePage> {
                         _isSelecting = false;
                         final index = _selectedCounters
                             .indexWhere((selected) => selected);
+                        _selectedCounters = List<bool>.filled(
+                          counterProvider.counters.length,
+                          false,
+                        );
                         FocusScope.of(context).unfocus();
                         Navigator.push(
                           context,
@@ -115,9 +119,10 @@ class HomePageState extends State<HomePage> {
                           isUpdating = true;
                         });
 
-                        await Provider.of<CounterProvider>(context,
-                                listen: false)
-                            .updateCounter(context, index);
+                        await Provider.of<CounterProvider>(
+                          context,
+                          listen: false,
+                        ).updateCounter(context, index);
 
                         setState(() {
                           isUpdating = false;
@@ -142,7 +147,7 @@ class HomePageState extends State<HomePage> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 300),
+                              duration: const Duration(milliseconds: 150),
                               transitionBuilder:
                                   (Widget child, Animation<double> animation) {
                                 return FadeTransition(
@@ -172,19 +177,20 @@ class HomePageState extends State<HomePage> {
                             ),
                             const SizedBox(width: 8),
                             AnimatedContainer(
-                              duration: const Duration(milliseconds: 300),
+                              duration: const Duration(milliseconds: 150),
                               curve: Curves.easeInOut,
                               width: _isSelecting ? 40 : 48,
                               height: _isSelecting ? 40 : 48,
                               child: CircleAvatar(
-                                  backgroundColor: Colors.blueAccent,
-                                  child: Icon(
-                                    counter.type == "increment"
-                                        ? Icons.add
-                                        : Icons.remove,
-                                    color: Colors.white,
-                                    size: 24,
-                                  ),),
+                                backgroundColor: Colors.blueAccent,
+                                child: Icon(
+                                  counter.type == "increment"
+                                      ? Icons.add
+                                      : Icons.remove,
+                                  color: Colors.white,
+                                  size: 24,
+                                ),
+                              ),
                             ),
                             const SizedBox(width: 8),
                           ],
@@ -225,7 +231,9 @@ class HomePageState extends State<HomePage> {
             if (_isSelecting && _selectedCounters.any((selected) => selected))
               Padding(
                 padding: const EdgeInsets.symmetric(
-                    vertical: 16.0, horizontal: 24.0),
+                  vertical: 16.0,
+                  horizontal: 24.0,
+                ),
                 child: ElevatedButton(
                   onPressed: () async {
                     // Show confirmation dialog before deleting
@@ -343,7 +351,9 @@ class HomePageState extends State<HomePage> {
                   leading: const Icon(Icons.update),
                   title: Container(
                     padding: const EdgeInsets.symmetric(
-                        vertical: 10, horizontal: 10),
+                      vertical: 10,
+                      horizontal: 10,
+                    ),
                     child:
                         const Text("Updates", style: TextStyle(fontSize: 18)),
                   ),
@@ -352,7 +362,8 @@ class HomePageState extends State<HomePage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const UpdatePage()),
+                        builder: (context) => const UpdatePage(),
+                      ),
                     );
                   },
                   splashColor: Colors.transparent,
@@ -361,7 +372,9 @@ class HomePageState extends State<HomePage> {
                   leading: const Icon(Icons.settings),
                   title: Container(
                     padding: const EdgeInsets.symmetric(
-                        vertical: 10, horizontal: 10),
+                      vertical: 10,
+                      horizontal: 10,
+                    ),
                     child:
                         const Text("Options", style: TextStyle(fontSize: 18)),
                   ),
@@ -380,7 +393,9 @@ class HomePageState extends State<HomePage> {
                   leading: const Icon(Icons.file_download),
                   title: Container(
                     padding: const EdgeInsets.symmetric(
-                        vertical: 10, horizontal: 10),
+                      vertical: 10,
+                      horizontal: 10,
+                    ),
                     child: const Text("Import", style: TextStyle(fontSize: 18)),
                   ),
                   onTap: () async {
@@ -409,7 +424,9 @@ class HomePageState extends State<HomePage> {
                   leading: const Icon(Icons.file_upload),
                   title: Container(
                     padding: const EdgeInsets.symmetric(
-                        vertical: 10, horizontal: 10),
+                      vertical: 10,
+                      horizontal: 10,
+                    ),
                     child: const Text("Export", style: TextStyle(fontSize: 18)),
                   ),
                   onTap: () async {
@@ -496,9 +513,13 @@ class HomePageState extends State<HomePage> {
                   leading: const Icon(Icons.help_outline),
                   title: Container(
                     padding: const EdgeInsets.symmetric(
-                        vertical: 10, horizontal: 10),
-                    child: const Text("How to Use",
-                        style: TextStyle(fontSize: 18)),
+                      vertical: 10,
+                      horizontal: 10,
+                    ),
+                    child: const Text(
+                      "How to Use",
+                      style: TextStyle(fontSize: 18),
+                    ),
                   ),
                   onTap: () {
                     Navigator.push(
@@ -514,7 +535,9 @@ class HomePageState extends State<HomePage> {
                   leading: const Icon(Icons.info),
                   title: Container(
                     padding: const EdgeInsets.symmetric(
-                        vertical: 10, horizontal: 10),
+                      vertical: 10,
+                      horizontal: 10,
+                    ),
                     child: const Text("About", style: TextStyle(fontSize: 18)),
                   ),
                   onTap: () {
@@ -522,7 +545,8 @@ class HomePageState extends State<HomePage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const AboutPage()),
+                        builder: (context) => const AboutPage(),
+                      ),
                     );
                   },
                   splashColor: Colors.transparent,
