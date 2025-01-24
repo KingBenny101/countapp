@@ -1,5 +1,3 @@
-import "dart:math";
-
 import "package:countapp/providers/counter_provider.dart";
 import "package:countapp/screens/all_updates.dart";
 import "package:countapp/utils/statistics.dart";
@@ -140,25 +138,21 @@ class InfoPageState extends State<InfoPage> {
               child: const Text("View All Updates"),
             ),
             const SizedBox(height: 16),
+            const Text("Days vs Update Count", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             Container(
                 height: 300,
                 padding: const EdgeInsets.all(16.0),
                 child: BarChart(
                   BarChartData(
-                    alignment: BarChartAlignment.spaceAround,
-                    maxY: histogramData
-                        .map((e) => e.value)
-                        .reduce(max)
-                        .toDouble(),
                     titlesData: FlTitlesData(
                       leftTitles: AxisTitles(
                         sideTitles: SideTitles(
                           showTitles: true,
-                          reservedSize: 30,
+                          reservedSize: 48,
                           getTitlesWidget: (value, meta) {
                             return Text(
                               value.toInt().toString(),
-                              style: const TextStyle(fontSize: 10),
+                              style: const TextStyle(fontSize: 16),
                             );
                           },
                         ),
@@ -168,10 +162,10 @@ class InfoPageState extends State<InfoPage> {
                           showTitles: true,
                           getTitlesWidget: (value, meta) {
                             return Padding(
-                              padding: const EdgeInsets.only(top: 8.0),
+                              padding: EdgeInsets.zero,
                               child: Text(
                                 value.toInt().toString(),
-                                style: const TextStyle(fontSize: 10),
+                                style: const TextStyle(fontSize: 12),
                               ),
                             );
                           },
@@ -190,10 +184,7 @@ class InfoPageState extends State<InfoPage> {
                         barRods: [
                           BarChartRodData(
                             toY: histogramData[index].value.toDouble(),
-                            width: 16,
-                            color: Colors.blue,
-                            borderRadius: const BorderRadius.vertical(
-                                top: Radius.circular(4),),
+                            width: 32,
                           ),
                         ],
                       );
