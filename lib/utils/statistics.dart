@@ -1,6 +1,7 @@
 import "package:countapp/utils/widgets.dart";
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
+import 'package:flutter_layout_grid/flutter_layout_grid.dart';
 
 class StatisticsGenerator {
   StatisticsGenerator(this.updatesData) {
@@ -44,7 +45,6 @@ class StatisticsGenerator {
       daysPerUpdateCount[updateCount] =
           (daysPerUpdateCount[updateCount] ?? 0) + 1;
     }
-
 
     _firstDate = updatesData.reduce((a, b) => a.isBefore(b) ? a : b);
     _lastDate = updatesData.reduce((a, b) => a.isAfter(b) ? a : b);
@@ -143,21 +143,12 @@ class StatisticsGenerator {
       }
     });
 
-    // final String mostUpdatesWindowStartTime =
-    //     '${(mostActiveWindowStart ~/ 60).toString().padLeft(2, '0')}:${(mostActiveWindowStart % 60).toString().padLeft(2, '0')}';
-    // final String mostUpdatesWindowEndTime =
-    //     '${((mostActiveWindowStart + windowSize) ~/ 60 % 24).toString().padLeft(2, '0')}:${((mostActiveWindowStart + windowSize) % 60).toString().padLeft(2, '0')}';
-
-    // return "$maxUpdates | $mostActiveDate\n$mostUpdatesWindowStartTime-$mostUpdatesWindowEndTime";
-
-    final String shortDate =
-        DateFormat("MM/dd").format(DateTime.parse(mostActiveDate));
     final String shortStartTime =
         '${(mostActiveWindowStart ~/ 60).toString().padLeft(2, '0')}:${(mostActiveWindowStart % 60).toString().padLeft(2, '0')}';
     final String shortEndTime =
         '${((mostActiveWindowStart + windowSize) ~/ 60 % 24).toString().padLeft(2, '0')}:${((mostActiveWindowStart + windowSize) % 60).toString().padLeft(2, '0')}';
 
-    return "$maxUpdates | $shortDate $shortStartTime-$shortEndTime";
+    return "$maxUpdates|$mostActiveDate|$shortStartTime-$shortEndTime";
   }
 
   List<Widget> generateStatsWidgets() {
@@ -168,11 +159,48 @@ class StatisticsGenerator {
       ),
       buildInfoCard("Most Updates Day", _mostUpdatesDay),
       buildInfoCard("Most Updates Count", _mostUpdatesCount.toString()),
-      buildInfoCard("Most Updates in 01 Hour", _mostActive60TimeWindow),
-      buildInfoCard("Most Updates in 03 Hours", _mostActive180TimeWindow),
-      buildInfoCard("Most Updates in 06 Hours", _mostActive360TimeWindow),
-      buildInfoCard("Most Updates in 12 Hours", _mostActive720TimeWindow),
-      buildInfoCard("Most Updates in 24 Hours", _mostActive1440TimeWindow),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          LayoutGrid(
+            columnSizes: [auto, auto, auto],
+            rowSizes: [auto, auto, auto],
+            columnGap: 8,
+            children: [
+              buildSummaryCard(
+                title: "1h Max",
+                count: _mostActive60TimeWindow.split("|")[0],
+                date: _mostActive60TimeWindow.split("|")[1],
+                timeRange: _mostActive60TimeWindow.split("|")[2],
+              ),
+              buildSummaryCard(
+                title: "3h Max",
+                count: _mostActive180TimeWindow.split("|")[0],
+                date: _mostActive180TimeWindow.split("|")[1],
+                timeRange: _mostActive180TimeWindow.split("|")[2],
+              ),
+              buildSummaryCard(
+                title: "6h Max",
+                count: _mostActive360TimeWindow.split("|")[0],
+                date: _mostActive360TimeWindow.split("|")[1],
+                timeRange: _mostActive360TimeWindow.split("|")[2],
+              ),
+              buildSummaryCard(
+                title: "12h Max",
+                count: _mostActive720TimeWindow.split("|")[0],
+                date: _mostActive720TimeWindow.split("|")[1],
+                timeRange: _mostActive720TimeWindow.split("|")[2],
+              ),
+              buildSummaryCard(
+                title: "24h Max",
+                count: _mostActive1440TimeWindow.split("|")[0],
+                date: _mostActive1440TimeWindow.split("|")[1],
+                timeRange: _mostActive1440TimeWindow.split("|")[2],
+              ),
+            ],
+          ),
+        ],
+      ),
       buildInfoCard(
         "Average over the Last 7 Days",
         _avgUpdatesLast7Days.toStringAsFixed(2),
