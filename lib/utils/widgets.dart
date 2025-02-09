@@ -52,3 +52,51 @@ Widget buildCustomListTile(DateTime date) {
     ],
   );
 }
+
+Widget buildSummaryCard({
+  required String title,
+  required String count,
+  required String date,
+  required String timeRange,
+}) {
+  return Card(
+    margin: const EdgeInsets.symmetric(vertical: 4.0),
+    elevation: 4,
+    child: Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  color: Colors.grey,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              Text(
+                count,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                "$date • $timeRange",
+                style: const TextStyle(
+                  color: Colors.grey,
+                  fontSize: 10,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
