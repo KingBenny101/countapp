@@ -138,32 +138,19 @@ class InfoPageState extends State<InfoPage> {
               child: const Text("View All Updates"),
             ),
             const SizedBox(height: 16),
-            const Text("Days vs Update Counts",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+            const Text(
+              "Days vs Update Counts",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
             Container(
               height: 300,
               padding: const EdgeInsets.all(16.0),
               child: BarChart(
                 BarChartData(
                   titlesData: FlTitlesData(
-                    leftTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        reservedSize: 48,
-                        getTitlesWidget: (value, meta) {
-                          return Align(
-                            alignment: Alignment.centerRight,
-                            child: Padding(
-                              padding: EdgeInsets.zero,
-                              child: Text(
-                                value.toInt().toString(),
-                                style: const TextStyle(fontSize: 16),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
+                    leftTitles: const AxisTitles(),
+                    rightTitles: const AxisTitles(),
+                    topTitles: const AxisTitles(),
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
@@ -175,8 +162,6 @@ class InfoPageState extends State<InfoPage> {
                         },
                       ),
                     ),
-                    rightTitles: const AxisTitles(),
-                    topTitles: const AxisTitles(),
                   ),
                   borderData: FlBorderData(show: false),
                   gridData: const FlGridData(show: false),
@@ -194,6 +179,7 @@ class InfoPageState extends State<InfoPage> {
                 ),
               ),
             ),
+            
           ],
         ),
       ),
