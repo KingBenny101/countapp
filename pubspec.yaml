@@ -12,6 +12,7 @@ dependencies:
   fl_chart: ^0.69.2
   flutter:
     sdk: flutter
+  flutter_layout_grid: ^2.0.7
   hive_ce: ^2.7.0+1
   hive_ce_flutter: ^2.1.0
   http: ^1.2.2
