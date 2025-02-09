@@ -163,7 +163,7 @@ class StatisticsGenerator {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           LayoutGrid(
-            columnSizes: [auto, auto, auto],
+            columnSizes: [auto, auto],
             rowSizes: [auto, auto, auto],
             columnGap: 8,
             children: [
