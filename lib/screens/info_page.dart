@@ -49,6 +49,21 @@ class InfoPageState extends State<InfoPage> {
       ..sort((a, b) => a.key.compareTo(b.key));
   }
 
+  Color _getColor(int index) {
+    const List<Color> palette = [
+      Colors.red,
+      Colors.blue,
+      Colors.green,
+      Colors.orange,
+      Colors.purple,
+      Colors.teal,
+      Colors.pink,
+      Colors.amber,
+      Colors.cyan,
+    ];
+    return palette[index % palette.length];
+  }
+
   @override
   Widget build(BuildContext context) {
     final int startIndex =
@@ -139,47 +154,25 @@ class InfoPageState extends State<InfoPage> {
             ),
             const SizedBox(height: 16),
             const Text(
-              "Days vs Update Counts",
+              "Updates Pie",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            Container(
+            SizedBox(
               height: 300,
-              padding: const EdgeInsets.all(16.0),
-              child: BarChart(
-                BarChartData(
-                  titlesData: FlTitlesData(
-                    leftTitles: const AxisTitles(),
-                    rightTitles: const AxisTitles(),
-                    topTitles: const AxisTitles(),
-                    bottomTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        getTitlesWidget: (value, meta) {
-                          return Text(
-                            value.toInt().toString(),
-                            style: const TextStyle(fontSize: 12),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                  borderData: FlBorderData(show: false),
-                  gridData: const FlGridData(show: false),
-                  barGroups: List.generate(histogramData.length, (index) {
-                    return BarChartGroupData(
-                      x: histogramData[index].key,
-                      barRods: [
-                        BarChartRodData(
-                          toY: histogramData[index].value.toDouble(),
-                          width: 32,
-                        ),
-                      ],
+              child: PieChart(
+                PieChartData(
+                  sections: List.generate(histogramData.length, (index) {
+                    return PieChartSectionData(
+                      title: histogramData[index].key.toString(),
+                      value: histogramData[index].value.toDouble(),
+                      color: _getColor(index), // Implement your color logic
+                      radius: 128,
                     );
                   }),
+                  centerSpaceRadius: 16,
                 ),
               ),
             ),
-            
           ],
         ),
       ),
