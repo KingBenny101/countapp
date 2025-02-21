@@ -1,4 +1,5 @@
 import "package:countapp/utils/widgets.dart";
+import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
 
@@ -113,41 +114,40 @@ class StatisticsGenerator {
   }
 
   String _calcMostActiveTimeWindow(int windowSize) {
-    final Map<String, Map<int, int>> updateWindows = {};
+    if (updatesData.isEmpty) return "No updates";
 
-    for (final time in updatesData) {
-      final String date = DateFormat("yyyy-MM-dd").format(time);
-      final int windowStart =
-          (time.hour * 60 + time.minute) ~/ windowSize * windowSize;
-      updateWindows[date] ??= {};
-      updateWindows[date]![windowStart] =
-          (updateWindows[date]![windowStart] ?? 0) + 1;
-    }
+    // Convert all times to DateTime and sort them
+    final sortedTimes = List<DateTime>.from(updatesData)..sort();
 
-    if (updateWindows.isEmpty) {
-      return "No updates";
-    }
+    int maxCount = 0;
+    DateTime? windowStart;
+    DateTime? windowEnd;
 
-    String mostActiveDate = "";
-    int mostActiveWindowStart = 0;
-    int maxUpdates = 0;
-
-    updateWindows.forEach((date, windows) {
-      final mostUpdatesWindow =
-          windows.entries.reduce((a, b) => a.value > b.value ? a : b);
-      if (mostUpdatesWindow.value > maxUpdates) {
-        mostActiveDate = date;
-        mostActiveWindowStart = mostUpdatesWindow.key;
-        maxUpdates = mostUpdatesWindow.value;
+    // Sliding window approach
+    int start = 0;
+    for (int end = 0; end < sortedTimes.length; end++) {
+      // Move start forward until within window size
+      while (sortedTimes[end].difference(sortedTimes[start]) >
+          Duration(minutes: windowSize)) {
+        start++;
       }
-    });
 
-    final String shortStartTime =
-        '${(mostActiveWindowStart ~/ 60).toString().padLeft(2, '0')}:${(mostActiveWindowStart % 60).toString().padLeft(2, '0')}';
-    final String shortEndTime =
-        '${((mostActiveWindowStart + windowSize) ~/ 60 % 24).toString().padLeft(2, '0')}:${((mostActiveWindowStart + windowSize) % 60).toString().padLeft(2, '0')}';
+      // Update max window
+      final currentCount = end - start + 1;
+      if (currentCount > maxCount) {
+        maxCount = currentCount;
+        windowStart = sortedTimes[start];
+        windowEnd = sortedTimes[end].add(Duration(minutes: windowSize));
+      }
+    }
 
-    return "$maxUpdates|$mostActiveDate|$shortStartTime-$shortEndTime";
+    final DateFormat dateFormat = DateFormat("yyyy-MM-dd");
+    final DateFormat timeFormat = DateFormat("HH:mm");
+
+    return "$maxCount|"
+        "${dateFormat.format(windowStart!)}|"
+        "${timeFormat.format(windowStart)}-"
+        "${timeFormat.format(windowEnd!)}";
   }
 
   List<Widget> generateStatsWidgets() {
