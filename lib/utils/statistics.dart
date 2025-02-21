@@ -1,5 +1,4 @@
 import "package:countapp/utils/widgets.dart";
-import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
 
@@ -25,6 +24,7 @@ class StatisticsGenerator {
   late String _mostActive60TimeWindow;
   late String _mostActive360TimeWindow;
   late String _mostActive720TimeWindow;
+  late String _mostActive1080TimeWindow;
   late String _mostActive1440TimeWindow;
 
   void _processUpdates() {
@@ -60,6 +60,7 @@ class StatisticsGenerator {
     _mostActive60TimeWindow = _calcMostActiveTimeWindow(60);
     _mostActive360TimeWindow = _calcMostActiveTimeWindow(360);
     _mostActive720TimeWindow = _calcMostActiveTimeWindow(720);
+    _mostActive1080TimeWindow = _calcMostActiveTimeWindow(1080);
     _mostActive1440TimeWindow = _calcMostActiveTimeWindow(1440);
   }
 
@@ -194,7 +195,12 @@ class StatisticsGenerator {
       ),
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
+        children: [buildSummaryCard(
+            title: "18h Max",
+            count: _mostActive1080TimeWindow.split("|")[0],
+            date: _mostActive1080TimeWindow.split("|")[1],
+            timeRange: _mostActive1080TimeWindow.split("|")[2],
+          ),
           buildSummaryCard(
             title: "24h Max",
             count: _mostActive1440TimeWindow.split("|")[0],
