@@ -1,7 +1,7 @@
 import "package:countapp/utils/widgets.dart";
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
-import 'package:flutter_layout_grid/flutter_layout_grid.dart';
+import "package:flutter_layout_grid/flutter_layout_grid.dart";
 
 class StatisticsGenerator {
   StatisticsGenerator(this.updatesData) {
@@ -163,8 +163,8 @@ class StatisticsGenerator {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           LayoutGrid(
-            columnSizes: [auto, auto],
-            rowSizes: [auto, auto, auto],
+            columnSizes: const [auto, auto],
+            rowSizes: const [auto, auto, auto],
             columnGap: 8,
             children: [
               buildSummaryCard(
