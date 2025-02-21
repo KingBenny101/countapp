@@ -1,7 +1,6 @@
 import "package:countapp/utils/widgets.dart";
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
-import "package:flutter_layout_grid/flutter_layout_grid.dart";
 
 class StatisticsGenerator {
   StatisticsGenerator(this.updatesData) {
@@ -160,44 +159,47 @@ class StatisticsGenerator {
       buildInfoCard("Most Updates Day", _mostUpdatesDay),
       buildInfoCard("Most Updates Count", _mostUpdatesCount.toString()),
       Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          LayoutGrid(
-            columnSizes: const [auto, auto],
-            rowSizes: const [auto, auto, auto],
-            columnGap: 8,
-            children: [
-              buildSummaryCard(
-                title: "1h Max",
-                count: _mostActive60TimeWindow.split("|")[0],
-                date: _mostActive60TimeWindow.split("|")[1],
-                timeRange: _mostActive60TimeWindow.split("|")[2],
-              ),
-              buildSummaryCard(
-                title: "3h Max",
-                count: _mostActive180TimeWindow.split("|")[0],
-                date: _mostActive180TimeWindow.split("|")[1],
-                timeRange: _mostActive180TimeWindow.split("|")[2],
-              ),
-              buildSummaryCard(
-                title: "6h Max",
-                count: _mostActive360TimeWindow.split("|")[0],
-                date: _mostActive360TimeWindow.split("|")[1],
-                timeRange: _mostActive360TimeWindow.split("|")[2],
-              ),
-              buildSummaryCard(
-                title: "12h Max",
-                count: _mostActive720TimeWindow.split("|")[0],
-                date: _mostActive720TimeWindow.split("|")[1],
-                timeRange: _mostActive720TimeWindow.split("|")[2],
-              ),
-              buildSummaryCard(
-                title: "24h Max",
-                count: _mostActive1440TimeWindow.split("|")[0],
-                date: _mostActive1440TimeWindow.split("|")[1],
-                timeRange: _mostActive1440TimeWindow.split("|")[2],
-              ),
-            ],
+          buildSummaryCard(
+            title: "1h Max",
+            count: _mostActive60TimeWindow.split("|")[0],
+            date: _mostActive60TimeWindow.split("|")[1],
+            timeRange: _mostActive60TimeWindow.split("|")[2],
+          ),
+          buildSummaryCard(
+            title: "3h Max",
+            count: _mostActive180TimeWindow.split("|")[0],
+            date: _mostActive180TimeWindow.split("|")[1],
+            timeRange: _mostActive180TimeWindow.split("|")[2],
+          ),
+        ],
+      ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          buildSummaryCard(
+            title: "6h Max",
+            count: _mostActive360TimeWindow.split("|")[0],
+            date: _mostActive360TimeWindow.split("|")[1],
+            timeRange: _mostActive360TimeWindow.split("|")[2],
+          ),
+          buildSummaryCard(
+            title: "12h Max",
+            count: _mostActive720TimeWindow.split("|")[0],
+            date: _mostActive720TimeWindow.split("|")[1],
+            timeRange: _mostActive720TimeWindow.split("|")[2],
+          ),
+        ],
+      ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          buildSummaryCard(
+            title: "24h Max",
+            count: _mostActive1440TimeWindow.split("|")[0],
+            date: _mostActive1440TimeWindow.split("|")[1],
+            timeRange: _mostActive1440TimeWindow.split("|")[2],
           ),
         ],
       ),
