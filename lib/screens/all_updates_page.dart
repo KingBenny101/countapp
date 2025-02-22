@@ -99,22 +99,21 @@ class DateSearchDelegate extends SearchDelegate {
     return Container();
   }
 
-
   @override
   Widget buildSuggestions(BuildContext context) {
-  final suggestions = query.isEmpty
-      ? data
-      : data.where((date) {
-          final formattedDate = DateFormat("EEEE, MMM d, yyyy - h:mm a")
-              .format(date.toLocal());
-          return formattedDate.toLowerCase().contains(query.toLowerCase());
-        }).toList();
+    final suggestions = query.isEmpty
+        ? data
+        : data.where((date) {
+            final formattedDate = DateFormat("MMM d, yyyy (EEEE) - h:mm a")
+                .format(date.toLocal());
+            return formattedDate.toLowerCase().contains(query.toLowerCase());
+          }).toList();
 
-  return ListView.builder(
-    itemCount: suggestions.length,
-    itemBuilder: (context, index) {
-      return buildCustomListTile(suggestions[index]);
-    },
-  );
-}
+    return ListView.builder(
+      itemCount: suggestions.length,
+      itemBuilder: (context, index) {
+        return buildCustomListTile(suggestions[index]);
+      },
+    );
+  }
 }
