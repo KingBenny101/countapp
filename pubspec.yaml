@@ -12,6 +12,7 @@ dependencies:
   fl_chart: ^0.70.2
   flutter:
     sdk: flutter
+  font_awesome_flutter: ^10.8.0
   hive_ce: ^2.7.0+1
   hive_ce_flutter: ^2.1.0
   http: ^1.2.2
