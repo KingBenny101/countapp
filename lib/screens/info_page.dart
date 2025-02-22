@@ -1,5 +1,5 @@
 import "package:countapp/providers/counter_provider.dart";
-import "package:countapp/screens/all_updates.dart";
+import "package:countapp/screens/all_updates_page.dart";
 import "package:countapp/utils/statistics.dart";
 import "package:fl_chart/fl_chart.dart";
 import "package:flutter/material.dart";
