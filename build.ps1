@@ -1,4 +1,5 @@
 $RELEASE_FOLDER = "release"
+$APP_NAME = "countapp"
 $ANDROID_BUILD = "build\app\outputs\flutter-apk\app-release.apk"
 $WINDOWS_BUILD = "build\windows\x64\runner\Release\countapp.msix"
 
@@ -7,6 +8,24 @@ $PERMISSIONS = @"
 <uses-permission android:name="android.permission.INTERNET"/>
 <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/>
 "@
+
+$VERSION = ""
+
+function GetVersion {
+    $pubspecContent = Get-Content "pubspec.yaml"
+    foreach ($line in $pubspecContent) {
+        if ($line -match '^version:\s*(\S+)') {
+            ${global:VERSION}  = $Matches[1]
+            break
+        }
+    }
+
+    if ([string]::IsNullOrEmpty(${global:VERSION})) {
+        Write-Host "Version not found in pubspec.yml"
+        return
+    }
+    Write-Host "Extracted version: ${global:VERSION}"
+}
 
 function GenerateEnvironment {
     Write-Host "`nInstalling dependencies..."
@@ -51,6 +70,11 @@ function BuildAndroid {
     if (Test-Path $ANDROID_BUILD) {
         Copy-Item $ANDROID_BUILD -Destination $RELEASE_FOLDER
         Write-Host "`nAPK file copied successfully."
+
+        $apkPath = Join-Path $RELEASE_FOLDER (Split-Path $ANDROID_BUILD -Leaf)
+        $newApkName = "$APP_NAME-${global:VERSION}.apk"
+        Rename-Item -Path $apkPath -NewName $newApkName
+        Write-Host "`nAPK file renamed to $newApkName."
     }
     else {
         Write-Host "`nAPK file not found at $ANDROID_BUILD"
@@ -64,6 +88,11 @@ function BuildWindows {
     if (Test-Path $WINDOWS_BUILD) {
         Copy-Item $WINDOWS_BUILD -Destination $RELEASE_FOLDER
         Write-Host "`nEXE file copied successfully."
+
+        $msixPath = Join-Path $RELEASE_FOLDER (Split-Path $WINDOWS_BUILD -Leaf)
+        $newMsixName = "$APP_NAME-${global:VERSION}.msix"
+        Rename-Item -Path $msixPath -NewName $newMsixName
+        Write-Host "`nMSIX file renamed to $newMsixName."
     }
     else {
         Write-Host "`nEXE file not found at $WINDOWS_BUILD"
@@ -71,6 +100,7 @@ function BuildWindows {
 }
 
 function All {
+    GetVersion
     GenerateEnvironment
     CleanEnvironment
     BuildAndroid
