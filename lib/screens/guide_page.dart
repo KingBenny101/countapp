@@ -1,21 +1,21 @@
 import "package:countapp/utils/widgets.dart";
 import "package:flutter/material.dart";
 
-class HowToUsePage extends StatelessWidget {
-  const HowToUsePage({super.key});
+class GuidePage extends StatelessWidget {
+  const GuidePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("How to Use"),
+        title: const Text("Guide"),
       ),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
         child: ListView(
           children: [
             const Text(
-              "A simple guide to using the features of Count App.",
+              "A simple guide to using Count App.",
               style: TextStyle(fontSize: 18, fontStyle: FontStyle.italic),
             ),
             const SizedBox(height: 20),
@@ -64,6 +64,14 @@ class HowToUsePage extends StatelessWidget {
             const SizedBox(height: 10),
             buildStepCard(
               "Use the Import option in the menu to load counters from a JSON file. Ensure the file is correctly formatted.",
+            ),const SizedBox(height: 10),
+            const Text(
+              "Counter Info:",
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            buildStepCard(
+              "To see info for a counter, long-press on the counter, and press the info button on the appbar.",
             ),
           ],
         ),

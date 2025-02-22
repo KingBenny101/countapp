@@ -2,7 +2,7 @@ import "package:countapp/models/counter_model.dart";
 import "package:countapp/providers/counter_provider.dart";
 import "package:countapp/screens/about_page.dart";
 import "package:countapp/screens/add_counter_page.dart";
-import "package:countapp/screens/how_to_use_page.dart";
+import "package:countapp/screens/guide_page.dart";
 import "package:countapp/screens/info_page.dart";
 import "package:countapp/screens/options_page.dart";
 import "package:countapp/screens/update_page.dart";
@@ -517,7 +517,7 @@ class HomePageState extends State<HomePage> {
                       horizontal: 10,
                     ),
                     child: const Text(
-                      "How to Use",
+                      "Guide",
                       style: TextStyle(fontSize: 18),
                     ),
                   ),
@@ -525,7 +525,7 @@ class HomePageState extends State<HomePage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const HowToUsePage(),
+                        builder: (context) => const GuidePage(),
                       ),
                     );
                   },
