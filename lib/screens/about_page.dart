@@ -1,6 +1,8 @@
 import "package:countapp/utils/updates.dart";
 import "package:countapp/utils/widgets.dart";
 import "package:flutter/material.dart";
+import "package:url_launcher/url_launcher.dart";
+import "package:font_awesome_flutter/font_awesome_flutter.dart";
 
 class AboutPage extends StatefulWidget {
   const AboutPage({super.key});
@@ -11,6 +13,7 @@ class AboutPage extends StatefulWidget {
 
 class _AboutPageState extends State<AboutPage> {
   String version = "Loading...";
+  String repoUrl = "https://github.com/KingBenny101/countapp";
 
   @override
   void initState() {
@@ -23,6 +26,16 @@ class _AboutPageState extends State<AboutPage> {
     setState(() {
       version = tmp.canonicalizedVersion;
     });
+  }
+
+  Future<void> _launchURL() async {
+    final Uri url = Uri.parse(repoUrl);
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
+    } else {
+      // Handle the error accordingly
+      throw "Could not launch $repoUrl";
+    }
   }
 
   @override
@@ -54,7 +67,6 @@ class _AboutPageState extends State<AboutPage> {
             buildStepCard(
               "Future versions may incorporate local storage, with potential Google Firebase integration.",
             ),
-            const SizedBox(height: 20),
             Align(
               child: Card(
                 elevation: 0,
@@ -73,6 +85,32 @@ class _AboutPageState extends State<AboutPage> {
                         style: TextStyle(fontSize: 12),
                       ),
                     ],
+                  ),
+                ),
+              ),
+            ),
+            Align(
+              child: Card(
+                elevation: 0,
+                margin: const EdgeInsets.symmetric(vertical: 10),
+                child: InkWell(
+                  onTap: _launchURL,
+                  child: const Padding(
+                    padding: EdgeInsets.all(15),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        FaIcon(
+                          FontAwesomeIcons.github,
+                          size: 24,
+                        ),
+                        SizedBox(width: 10),
+                        Text(
+                          "View Source on GitHub",
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
