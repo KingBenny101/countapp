@@ -1,5 +1,6 @@
 import "package:countapp/utils/widgets.dart";
 import "package:flutter/material.dart";
+import "package:intl/intl.dart";
 
 class AllUpdatesPage extends StatefulWidget {
   const AllUpdatesPage({super.key, required this.name, required this.data});
@@ -98,15 +99,22 @@ class DateSearchDelegate extends SearchDelegate {
     return Container();
   }
 
+
   @override
   Widget buildSuggestions(BuildContext context) {
-    final filteredData =
-        data.where((date) => date.toString().contains(query)).toList();
-    return ListView.builder(
-      itemCount: filteredData.length,
-      itemBuilder: (context, index) {
-        return buildCustomListTile(filteredData[index]);
-      },
-    );
-  }
+  final suggestions = query.isEmpty
+      ? data
+      : data.where((date) {
+          final formattedDate = DateFormat("EEEE, MMM d, yyyy - h:mm a")
+              .format(date.toLocal());
+          return formattedDate.toLowerCase().contains(query.toLowerCase());
+        }).toList();
+
+  return ListView.builder(
+    itemCount: suggestions.length,
+    itemBuilder: (context, index) {
+      return buildCustomListTile(suggestions[index]);
+    },
+  );
+}
 }
