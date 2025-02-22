@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "package:intl/intl.dart";
 
 Widget buildStepCard(String step) {
   return Card(
@@ -37,19 +38,49 @@ Widget buildInfoCard(String infoName, String infoValue) {
   );
 }
 
+// Widget buildCustomListTile(DateTime date) {
+//   return Column(
+//     children: [
+//       ListTile(
+//         title: Text(
+//           date.toLocal().toString(),
+//         ),
+//       ),
+//       const Divider(
+//         indent: 16,
+//         endIndent: 16,
+//       ),
+//     ],
+//   );
+// }
+
 Widget buildCustomListTile(DateTime date) {
-  return Column(
-    children: [
-      ListTile(
-        title: Text(
-          date.toLocal().toString(),
+  final formattedDate =
+      DateFormat("EEEE, MMM d, yyyy - h:mm a").format(date.toLocal());
+
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+    child: Column(
+      children: [
+        ListTile(
+          title: Text(
+            formattedDate,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
+          ),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
         ),
-      ),
-      const Divider(
-        indent: 16,
-        endIndent: 16,
-      ),
-    ],
+        const Divider(
+          indent: 16,
+          endIndent: 16,
+          thickness: 1,
+        ),
+      ],
+    ),
   );
 }
 
@@ -99,4 +130,3 @@ Widget buildSummaryCard({
     ),
   );
 }
-
