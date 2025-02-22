@@ -138,7 +138,8 @@ class StatisticsGenerator {
       if (currentCount > maxCount) {
         maxCount = currentCount;
         windowStart = sortedTimes[start];
-        windowEnd = sortedTimes[end].add(Duration(minutes: windowSize));
+        windowEnd = sortedTimes[start].add(Duration(minutes: windowSize));
+        // windowEnd = sortedTimes[end];
       }
     }
 
@@ -159,6 +160,18 @@ class StatisticsGenerator {
       ),
       buildInfoCard("Most Updates Day", _mostUpdatesDay),
       buildInfoCard("Most Updates Count", _mostUpdatesCount.toString()),
+      buildInfoCard(
+        "Average over the Last 7 Days",
+        _avgUpdatesLast7Days.toStringAsFixed(2),
+      ),
+      buildInfoCard(
+        "Average over the Last 30 Days",
+        _avgUpdatesLast30Days.toStringAsFixed(2),
+      ),
+      buildInfoCard(
+        "Days with No Updates",
+        "${_percentDaysWithNoUpdates.toStringAsFixed(2)}%",
+      ),
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
@@ -195,7 +208,8 @@ class StatisticsGenerator {
       ),
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [buildSummaryCard(
+        children: [
+          buildSummaryCard(
             title: "18h Max",
             count: _mostActive1080TimeWindow.split("|")[0],
             date: _mostActive1080TimeWindow.split("|")[1],
@@ -208,18 +222,6 @@ class StatisticsGenerator {
             timeRange: _mostActive1440TimeWindow.split("|")[2],
           ),
         ],
-      ),
-      buildInfoCard(
-        "Average over the Last 7 Days",
-        _avgUpdatesLast7Days.toStringAsFixed(2),
-      ),
-      buildInfoCard(
-        "Average over the Last 30 Days",
-        _avgUpdatesLast30Days.toStringAsFixed(2),
-      ),
-      buildInfoCard(
-        "Days with No Updates",
-        "${_percentDaysWithNoUpdates.toStringAsFixed(2)}%",
       ),
     ];
   }
