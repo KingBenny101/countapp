@@ -56,7 +56,7 @@ Widget buildInfoCard(String infoName, String infoValue) {
 
 Widget buildCustomListTile(DateTime date) {
   final formattedDate =
-      DateFormat("EEEE, MMM d, yyyy - h:mm a").format(date.toLocal());
+      DateFormat("MMM d, yyyy (EEEE) - h:mm a").format(date.toLocal());
 
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 8.0),
