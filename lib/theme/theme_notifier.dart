@@ -25,14 +25,7 @@ class ThemeNotifier extends ChangeNotifier {
   void toggleTheme() {
     _themeMode = _themeMode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
     _saveThemeMode();
-    _updateSystemUiOverlay();
-    notifyListeners();
-  }
-
-  void setTheme(ThemeMode mode) {
-    _themeMode = mode;
-    _saveThemeMode();
-    _updateSystemUiOverlay();
+    updateSystemUiOverlay();
     notifyListeners();
   }
 
@@ -40,7 +33,7 @@ class ThemeNotifier extends ChangeNotifier {
     _settingsBox.put("themeMode", _themeMode == ThemeMode.dark ? "dark" : "light");
   }
 
-  void _updateSystemUiOverlay() {
+  void updateSystemUiOverlay() {
     final backgroundColor = _themeMode == ThemeMode.dark
         ? ThemeData.dark().scaffoldBackgroundColor
         : ThemeData.light().scaffoldBackgroundColor;
