@@ -69,7 +69,7 @@ class _UpdatePageState extends State<UpdatePage> {
   }
 
   Future<void> _downloadUpdate() async {
-    final url = Uri.parse("https://github.com/KingBenny101/countapp/releases");
+    final url = Uri.parse("https://github.com/KingBenny101/countapp/releases/latest");
     await launchUrl(url);
   }
 
