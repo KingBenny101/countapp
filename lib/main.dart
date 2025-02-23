@@ -1,6 +1,7 @@
 import "package:countapp/models/counter_model.dart";
 import "package:countapp/providers/counter_provider.dart";
 import "package:countapp/screens/home_page.dart";
+import "package:countapp/screens/options_page.dart";
 import "package:countapp/theme/theme_notifier.dart";
 import "package:flutter/material.dart";
 import "package:hive_ce_flutter/hive_flutter.dart";
@@ -42,6 +43,9 @@ class MainApp extends StatelessWidget {
             darkTheme: ThemeData.dark(),
             themeMode: themeNotifier.themeMode,
             home: const HomePage(),
+            routes: {
+              "/options": (context) => const OptionsPage(),
+            },
           ),
         );
       },
