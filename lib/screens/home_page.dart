@@ -1,11 +1,7 @@
 import "package:countapp/models/counter_model.dart";
 import "package:countapp/providers/counter_provider.dart";
-import "package:countapp/screens/about_page.dart";
 import "package:countapp/screens/add_counter_page.dart";
-import "package:countapp/screens/guide_page.dart";
 import "package:countapp/screens/info_page.dart";
-import "package:countapp/screens/options_page.dart";
-import "package:countapp/screens/update_page.dart";
 import "package:countapp/utils/files.dart";
 import "package:file_picker/file_picker.dart";
 import "package:flutter/material.dart";
@@ -320,8 +316,6 @@ class HomePageState extends State<HomePage> {
             child: Column(
               children: [
                 DrawerHeader(
-                  decoration:
-                      BoxDecoration(color: Theme.of(context).primaryColor),
                   child: Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -340,7 +334,6 @@ class HomePageState extends State<HomePage> {
                           style: TextStyle(
                             fontSize: 26,
                             fontWeight: FontWeight.w600,
-                            color: Colors.white,
                           ),
                         ),
                       ],
@@ -357,14 +350,9 @@ class HomePageState extends State<HomePage> {
                     child:
                         const Text("Updates", style: TextStyle(fontSize: 18)),
                   ),
-                  onTap: () {
+                  onTap: () async {
                     FocusScope.of(context).unfocus();
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const UpdatePage(),
-                      ),
-                    );
+                    await Navigator.pushNamed(context, "/updates");
                   },
                   splashColor: Colors.transparent,
                 ),
@@ -378,14 +366,9 @@ class HomePageState extends State<HomePage> {
                     child:
                         const Text("Options", style: TextStyle(fontSize: 18)),
                   ),
-                  onTap: () {
+                  onTap: () async {
                     FocusScope.of(context).unfocus();
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const OptionsPage(),
-                      ),
-                    );
+                    await Navigator.pushNamed(context, "/options");
                   },
                   splashColor: Colors.transparent,
                 ),
@@ -521,13 +504,9 @@ class HomePageState extends State<HomePage> {
                       style: TextStyle(fontSize: 18),
                     ),
                   ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const GuidePage(),
-                      ),
-                    );
+                  onTap: () async {
+                    FocusScope.of(context).unfocus();
+                    await Navigator.pushNamed(context, "/guide");
                   },
                   splashColor: Colors.transparent,
                 ),
@@ -540,14 +519,9 @@ class HomePageState extends State<HomePage> {
                     ),
                     child: const Text("About", style: TextStyle(fontSize: 18)),
                   ),
-                  onTap: () {
+                  onTap: () async {
                     FocusScope.of(context).unfocus();
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const AboutPage(),
-                      ),
-                    );
+                    await Navigator.pushNamed(context, "/about");
                   },
                   splashColor: Colors.transparent,
                 ),

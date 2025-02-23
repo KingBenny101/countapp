@@ -1,9 +1,12 @@
 import "package:countapp/models/counter_model.dart";
 import "package:countapp/providers/counter_provider.dart";
+import "package:countapp/screens/about_page.dart";
+import "package:countapp/screens/guide_page.dart";
 import "package:countapp/screens/home_page.dart";
+import "package:countapp/screens/options_page.dart";
+import "package:countapp/screens/update_page.dart";
 import "package:countapp/theme/theme_notifier.dart";
 import "package:flutter/material.dart";
-import "package:flutter/services.dart";
 import "package:hive_ce_flutter/hive_flutter.dart";
 import "package:provider/provider.dart";
 import "package:toastification/toastification.dart";
@@ -33,14 +36,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeNotifier = Provider.of<ThemeNotifier>(context);
-    final backgroundColor = themeNotifier.themeMode == ThemeMode.dark
-        ? ThemeData.dark().scaffoldBackgroundColor
-        : ThemeData.light().scaffoldBackgroundColor;
-
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      systemNavigationBarColor: backgroundColor,
-      systemNavigationBarIconBrightness: Brightness.light,
-    ),);
+    themeNotifier.updateSystemUiOverlay();
 
     return Consumer<ThemeNotifier>(
       builder: (context, themeNotifier, child) {
@@ -50,6 +46,12 @@ class MainApp extends StatelessWidget {
             darkTheme: ThemeData.dark(),
             themeMode: themeNotifier.themeMode,
             home: const HomePage(),
+            routes: {
+              "/updates" : (context) => const UpdatePage(),
+              "/options": (context) => const OptionsPage(),
+              "/guide" : (context) => const GuidePage(),
+              "/about" : (context) => const AboutPage(),
+            },
           ),
         );
       },
