@@ -1,8 +1,8 @@
 import "package:countapp/utils/updates.dart";
 import "package:countapp/utils/widgets.dart";
 import "package:flutter/material.dart";
-import "package:url_launcher/url_launcher.dart";
 import "package:font_awesome_flutter/font_awesome_flutter.dart";
+import "package:url_launcher/url_launcher.dart";
 
 class AboutPage extends StatefulWidget {
   const AboutPage({super.key});
@@ -30,12 +30,7 @@ class _AboutPageState extends State<AboutPage> {
 
   Future<void> _launchURL() async {
     final Uri url = Uri.parse(repoUrl);
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url);
-    } else {
-      // Handle the error accordingly
-      throw "Could not launch $repoUrl";
-    }
+    await launchUrl(url);
   }
 
   @override
@@ -90,31 +85,25 @@ class _AboutPageState extends State<AboutPage> {
               ),
             ),
             Align(
-              child: Card(
-                elevation: 0,
-                margin: const EdgeInsets.symmetric(vertical: 10),
-                child: InkWell(
-                  onTap: _launchURL,
-                  child: const Padding(
-                    padding: EdgeInsets.all(15),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        FaIcon(
-                          FontAwesomeIcons.github,
-                          size: 24,
-                        ),
-                        SizedBox(width: 10),
-                        Text(
-                          "View Source on GitHub",
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ],
-                    ),
+              child: ElevatedButton(
+              onPressed: _launchURL,
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  FaIcon(
+                    FontAwesomeIcons.github,
+                    size: 24,
                   ),
-                ),
+                  SizedBox(width: 10),
+                  Text(
+                    "View Source on GitHub",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ],
               ),
             ),
+            ),
+           
           ],
         ),
       ),
