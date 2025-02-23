@@ -320,8 +320,6 @@ class HomePageState extends State<HomePage> {
             child: Column(
               children: [
                 DrawerHeader(
-                  decoration:
-                      BoxDecoration(color: Theme.of(context).primaryColor),
                   child: Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -340,7 +338,6 @@ class HomePageState extends State<HomePage> {
                           style: TextStyle(
                             fontSize: 26,
                             fontWeight: FontWeight.w600,
-                            color: Colors.white,
                           ),
                         ),
                       ],
