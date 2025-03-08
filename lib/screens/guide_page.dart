@@ -10,9 +10,9 @@ class GuidePage extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Guide"),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
+      body: Expanded(
         child: ListView(
+          padding: const EdgeInsets.all(24.0),
           children: [
             const Text(
               "A simple guide to using Count App.",
@@ -64,7 +64,8 @@ class GuidePage extends StatelessWidget {
             const SizedBox(height: 10),
             buildStepCard(
               "Use the Import option in the menu to load counters from a JSON file. Ensure the file is correctly formatted.",
-            ),const SizedBox(height: 10),
+            ),
+            const SizedBox(height: 10),
             const Text(
               "Counter Info:",
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
