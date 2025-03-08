@@ -10,6 +10,8 @@ jobs:
   build_android:      
     name: Build & Release in Linux
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       #1 Checkout Repository
@@ -101,6 +103,8 @@ jobs:
   build_windows:
     name: Build & Release in Windows
     runs-on: windows-latest
+    permissions:
+      contents: write
 
     steps:
       #1 Checkout Repository
