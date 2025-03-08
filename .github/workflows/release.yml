@@ -1,0 +1,90 @@
+name: "Build and Release"
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:  
+  build:      
+    name: Build & Release 
+    runs-on: ubuntu-latest
+
+    steps:
+        #1 Checkout Repository
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+        #3 Setup Flutter
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version-file: pubspec.yaml 
+      
+        #4 Install Dependencies
+      - name: Install Dependencies
+        run: flutter pub get
+
+        #10 Extract Version
+      - name: Extract version from pubspec.yaml
+        id: extract_version
+        run: |
+          version=$(grep '^version: ' pubspec.yaml | cut -d ' ' -f 2 | tr -d '\r')
+          echo "VERSION=$version" >> $GITHUB_ENV
+
+        
+       #6 Building APK
+      - name: Build APK
+        run: flutter build apk --release
+
+        # Rename the APK file
+      - name: Rename APK file
+        run: |
+          # Define source and target file paths
+          APK_SOURCE="build/app/outputs/flutter-apk/app-release.apk"
+          APK_TARGET="build/app/outputs/flutter-apk/countapp-${{ env.VERSION }}.apk"
+          echo "Renaming ${APK_SOURCE} to ${APK_TARGET}"
+          mv "$APK_SOURCE" "$APK_TARGET"
+
+       #6 Building APK
+      - name: windows
+        run: dart run msix:create --output-name="countapp-${{ env.VERSION }}"
+
+
+        #9 Upload Artifacts
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: Releases
+          path: |
+            build/app/outputs/flutter-apk/countapp-${{ env.VERSION }}.apk
+            build/windows/x64/runner/Release/countapp-${{ env.VERSION }}.msix
+
+
+        #11 Check if Tag Exists
+      - name: Check if Tag Exists
+        id: check_tag
+        run: |
+          if git rev-parse "${{ env.VERSION }}" >/dev/null 2>&1; then
+            echo "TAG_EXISTS=true" >> $GITHUB_ENV
+          else
+            echo "TAG_EXISTS=false" >> $GITHUB_ENV
+          fi
+
+        #12 Modify Tag if it Exists
+      - name: Modify Tag
+        if: env.TAG_EXISTS == 'true'
+        id: modify_tag
+        run: |
+          new_version="${{ env.VERSION }}-build-${{ github.run_number }}"
+          echo "VERSION=$new_version" >> $GITHUB_ENV
+        
+        #13 Create Release
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: " build/app/outputs/flutter-apk/countapp-${{ env.VERSION }}.apk,build/windows/x64/runner/Release/countapp-${{ env.VERSION }}.msix"
+          tag: ${{ env.VERSION }}
+      
