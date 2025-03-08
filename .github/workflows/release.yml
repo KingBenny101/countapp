@@ -12,21 +12,42 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-        #1 Checkout Repository
+      #1 Checkout Repository
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-        #3 Setup Flutter
+      #2 Setup Java
+      - name: Set Up Java
+        uses: actions/setup-java@v3.12.0
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      #3 Setup Flutter
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: stable
       
-        #4 Install Dependencies
+      #4 Install Dependencies
       - name: Install Dependencies
         run: flutter pub get
 
-        #10 Extract Version
+      #5 Add Android Platform
+      - name: Add Android Platform
+        run: flutter create --platforms=android --android-language=java .
+
+      #7 Add Windows Platform
+      - name: Add Windows Platform
+        run: flutter create --platforms=windows .
+
+      #7 Add Android Permissions
+      - name: Add Android Permissions
+        run: |
+          sed -i '/<application/ i\<uses-permission android:name="android.permission.INTERNET" />\<uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />' android/app/src/main/AndroidManifest.xml
+
+
+      #10 Extract Version
       - name: Extract version from pubspec.yaml
         id: extract_version
         run: |
