@@ -1,13 +1,13 @@
-name: "Build and Release"
+name: 'Build and Release'
 
 on:
   push:
-    branches: [ "master" ]
+    branches: ['master']
   pull_request:
-    branches: [ "master" ]
+    branches: ['master']
 
-jobs:  
-  build_android:      
+jobs:
+  build_android:
     name: Build & Release in Linux
     runs-on: ubuntu-latest
     permissions:
@@ -23,14 +23,14 @@ jobs:
         uses: actions/setup-java@v3.12.0
         with:
           distribution: 'temurin'
-          java-version: '21'
+          java-version: '20'
 
       #3 Setup Flutter
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: stable
-      
+
       #4 Install Dependencies
       - name: Install Dependencies
         run: flutter pub get
@@ -44,19 +44,26 @@ jobs:
         run: |
           sed -i '/<application/ i\<uses-permission android:name="android.permission.INTERNET" />\<uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />' android/app/src/main/AndroidManifest.xml
 
-      #7 Extract Version
+      #7 Change Package Name
+      - name: Change Package Name
+        run: dart run package_rename
+
+      #8 Change Icons
+      - name: Change Icons
+        run: dart run flutter_launcher_icons:main
+
+      #9 Extract Version
       - name: Extract version from pubspec.yaml
         id: extract_version
         run: |
           version=$(grep '^version: ' pubspec.yaml | cut -d ' ' -f 2 | tr -d '\r')
           echo "VERSION=$version" >> $GITHUB_ENV
 
-        
-      #8 Building APK
+      #10 Building APK
       - name: Build APK
         run: flutter build apk --release
 
-      #9 Rename the APK file
+      #11 Rename the APK file
       - name: Rename APK file
         run: |
           # Define source and target file paths
@@ -65,7 +72,7 @@ jobs:
           echo "Renaming ${APK_SOURCE} to ${APK_TARGET}"
           mv "$APK_SOURCE" "$APK_TARGET"
 
-      #10 Upload Artifacts
+      #12 Upload Artifacts
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -73,34 +80,15 @@ jobs:
           path: |
             build/app/outputs/flutter-apk/countapp-${{ env.VERSION }}.apk
 
-
-      #11 Check if Tag Exists
-      # - name: Check if Tag Exists
-      #   id: check_tag
-      #   run: |
-      #     if git rev-parse "${{ env.VERSION }}" >/dev/null 2>&1; then
-      #       echo "TAG_EXISTS=true" >> $GITHUB_ENV
-      #     else
-      #       echo "TAG_EXISTS=false" >> $GITHUB_ENV
-      #     fi
-
-      # #12 Modify Tag if it Exists
-      # - name: Modify Tag
-      #   if: env.TAG_EXISTS == 'true'
-      #   id: modify_tag
-      #   run: |
-      #     new_version="${{ env.VERSION }}-build-${{ github.run_number }}"
-      #     echo "VERSION=$new_version" >> $GITHUB_ENV
-        
       #13 Create Release
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: " build/app/outputs/flutter-apk/countapp-${{ env.VERSION }}.apk"
+          artifacts: ' build/app/outputs/flutter-apk/countapp-${{ env.VERSION }}.apk'
           allowUpdates: true
           generateReleaseNotes: true
           tag: ${{ env.VERSION }}
-      
+
   build_windows:
     name: Build & Release in Windows
     runs-on: windows-latest
@@ -117,14 +105,14 @@ jobs:
         uses: actions/setup-java@v3.12.0
         with:
           distribution: 'temurin'
-          java-version: '21'
+          java-version: '20'
 
       #3 Setup Flutter
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: stable
-      
+
       #4 Install Dependencies
       - name: Install Dependencies
         run: flutter pub get
@@ -145,11 +133,23 @@ jobs:
           # Append the VERSION variable to the GitHub environment file
           Add-Content -Path $env:GITHUB_ENV -Value "VERSION=$version"
 
+      #7 Change Package Name
+      - name: Change Package Name
+        run: dart run package_rename
 
-      #7 Build Windows Executable
-      - name: Build Windows MSIX
-        run: dart run msix:create --output-name="countapp-${{ env.VERSION }}"
+      #8 Change Icons
+      - name: Change Icons
+        run: dart run flutter_launcher_icons:main
 
+      #9 Build Windows Executable
+      - name: Build Windows Executable
+        run: flutter build windows --release
+
+      #10 Compress Artifacts
+      - name: Collect Artifacts
+        shell: powershell
+        run: |
+          Compress-Archive -Path 'build/windows/x64/runner/Release/*' -DestinationPath 'countapp-${{ env.VERSION }}.zip'
 
       #9 Upload Artifacts
       - name: Upload Artifacts
@@ -157,31 +157,13 @@ jobs:
         with:
           name: Releases
           path: |
-            build/windows/x64/runner/Release/countapp-${{ env.VERSION }}.msix
+            countapp-${{ env.VERSION }}.zip
 
-       #11 Check if Tag Exists
-      # - name: Check if Tag Exists
-      #   id: check_tag
-      #   run: |
-      #     if git rev-parse "${{ env.VERSION }}" >/dev/null 2>&1; then
-      #       echo "TAG_EXISTS=true" >> $GITHUB_ENV
-      #     else
-      #       echo "TAG_EXISTS=false" >> $GITHUB_ENV
-      #     fi
-
-      #  #12 Modify Tag if it Exists
-      # - name: Modify Tag
-      #   if: env.TAG_EXISTS == 'true'
-      #   id: modify_tag
-      #   run: |
-      #     new_version="${{ env.VERSION }}-build-${{ github.run_number }}"
-      #     echo "VERSION=$new_version" >> $GITHUB_ENV
-        
-       #13 Create Release
+      #10 Create Release
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "build/windows/x64/runner/Release/countapp-${{ env.VERSION }}.msix"
+          artifacts: 'build/windows/x64/runner/Release/countapp-${{ env.VERSION }}.msix'
           allowUpdates: true
           generateReleaseNotes: true
           tag: ${{ env.VERSION }}
