@@ -61,11 +61,14 @@ jobs:
         id: extract_version_windows
         shell: pwsh
         run: |
-          # Read the line that starts with "version:"
-          $line = (Select-String -Path "pubspec.yaml" -Pattern "^version:" -SimpleMatch).Line
-          # Remove the "version:" prefix and trim whitespace
-          $version = $line -replace '^version:\s*', ''
-          # Append the VERSION variable to the GitHub environment file
+          $pubspecContent = Get-Content "pubspec.yaml"
+          foreach ($line in $pubspecContent) {
+              if ($line -match '^version:\s*(\S+)') {
+                  $version = $Matches[1]
+                  break
+              }
+          }
+          echo "Extracted version: $version"
           Add-Content -Path $env:GITHUB_ENV -Value "VERSION=$version"
 
       #11 Build Windows Executable
@@ -80,31 +83,21 @@ jobs:
       - name: Rename APK file
         shell: pwsh
         run: |
-          # Define the source APK path (relative to the repo root)
           $APK_SOURCE = "build/app/outputs/flutter-apk/app-release.apk"
-          
-          # Extract the folder path from the source file
           $folder = Split-Path $APK_SOURCE
-          
-          # Use the VERSION environment variable (set a default if empty)
           $version = ${env:VERSION}
           if ([string]::IsNullOrEmpty($version)) {
             $version = "default"
           }
-          
-          # Define the new file name (without a folder)
           $NewFileName = "countapp-$version.apk"
-          
-          Write-Output "Renaming $APK_SOURCE to $folder\$NewFileName"
-          
-          # Rename the file (the new name is only the file name)
+          Write-Output "Renaming $APK_SOURCE to $folder/$NewFileName"
           Rename-Item -Path $APK_SOURCE -NewName $NewFileName
 
       #14 Compress Artifacts
-      - name: Collect Artifacts
+      - name: Compress Artifacts
         shell: powershell
         run: |
-          Compress-Archive -Path 'build/windows/x64/runner/Release/*' -DestinationPath 'countapp-${{ env.VERSION }}.zip'
+          Compress-Archive -Path 'build/windows/x64/runner/Release/*' -DestinationPath 'countapp-${env:VERSION}.zip'
 
       #15 Upload Artifacts
       - name: Upload Artifacts
@@ -112,14 +105,14 @@ jobs:
         with:
           name: Releases
           path: |
-            build/app/outputs/flutter-apk/countapp-${{ env.VERSION }}.apk
-            countapp-${{ env.VERSION }}.zip
+            build/app/outputs/flutter-apk/countapp-${env:VERSION}.apk
+            countapp-${env:VERSION}.zip
 
       #16 Create Release
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: 'build/app/outputs/flutter-apk/countapp-${{ env.VERSION }}.apk,build/windows/x64/runner/Release/countapp-${{ env.VERSION }}.msix'
+          artifacts: 'build/app/outputs/flutter-apk/countapp-${env:VERSION}.apk,countapp-${env:VERSION}.zip'
           allowUpdates: true
           generateReleaseNotes: true
-          tag: ${{ env.VERSION }}
+          tag: ${env:VERSION}
