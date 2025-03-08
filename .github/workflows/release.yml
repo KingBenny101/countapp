@@ -107,14 +107,14 @@ jobs:
         with:
           name: Releases
           path: |
-            build/app/outputs/flutter-apk/countapp-$env:VERSION.apk
-            countapp-$env:VERSION.zip
+            build/app/outputs/flutter-apk/countapp-${{ env.VERSION }}.apk
+            countapp-${{ env.VERSION }}.zip
 
       #16 Create Release
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: 'build/app/outputs/flutter-apk/countapp-$env:VERSION.apk,countapp-$env:VERSION.zip'
+          artifacts: 'build/app/outputs/flutter-apk/countapp-${{ env.VERSION }}.apk,countapp-${{ env.VERSION }}.zip'
           allowUpdates: true
           generateReleaseNotes: true
-          tag: $env:VERSION
+          tag: ${{ env.VERSION }}
