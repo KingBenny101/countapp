@@ -25,6 +25,7 @@ Future<void> exportJSON(String exportFilePath) async {
       style: ToastificationStyle.simple,
       title: const Text("Counters Exported Successfully!"),
       autoCloseDuration: const Duration(seconds: 2),
+      closeOnClick: true,
     );
   } else {
     toastification.show(
