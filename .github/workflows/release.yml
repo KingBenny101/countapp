@@ -78,13 +78,13 @@ jobs:
 
       #13 Rename the APK file
       - name: Rename APK file
+        shell: pwsh
         run: |
           # Define source and target file paths
-          APK_SOURCE="build/app/outputs/flutter-apk/app-release.apk"
-          APK_TARGET="build/app/outputs/flutter-apk/countapp-${{ env.VERSION }}.apk"
-          echo "Renaming ${APK_SOURCE} to ${APK_TARGET}"
-          mv "$APK_SOURCE" "$APK_TARGET"
-
+          $APK_SOURCE = "build/app/outputs/flutter-apk/app-release.apk"
+          $APK_TARGET = "build/app/outputs/flutter-apk/countapp-$env:VERSION.apk"
+          Write-Output "Renaming $APK_SOURCE to $APK_TARGET"
+          Rename-Item -Path $APK_SOURCE -NewName $APK_TARGET
 
       #14 Compress Artifacts
       - name: Collect Artifacts
