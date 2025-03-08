@@ -39,9 +39,9 @@ class _AboutPageState extends State<AboutPage> {
       appBar: AppBar(
         title: const Text("About"),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
+      body: Expanded(
         child: ListView(
+          padding: const EdgeInsets.all(24.0),
           children: [
             const Text(
               "A simple application to help users keep track of their counts effortlessly.",
@@ -64,8 +64,8 @@ class _AboutPageState extends State<AboutPage> {
             ),
             Align(
               child: Card(
-                elevation: 0,
-                margin: const EdgeInsets.symmetric(vertical: 10),
+                elevation: 4,
+                margin: const EdgeInsets.symmetric(vertical: 8.0),
                 child: Padding(
                   padding: const EdgeInsets.all(15),
                   child: Column(
@@ -86,24 +86,23 @@ class _AboutPageState extends State<AboutPage> {
             ),
             Align(
               child: ElevatedButton(
-              onPressed: _launchURL,
-              child: const Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  FaIcon(
-                    FontAwesomeIcons.github,
-                    size: 24,
-                  ),
-                  SizedBox(width: 10),
-                  Text(
-                    "View Source on GitHub",
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ],
+                onPressed: _launchURL,
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    FaIcon(
+                      FontAwesomeIcons.github,
+                      size: 24,
+                    ),
+                    SizedBox(width: 10),
+                    Text(
+                      "View Source on GitHub",
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ],
+                ),
               ),
             ),
-            ),
-           
           ],
         ),
       ),

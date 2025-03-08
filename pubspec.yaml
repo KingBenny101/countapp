@@ -21,7 +21,7 @@ dependencies:
   permission_handler: ^11.3.1
   provider: ^6.1.2
   pub_semver: ^2.1.5
-  toastification: 2.3.0
+  toastification: ^3.0.1
   url_launcher: ^6.3.1
   yaml: ^3.1.3
 
