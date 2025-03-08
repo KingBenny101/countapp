@@ -115,4 +115,5 @@ jobs:
           artifacts: 'build/app/outputs/flutter-apk/countapp-${{ env.VERSION }}.apk,countapp-${{ env.VERSION }}.zip'
           allowUpdates: true
           generateReleaseNotes: true
+          name: Count App ${{ env.VERSION }}
           tag: ${{ env.VERSION }}
