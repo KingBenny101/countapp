@@ -64,8 +64,8 @@ class _AboutPageState extends State<AboutPage> {
             ),
             Align(
               child: Card(
-                elevation: 0,
-                margin: const EdgeInsets.symmetric(vertical: 10),
+                elevation: 4,
+                margin: const EdgeInsets.symmetric(vertical: 8.0),
                 child: Padding(
                   padding: const EdgeInsets.all(15),
                   child: Column(
