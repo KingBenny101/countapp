@@ -98,7 +98,7 @@ jobs:
         shell: powershell
         run: |
           $version = $env:VERSION
-          $NewFileName = "countapp-$version.apk"
+          $NewFileName = "countapp-$version.zip"
           Compress-Archive -Path 'build/windows/x64/runner/Release/*' -DestinationPath $NewFileName
 
       #15 Upload Artifacts
