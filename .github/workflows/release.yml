@@ -7,90 +7,8 @@ on:
     branches: ['master']
 
 jobs:
-  build_android:
-    name: Build & Release in Linux
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-
-    steps:
-      #1 Checkout Repository
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      #2 Setup Java
-      - name: Set Up Java
-        uses: actions/setup-java@v3.12.0
-        with:
-          distribution: 'temurin'
-          java-version: '20'
-
-      #3 Setup Flutter
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-
-      #4 Install Dependencies
-      - name: Install Dependencies
-        run: flutter pub get
-
-      #5 Add Android Platform
-      - name: Add Android Platform
-        run: flutter create --platforms=android --android-language=java .
-
-      #6 Add Android Permissions
-      - name: Add Android Permissions
-        run: |
-          sed -i '/<application/ i\<uses-permission android:name="android.permission.INTERNET" />\<uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />' android/app/src/main/AndroidManifest.xml
-
-      #7 Change Package Name
-      - name: Change Package Name
-        run: dart run package_rename
-
-      #8 Change Icons
-      - name: Change Icons
-        run: dart run flutter_launcher_icons:main
-
-      #9 Extract Version
-      - name: Extract version from pubspec.yaml
-        id: extract_version
-        run: |
-          version=$(grep '^version: ' pubspec.yaml | cut -d ' ' -f 2 | tr -d '\r')
-          echo "VERSION=$version" >> $GITHUB_ENV
-
-      #10 Building APK
-      - name: Build APK
-        run: flutter build apk --release
-
-      #11 Rename the APK file
-      - name: Rename APK file
-        run: |
-          # Define source and target file paths
-          APK_SOURCE="build/app/outputs/flutter-apk/app-release.apk"
-          APK_TARGET="build/app/outputs/flutter-apk/countapp-${{ env.VERSION }}.apk"
-          echo "Renaming ${APK_SOURCE} to ${APK_TARGET}"
-          mv "$APK_SOURCE" "$APK_TARGET"
-
-      #12 Upload Artifacts
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: Releases
-          path: |
-            build/app/outputs/flutter-apk/countapp-${{ env.VERSION }}.apk
-
-      #13 Create Release
-      - name: Create Release
-        uses: ncipollo/release-action@v1
-        with:
-          artifacts: ' build/app/outputs/flutter-apk/countapp-${{ env.VERSION }}.apk'
-          allowUpdates: true
-          generateReleaseNotes: true
-          tag: ${{ env.VERSION }}
-
-  build_windows:
-    name: Build & Release in Windows
+  build:
+    name: Build & Release
     runs-on: windows-latest
     permissions:
       contents: write
@@ -121,7 +39,24 @@ jobs:
       - name: Add Windows Platform
         run: flutter create --platforms=windows .
 
-      #6 Extract Version
+      #6 Add Android Platform
+      - name: Add Android Platform
+        run: flutter create --platforms=android --android-language=java .
+
+      #7 Add Android Permissions
+      - name: Add Android Permissions
+        run: |
+          sed -i '/<application/ i\<uses-permission android:name="android.permission.INTERNET" />\<uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />' android/app/src/main/AndroidManifest.xml
+
+      #8 Change Package Name
+      - name: Change Package Name
+        run: dart run package_rename
+
+      #9 Change Icons
+      - name: Change Icons
+        run: dart run flutter_launcher_icons:main
+
+      #10 Extract Version
       - name: Extract version from pubspec.yaml
         id: extract_version_windows
         shell: pwsh
@@ -133,37 +68,44 @@ jobs:
           # Append the VERSION variable to the GitHub environment file
           Add-Content -Path $env:GITHUB_ENV -Value "VERSION=$version"
 
-      #7 Change Package Name
-      - name: Change Package Name
-        run: dart run package_rename
-
-      #8 Change Icons
-      - name: Change Icons
-        run: dart run flutter_launcher_icons:main
-
-      #9 Build Windows Executable
+      #11 Build Windows Executable
       - name: Build Windows Executable
         run: flutter build windows --release
 
-      #10 Compress Artifacts
+      #12 Building APK
+      - name: Build APK
+        run: flutter build apk --release
+
+      #13 Rename the APK file
+      - name: Rename APK file
+        run: |
+          # Define source and target file paths
+          APK_SOURCE="build/app/outputs/flutter-apk/app-release.apk"
+          APK_TARGET="build/app/outputs/flutter-apk/countapp-${{ env.VERSION }}.apk"
+          echo "Renaming ${APK_SOURCE} to ${APK_TARGET}"
+          mv "$APK_SOURCE" "$APK_TARGET"
+
+
+      #14 Compress Artifacts
       - name: Collect Artifacts
         shell: powershell
         run: |
           Compress-Archive -Path 'build/windows/x64/runner/Release/*' -DestinationPath 'countapp-${{ env.VERSION }}.zip'
 
-      #9 Upload Artifacts
+      #15 Upload Artifacts
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: Releases
           path: |
+            build/app/outputs/flutter-apk/countapp-${{ env.VERSION }}.apk
             countapp-${{ env.VERSION }}.zip
 
-      #10 Create Release
+      #16 Create Release
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: 'build/windows/x64/runner/Release/countapp-${{ env.VERSION }}.msix'
+          artifacts: 'build/app/outputs/flutter-apk/countapp-${{ env.VERSION }}.apk,build/windows/x64/runner/Release/countapp-${{ env.VERSION }}.msix'
           allowUpdates: true
           generateReleaseNotes: true
           tag: ${{ env.VERSION }}
