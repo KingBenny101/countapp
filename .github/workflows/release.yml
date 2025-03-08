@@ -75,29 +75,30 @@ jobs:
 
 
       #11 Check if Tag Exists
-      - name: Check if Tag Exists
-        id: check_tag
-        run: |
-          if git rev-parse "${{ env.VERSION }}" >/dev/null 2>&1; then
-            echo "TAG_EXISTS=true" >> $GITHUB_ENV
-          else
-            echo "TAG_EXISTS=false" >> $GITHUB_ENV
-          fi
+      # - name: Check if Tag Exists
+      #   id: check_tag
+      #   run: |
+      #     if git rev-parse "${{ env.VERSION }}" >/dev/null 2>&1; then
+      #       echo "TAG_EXISTS=true" >> $GITHUB_ENV
+      #     else
+      #       echo "TAG_EXISTS=false" >> $GITHUB_ENV
+      #     fi
 
-      #12 Modify Tag if it Exists
-      - name: Modify Tag
-        if: env.TAG_EXISTS == 'true'
-        id: modify_tag
-        run: |
-          new_version="${{ env.VERSION }}-build-${{ github.run_number }}"
-          echo "VERSION=$new_version" >> $GITHUB_ENV
+      # #12 Modify Tag if it Exists
+      # - name: Modify Tag
+      #   if: env.TAG_EXISTS == 'true'
+      #   id: modify_tag
+      #   run: |
+      #     new_version="${{ env.VERSION }}-build-${{ github.run_number }}"
+      #     echo "VERSION=$new_version" >> $GITHUB_ENV
         
       #13 Create Release
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
           artifacts: " build/app/outputs/flutter-apk/countapp-${{ env.VERSION }}.apk"
-          #,build/windows/x64/runner/Release/countapp-${{ env.VERSION }}.msix"
+          allowUpdates: true
+          generateReleaseNotes: true
           tag: ${{ env.VERSION }}
       
   build_windows:
@@ -135,9 +136,15 @@ jobs:
       #6 Extract Version
       - name: Extract version from pubspec.yaml
         id: extract_version_windows
+        shell: pwsh
         run: |
-          version=$(grep '^version: ' pubspec.yaml | cut -d ' ' -f 2 | tr -d '\r')
-          echo "VERSION=$version" >> $GITHUB_ENV
+          # Read the line that starts with "version:"
+          $line = (Select-String -Path "pubspec.yaml" -Pattern "^version:" -SimpleMatch).Line
+          # Remove the "version:" prefix and trim whitespace
+          $version = $line -replace '^version:\s*', ''
+          # Append the VERSION variable to the GitHub environment file
+          Add-Content -Path $env:GITHUB_ENV -Value "VERSION=$version"
+
 
       #7 Build Windows Executable
       - name: Build Windows MSIX
@@ -153,26 +160,28 @@ jobs:
             build/windows/x64/runner/Release/countapp-${{ env.VERSION }}.msix
 
        #11 Check if Tag Exists
-      - name: Check if Tag Exists
-        id: check_tag
-        run: |
-          if git rev-parse "${{ env.VERSION }}" >/dev/null 2>&1; then
-            echo "TAG_EXISTS=true" >> $GITHUB_ENV
-          else
-            echo "TAG_EXISTS=false" >> $GITHUB_ENV
-          fi
+      # - name: Check if Tag Exists
+      #   id: check_tag
+      #   run: |
+      #     if git rev-parse "${{ env.VERSION }}" >/dev/null 2>&1; then
+      #       echo "TAG_EXISTS=true" >> $GITHUB_ENV
+      #     else
+      #       echo "TAG_EXISTS=false" >> $GITHUB_ENV
+      #     fi
 
-       #12 Modify Tag if it Exists
-      - name: Modify Tag
-        if: env.TAG_EXISTS == 'true'
-        id: modify_tag
-        run: |
-          new_version="${{ env.VERSION }}-build-${{ github.run_number }}"
-          echo "VERSION=$new_version" >> $GITHUB_ENV
+      #  #12 Modify Tag if it Exists
+      # - name: Modify Tag
+      #   if: env.TAG_EXISTS == 'true'
+      #   id: modify_tag
+      #   run: |
+      #     new_version="${{ env.VERSION }}-build-${{ github.run_number }}"
+      #     echo "VERSION=$new_version" >> $GITHUB_ENV
         
        #13 Create Release
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
           artifacts: "build/windows/x64/runner/Release/countapp-${{ env.VERSION }}.msix"
+          allowUpdates: true
+          generateReleaseNotes: true
           tag: ${{ env.VERSION }}
