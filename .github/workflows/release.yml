@@ -7,8 +7,8 @@ on:
     branches: [ "master" ]
 
 jobs:  
-  build:      
-    name: Build & Release 
+  build_android:      
+    name: Build & Release in Linux
     runs-on: ubuntu-latest
 
     steps:
@@ -37,17 +37,12 @@ jobs:
       - name: Add Android Platform
         run: flutter create --platforms=android --android-language=java .
 
-      #7 Add Windows Platform
-      - name: Add Windows Platform
-        run: flutter create --platforms=windows .
-
-      #7 Add Android Permissions
+      #6 Add Android Permissions
       - name: Add Android Permissions
         run: |
           sed -i '/<application/ i\<uses-permission android:name="android.permission.INTERNET" />\<uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />' android/app/src/main/AndroidManifest.xml
 
-
-      #10 Extract Version
+      #7 Extract Version
       - name: Extract version from pubspec.yaml
         id: extract_version
         run: |
@@ -55,11 +50,11 @@ jobs:
           echo "VERSION=$version" >> $GITHUB_ENV
 
         
-       #6 Building APK
+      #8 Building APK
       - name: Build APK
         run: flutter build apk --release
 
-        # Rename the APK file
+      #9 Rename the APK file
       - name: Rename APK file
         run: |
           # Define source and target file paths
@@ -68,22 +63,16 @@ jobs:
           echo "Renaming ${APK_SOURCE} to ${APK_TARGET}"
           mv "$APK_SOURCE" "$APK_TARGET"
 
-       #6 Building APK
-      - name: windows
-        run: dart run msix:create --output-name="countapp-${{ env.VERSION }}"
-
-
-        #9 Upload Artifacts
+      #10 Upload Artifacts
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: Releases
           path: |
             build/app/outputs/flutter-apk/countapp-${{ env.VERSION }}.apk
-            build/windows/x64/runner/Release/countapp-${{ env.VERSION }}.msix
 
 
-        #11 Check if Tag Exists
+      #11 Check if Tag Exists
       - name: Check if Tag Exists
         id: check_tag
         run: |
@@ -93,7 +82,7 @@ jobs:
             echo "TAG_EXISTS=false" >> $GITHUB_ENV
           fi
 
-        #12 Modify Tag if it Exists
+      #12 Modify Tag if it Exists
       - name: Modify Tag
         if: env.TAG_EXISTS == 'true'
         id: modify_tag
@@ -101,10 +90,85 @@ jobs:
           new_version="${{ env.VERSION }}-build-${{ github.run_number }}"
           echo "VERSION=$new_version" >> $GITHUB_ENV
         
-        #13 Create Release
+      #13 Create Release
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: " build/app/outputs/flutter-apk/countapp-${{ env.VERSION }}.apk,build/windows/x64/runner/Release/countapp-${{ env.VERSION }}.msix"
+          artifacts: " build/app/outputs/flutter-apk/countapp-${{ env.VERSION }}.apk"
+          #,build/windows/x64/runner/Release/countapp-${{ env.VERSION }}.msix"
           tag: ${{ env.VERSION }}
       
+  build_windows:
+    name: Build & Release in Windows
+    runs-on: windows-latest
+
+    steps:
+      #1 Checkout Repository
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      #2 Setup Java
+      - name: Set Up Java
+        uses: actions/setup-java@v3.12.0
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      #3 Setup Flutter
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      
+      #4 Install Dependencies
+      - name: Install Dependencies
+        run: flutter pub get
+
+      #5 Add Windows Platform
+      - name: Add Windows Platform
+        run: flutter create --platforms=windows .
+
+      #6 Extract Version
+      - name: Extract version from pubspec.yaml
+        id: extract_version_windows
+        run: |
+          version=$(grep '^version: ' pubspec.yaml | cut -d ' ' -f 2 | tr -d '\r')
+          echo "VERSION=$version" >> $GITHUB_ENV
+
+      #7 Build Windows Executable
+      - name: Build Windows MSIX
+        run: dart run msix:create --output-name="countapp-${{ env.VERSION }}"
+
+
+      #9 Upload Artifacts
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: Releases
+          path: |
+            build/windows/x64/runner/Release/countapp-${{ env.VERSION }}.msix
+
+       #11 Check if Tag Exists
+      - name: Check if Tag Exists
+        id: check_tag
+        run: |
+          if git rev-parse "${{ env.VERSION }}" >/dev/null 2>&1; then
+            echo "TAG_EXISTS=true" >> $GITHUB_ENV
+          else
+            echo "TAG_EXISTS=false" >> $GITHUB_ENV
+          fi
+
+       #12 Modify Tag if it Exists
+      - name: Modify Tag
+        if: env.TAG_EXISTS == 'true'
+        id: modify_tag
+        run: |
+          new_version="${{ env.VERSION }}-build-${{ github.run_number }}"
+          echo "VERSION=$new_version" >> $GITHUB_ENV
+        
+       #13 Create Release
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "build/windows/x64/runner/Release/countapp-${{ env.VERSION }}.msix"
+          tag: ${{ env.VERSION }}
