@@ -84,6 +84,7 @@ class CounterProvider with ChangeNotifier {
         style: ToastificationStyle.simple,
         title: const Text("Counter Updated Successfully!"),
         autoCloseDuration: const Duration(seconds: 2),
+        closeOnClick: true,
       );
     }
   }

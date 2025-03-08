@@ -22,7 +22,7 @@ dependencies:
   provider: ^6.1.2
   pub_semver: ^2.1.5
   syncfusion_flutter_charts: ^28.2.9
-  toastification: ^3.0.1
+  toastification: 2.3.0
   url_launcher: ^6.3.1
   yaml: ^3.1.3
 
