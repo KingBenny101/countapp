@@ -12,9 +12,9 @@ class OptionsPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Options"),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
+      body: Expanded(
         child: ListView(
+        padding: const EdgeInsets.all(24.0),
           children: [
             Card(
               shape: RoundedRectangleBorder(
