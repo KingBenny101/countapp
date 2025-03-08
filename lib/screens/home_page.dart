@@ -298,6 +298,7 @@ class HomePageState extends State<HomePage> {
                             "$selectedCount Counters Deleted Successfully!",
                           ),
                           autoCloseDuration: const Duration(seconds: 2),
+                          closeOnClick: true,
                         );
                       }
                     }
@@ -398,6 +399,7 @@ class HomePageState extends State<HomePage> {
                         style: ToastificationStyle.simple,
                         title: const Text("Counters Imported Successfully!"),
                         autoCloseDuration: const Duration(seconds: 2),
+                        closeOnClick: true,
                       );
                     }
                   },
