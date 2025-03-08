@@ -5,6 +5,13 @@ import "package:fl_chart/fl_chart.dart";
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
 import "package:provider/provider.dart";
+import "package:syncfusion_flutter_charts/charts.dart";
+
+class ChartData {
+  ChartData(this.x, this.y);
+  final String x;
+  final double y;
+}
 
 class InfoPage extends StatefulWidget {
   const InfoPage({super.key, required this.index});
@@ -49,19 +56,15 @@ class InfoPageState extends State<InfoPage> {
       ..sort((a, b) => a.key.compareTo(b.key));
   }
 
-  Color _getColor(int index) {
-    const List<Color> palette = [
-      Colors.red,
-      Colors.blue,
-      Colors.green,
-      Colors.orange,
-      Colors.purple,
-      Colors.teal,
-      Colors.pink,
-      Colors.amber,
-      Colors.cyan,
-    ];
-    return palette[index % palette.length];
+  List<ChartData> _getHistogramData() {
+    final List<ChartData> histogramData = [];
+    for (int i = 0; i < _daysPerUpdateCount.length; i++) {
+      histogramData.add(
+        ChartData(_daysPerUpdateCount[i].key.toString(),
+            _daysPerUpdateCount[i].value.toDouble()),
+      );
+    }
+    return histogramData;
   }
 
   @override
@@ -72,7 +75,7 @@ class InfoPageState extends State<InfoPage> {
     final int endIndex = (_indexOfEndDate + 1).clamp(0, _updatesPerDay.length);
 
     final plotData = _updatesPerDay.sublist(startIndex, endIndex);
-    final histogramData = _daysPerUpdateCount;
+    final chartData = _getHistogramData();
 
     return Scaffold(
       appBar: AppBar(title: Text("Info for $_counterName")),
@@ -153,25 +156,25 @@ class InfoPageState extends State<InfoPage> {
               child: const Text("View All Updates"),
             ),
             const SizedBox(height: 16),
-            const Text(
-              "Updates Pie",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(
-              height: 300,
-              child: PieChart(
-                PieChartData(
-                  sections: List.generate(histogramData.length, (index) {
-                    return PieChartSectionData(
-                      title: histogramData[index].key.toString(),
-                      value: histogramData[index].value.toDouble(),
-                      color: _getColor(index), // Implement your color logic
-                      radius: 128,
-                    );
-                  }),
-                  centerSpaceRadius: 16,
-                ),
-              ),
+            Center(
+              child: SfCircularChart(
+                  title: const ChartTitle(
+                    text: "Updates Pie",
+                    textStyle:
+                        TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  legend: const Legend(isVisible: true),
+                  series: <CircularSeries>[
+                    PieSeries<ChartData, String>(
+                        explode: true,
+                        dataSource: chartData,
+                        xValueMapper: (ChartData data, _) => data.x,
+                        yValueMapper: (ChartData data, _) => data.y,
+                        dataLabelMapper: (ChartData data, _) =>
+                            data.y.toInt().toString(),
+                        dataLabelSettings:
+                            const DataLabelSettings(isVisible: true)),
+                  ]),
             ),
           ],
         ),
