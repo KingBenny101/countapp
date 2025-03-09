@@ -115,7 +115,7 @@ $task = $args[0]
 
 switch ($task) {
     "generate" { GenerateEnvironment }
-    "clean" { CleanRelease }
+    "clean" { CleanEnvironment }
     "build_android" { BuildAndroid }
     "build_windows" { BuildWindows }
     "all" { All }

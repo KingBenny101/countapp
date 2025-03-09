@@ -40,6 +40,8 @@ class HomePageState extends State<HomePage> {
           List<bool>.filled(counterProvider.counters.length, false);
     }
 
+    final Color? textColor = Theme.of(context).textTheme.bodyLarge?.color;
+
     return GestureDetector(
       onTap: () {
         if (_isSelecting) {
@@ -193,10 +195,10 @@ class HomePageState extends State<HomePage> {
                         ),
                         title: Text(
                           counter.name,
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: textColor),
                         ),
                         subtitle: Text(
                           counter.type == "increment"
@@ -210,10 +212,10 @@ class HomePageState extends State<HomePage> {
                           children: [
                             Text(
                               "${counter.value}",
-                              style: const TextStyle(
-                                fontSize: 30,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: TextStyle(
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.bold,
+                                  color: textColor),
                             ),
                             const SizedBox(width: 8),
                           ],
@@ -348,8 +350,8 @@ class HomePageState extends State<HomePage> {
                       vertical: 10,
                       horizontal: 10,
                     ),
-                    child:
-                        const Text("Updates", style: TextStyle(fontSize: 18)),
+                    child: Text("Updates",
+                        style: TextStyle(fontSize: 18, color: textColor)),
                   ),
                   onTap: () async {
                     FocusScope.of(context).unfocus();
@@ -364,8 +366,8 @@ class HomePageState extends State<HomePage> {
                       vertical: 10,
                       horizontal: 10,
                     ),
-                    child:
-                        const Text("Options", style: TextStyle(fontSize: 18)),
+                    child: Text("Options",
+                        style: TextStyle(fontSize: 18, color: textColor)),
                   ),
                   onTap: () async {
                     FocusScope.of(context).unfocus();
@@ -380,7 +382,8 @@ class HomePageState extends State<HomePage> {
                       vertical: 10,
                       horizontal: 10,
                     ),
-                    child: const Text("Import", style: TextStyle(fontSize: 18)),
+                    child: Text("Import",
+                        style: TextStyle(fontSize: 18, color: textColor)),
                   ),
                   onTap: () async {
                     final FilePickerResult? result =
@@ -412,7 +415,8 @@ class HomePageState extends State<HomePage> {
                       vertical: 10,
                       horizontal: 10,
                     ),
-                    child: const Text("Export", style: TextStyle(fontSize: 18)),
+                    child: Text("Export",
+                        style: TextStyle(fontSize: 18, color: textColor)),
                   ),
                   onTap: () async {
                     final String? selectedDirectory =
@@ -501,9 +505,9 @@ class HomePageState extends State<HomePage> {
                       vertical: 10,
                       horizontal: 10,
                     ),
-                    child: const Text(
+                    child: Text(
                       "Guide",
-                      style: TextStyle(fontSize: 18),
+                      style: TextStyle(fontSize: 18, color: textColor),
                     ),
                   ),
                   onTap: () async {
@@ -519,7 +523,8 @@ class HomePageState extends State<HomePage> {
                       vertical: 10,
                       horizontal: 10,
                     ),
-                    child: const Text("About", style: TextStyle(fontSize: 18)),
+                    child: Text("About",
+                        style: TextStyle(fontSize: 18, color: textColor)),
                   ),
                   onTap: () async {
                     FocusScope.of(context).unfocus();
