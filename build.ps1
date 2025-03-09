@@ -15,7 +15,7 @@ function GetVersion {
     $pubspecContent = Get-Content "pubspec.yaml"
     foreach ($line in $pubspecContent) {
         if ($line -match '^version:\s*(\S+)') {
-            ${global:VERSION}  = $Matches[1]
+            ${global:VERSION} = $Matches[1]
             break
         }
     }
@@ -28,8 +28,18 @@ function GetVersion {
 }
 
 function GenerateEnvironment {
+    Write-Host "`nCleaning up previous builds..."
+    flutter clean
+
+    $ProgressPreference = 'SilentlyContinue'
+
+    Write-Host "`nCleaning up previous platforms..."
+    Remove-Item "android" -Force -Recurse -ErrorAction SilentlyContinue
+    Remove-Item "windows" -Force -Recurse -ErrorAction SilentlyContinue
+
     Write-Host "`nInstalling dependencies..."
     flutter pub get
+
     Write-Host "`nCreating Android platform..."
     flutter create --platforms=android --android-language=java .
     Write-Host "`nAdding Permissions..."
@@ -40,7 +50,6 @@ function GenerateEnvironment {
         }
         $_
     } | Set-Content $MANIFEST_PATH
-
 
     Write-Host "`nCreating Windows platform..."
     flutter create --platforms=windows .
@@ -54,7 +63,7 @@ function GenerateEnvironment {
 
 function CleanEnvironment {
     if (Test-Path $RELEASE_FOLDER) {
-        Remove-Item "$RELEASE_FOLDER\*" -Force -ErrorAction SilentlyContinue
+        Remove-Item "$RELEASE_FOLDER\*" -Recurse -Force -ErrorAction SilentlyContinue
         Write-Host "`nCleaned release folder."
     }
     else {
@@ -106,7 +115,7 @@ $task = $args[0]
 
 switch ($task) {
     "generate" { GenerateEnvironment }
-    "clean" { CleanRelease }
+    "clean" { CleanEnvironment }
     "build_android" { BuildAndroid }
     "build_windows" { BuildWindows }
     "all" { All }
