@@ -15,7 +15,7 @@ function GetVersion {
     $pubspecContent = Get-Content "pubspec.yaml"
     foreach ($line in $pubspecContent) {
         if ($line -match '^version:\s*(\S+)') {
-            ${global:VERSION}  = $Matches[1]
+            ${global:VERSION} = $Matches[1]
             break
         }
     }
@@ -54,7 +54,7 @@ function GenerateEnvironment {
 
 function CleanEnvironment {
     if (Test-Path $RELEASE_FOLDER) {
-        Remove-Item "$RELEASE_FOLDER\*" -Force -ErrorAction SilentlyContinue
+        Remove-Item "$RELEASE_FOLDER\*" -Recurse -Force -ErrorAction SilentlyContinue
         Write-Host "`nCleaned release folder."
     }
     else {
