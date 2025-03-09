@@ -28,8 +28,18 @@ function GetVersion {
 }
 
 function GenerateEnvironment {
+    Write-Host "`nCleaning up previous builds..."
+    flutter clean
+
+    $ProgressPreference = 'SilentlyContinue'
+
+    Write-Host "`nCleaning up previous platforms..."
+    Remove-Item "android" -Force -Recurse -ErrorAction SilentlyContinue
+    Remove-Item "windows" -Force -Recurse -ErrorAction SilentlyContinue
+
     Write-Host "`nInstalling dependencies..."
     flutter pub get
+
     Write-Host "`nCreating Android platform..."
     flutter create --platforms=android --android-language=java .
     Write-Host "`nAdding Permissions..."
@@ -40,7 +50,6 @@ function GenerateEnvironment {
         }
         $_
     } | Set-Content $MANIFEST_PATH
-
 
     Write-Host "`nCreating Windows platform..."
     flutter create --platforms=windows .
