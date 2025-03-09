@@ -1,7 +1,7 @@
 $RELEASE_FOLDER = "release"
 $APP_NAME = "countapp"
 $ANDROID_BUILD = "build\app\outputs\flutter-apk\app-release.apk"
-$WINDOWS_BUILD = "build\windows\x64\runner\Release\countapp.msix"
+$WINDOWS_BUILD = "build\windows\x64\runner\Release\*"
 
 $MANIFEST_PATH = "android\app\src\main\AndroidManifest.xml"
 $PERMISSIONS = @"
@@ -83,19 +83,14 @@ function BuildAndroid {
 
 function BuildWindows {
     Write-Host "`nBuilding for Windows..."
-    dart run msix:create
+    flutter build windows --release
 
-    if (Test-Path $WINDOWS_BUILD) {
-        Copy-Item $WINDOWS_BUILD -Destination $RELEASE_FOLDER
-        Write-Host "`nEXE file copied successfully."
-
-        $msixPath = Join-Path $RELEASE_FOLDER (Split-Path $WINDOWS_BUILD -Leaf)
-        $newMsixName = "$APP_NAME-${global:VERSION}.msix"
-        Rename-Item -Path $msixPath -NewName $newMsixName
-        Write-Host "`nMSIX file renamed to $newMsixName."
+    try {
+        Copy-Item -Path $WINDOWS_BUILD -Destination "$RELEASE_FOLDER\windows" -Recurse -Force
+        Write-Host "`nWindows build copied successfully."
     }
-    else {
-        Write-Host "`nEXE file not found at $WINDOWS_BUILD"
+    catch {
+        Write-Host "`nError copying Windows build."
     }
 }
 

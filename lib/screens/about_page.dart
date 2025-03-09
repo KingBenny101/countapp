@@ -39,72 +39,70 @@ class _AboutPageState extends State<AboutPage> {
       appBar: AppBar(
         title: const Text("About"),
       ),
-      body: Expanded(
-        child: ListView(
-          padding: const EdgeInsets.all(24.0),
-          children: [
-            const Text(
-              "A simple application to help users keep track of their counts effortlessly.",
-              style: TextStyle(fontSize: 18, fontStyle: FontStyle.italic),
-            ),
-            const SizedBox(height: 20),
-            const Divider(),
-            const SizedBox(height: 10),
-            buildStepCard(
-              "Developed almost without any human-written Dart code, utilizing AI assistance from ChatGPT for all code generation.",
-            ),
-            buildStepCard(
-              "Create an arbitrary number of counters that can be added, accessed, and deleted from the main home page.",
-            ),
-            buildStepCard(
-              "Configurable options for each counter, such as increment or decrement type and step size.",
-            ),
-            buildStepCard(
-              "Future versions may incorporate local storage, with potential Google Firebase integration.",
-            ),
-            Align(
-              child: Card(
-                elevation: 4,
-                margin: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Padding(
-                  padding: const EdgeInsets.all(15),
-                  child: Column(
-                    children: [
-                      Text(
-                        "Version: $version",
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                      const SizedBox(height: 10),
-                      const Text(
-                        "© 2024 KingBenny101. All rights reserved.",
-                        style: TextStyle(fontSize: 12),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Align(
-              child: ElevatedButton(
-                onPressed: _launchURL,
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
+      body: ListView(
+        padding: const EdgeInsets.all(24.0),
+        children: [
+          const Text(
+            "A simple application to help users keep track of their counts effortlessly.",
+            style: TextStyle(fontSize: 18, fontStyle: FontStyle.italic),
+          ),
+          const SizedBox(height: 20),
+          const Divider(),
+          const SizedBox(height: 10),
+          buildStepCard(
+            "Developed almost without any human-written Dart code, utilizing AI assistance from ChatGPT for all code generation.",
+          ),
+          buildStepCard(
+            "Create an arbitrary number of counters that can be added, accessed, and deleted from the main home page.",
+          ),
+          buildStepCard(
+            "Configurable options for each counter, such as increment or decrement type and step size.",
+          ),
+          buildStepCard(
+            "Future versions may incorporate local storage, with potential Google Firebase integration.",
+          ),
+          Align(
+            child: Card(
+              elevation: 4,
+              margin: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Padding(
+                padding: const EdgeInsets.all(15),
+                child: Column(
                   children: [
-                    FaIcon(
-                      FontAwesomeIcons.github,
-                      size: 24,
-                    ),
-                    SizedBox(width: 10),
                     Text(
-                      "View Source on GitHub",
-                      style: TextStyle(fontSize: 16),
+                      "Version: $version",
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    const SizedBox(height: 10),
+                    const Text(
+                      "© 2024 KingBenny101. All rights reserved.",
+                      style: TextStyle(fontSize: 12),
                     ),
                   ],
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+          Align(
+            child: ElevatedButton(
+              onPressed: _launchURL,
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  FaIcon(
+                    FontAwesomeIcons.github,
+                    size: 24,
+                  ),
+                  SizedBox(width: 10),
+                  Text(
+                    "View Source on GitHub",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -12,35 +12,33 @@ class OptionsPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Options"),
       ),
-      body: Expanded(
-        child: ListView(
+      body: ListView(
         padding: const EdgeInsets.all(24.0),
-          children: [
-            Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.0),
+        children: [
+          Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.0),
+            ),
+            elevation: 5,
+            margin: const EdgeInsets.only(bottom: 20.0),
+            child: ListTile(
+              contentPadding: const EdgeInsets.symmetric(
+                vertical: 12.0,
+                horizontal: 20.0,
               ),
-              elevation: 5,
-              margin: const EdgeInsets.only(bottom: 20.0),
-              child: ListTile(
-                contentPadding: const EdgeInsets.symmetric(
-                  vertical: 12.0,
-                  horizontal: 20.0,
-                ),
-                title: const Text(
-                  "Toggle Theme",
-                  style: TextStyle(fontSize: 18),
-                ),
-                trailing: Switch(
-                  value: Theme.of(context).brightness == Brightness.dark,
-                  onChanged: (value) {
-                    themeNotifier.toggleTheme();
-                  },
-                ),
+              title: const Text(
+                "Toggle Theme",
+                style: TextStyle(fontSize: 18),
+              ),
+              trailing: Switch(
+                value: Theme.of(context).brightness == Brightness.dark,
+                onChanged: (value) {
+                  themeNotifier.toggleTheme();
+                },
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
