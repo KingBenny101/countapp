@@ -1,5 +1,8 @@
+import "dart:convert";
+
 import "package:countapp/utils/updates.dart";
 import "package:flutter/material.dart";
+import "package:http/http.dart" as http;
 import "package:pub_semver/pub_semver.dart";
 import "package:url_launcher/url_launcher.dart";
 
@@ -69,8 +72,20 @@ class _UpdatePageState extends State<UpdatePage> {
   }
 
   Future<void> _downloadUpdate() async {
-    final url = Uri.parse("https://github.com/KingBenny101/countapp/releases/latest");
-    await launchUrl(url);
+    final url = Uri.parse(
+        "https://api.github.com/repos/KingBenny101/countapp/releases/latest");
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      final downloadUrl = Uri.parse(data["html_url"] as String);
+      await launchUrl(downloadUrl);
+    } else {
+      setState(() {
+        _updateText = "Failed to download update. Please try again later";
+      });
+      _isLoading = false;
+      _checkFailed = true;
+    }
   }
 
   @override
