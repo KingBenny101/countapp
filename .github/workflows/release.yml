@@ -12,28 +12,23 @@ jobs:
       contents: write
 
     steps:
-      #1 Checkout Repository
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      #2 Setup Java
       - name: Set Up Java
         uses: actions/setup-java@v3.12.0
         with:
           distribution: 'temurin'
           java-version: '20.0.2'
 
-      #3 Setup Flutter
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: stable
 
-      #4 Install Dependencies
       - name: Install Dependencies
         run: flutter pub get
 
-      #5 Extract Version
       - name: Extract version from pubspec.yaml
         id: extract_version_windows
         shell: pwsh
@@ -48,13 +43,18 @@ jobs:
           echo "Extracted version: $version"
           Add-Content -Path $env:GITHUB_ENV -Value "VERSION=$version"
 
-      #6 Decode Keystore File
       - name: Decode Keystore File
         run: |
-          [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String("${{ secrets.ANDROID_KEYSTORE }}")) | Set-Content -Path android/app/keystore.jks
+          $base64Content = "${{ secrets.ANDROID_KEYSTORE }}"
+          if (-not [string]::IsNullOrEmpty($base64Content)) {
+              $bytes = [System.Convert]::FromBase64String($base64Content)
+              [System.IO.File]::WriteAllBytes("android/app/keystore.jks", $bytes)
+              Write-Output "File 'keystore.jks' written successfully."
+          } else {
+              Write-Error "The ANDROID_KEYSTORE secret is empty or not found."
+          }
         shell: pwsh
       
-      #7 Create key.properties file
       - name: Create key.properties
         run: |
           $content = @"
@@ -66,12 +66,9 @@ jobs:
           Set-Content -Path android/app/key.properties -Value $content
         shell: pwsh
 
-      
-      #8 Build Signed APK
       - name: Build Signed APK
         run: flutter build apk --release
       
-      #9 Rename the APK file
       - name: Rename APK file
         shell: pwsh
         run: |
@@ -85,11 +82,9 @@ jobs:
           Write-Output "Renaming $APK_SOURCE to $folder/$NewFileName"
           Rename-Item -Path $APK_SOURCE -NewName $NewFileName
 
-      #10 Build Windows Executable
       - name: Build Windows Executable
         run: flutter build windows --release
 
-      #11 Compress Artifacts
       - name: Compress Artifacts
         shell: powershell
         run: |
@@ -97,7 +92,6 @@ jobs:
           $NewFileName = "countapp-$version.zip"
           Compress-Archive -Path 'build/windows/x64/runner/Release/*' -DestinationPath $NewFileName
 
-      #12 Upload Artifacts
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -106,7 +100,6 @@ jobs:
             build/app/outputs/flutter-apk/countapp-${{ env.VERSION }}.apk
             countapp-${{ env.VERSION }}.zip
 
-      #13 Create Release
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
