@@ -33,28 +33,7 @@ jobs:
       - name: Install Dependencies
         run: flutter pub get
 
-      #5 Add Windows Platform
-      - name: Add Windows Platform
-        run: flutter create --platforms=windows .
-
-      #6 Add Android Platform
-      - name: Add Android Platform
-        run: flutter create --platforms=android --android-language=java .
-
-      #7 Add Android Permissions
-      - name: Add Android Permissions
-        run: |
-          sed -i '/<application/ i\<uses-permission android:name="android.permission.INTERNET" />\<uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />' android/app/src/main/AndroidManifest.xml
-
-      #8 Change Package Name
-      - name: Change Package Name
-        run: dart run package_rename
-
-      #9 Change Icons
-      - name: Change Icons
-        run: dart run flutter_launcher_icons:main
-
-      #10 Extract Version
+      #5 Extract Version
       - name: Extract version from pubspec.yaml
         id: extract_version_windows
         shell: pwsh
@@ -69,17 +48,17 @@ jobs:
           echo "Extracted version: $version"
           Add-Content -Path $env:GITHUB_ENV -Value "VERSION=$version"
 
-      #11 Build Windows Executable
+      #6 Build Windows Executable
       - name: Build Windows Executable
         run: flutter build windows --release
 
-      #12 Decode Keystore File
+      #7 Decode Keystore File
       - name: Decode Keystore File
         run: |
           [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String("${{ secrets.ANDROID_KEYSTORE }}")) | Set-Content -Path android/app/keystore.jks
         shell: pwsh
       
-      #13 Create key.properties file
+      #8 Create key.properties file
       - name: Create key.properties
         run: |
           $content = @"
@@ -92,7 +71,7 @@ jobs:
         shell: pwsh
 
       
-      #14 Build Signed APK
+      #9 Build Signed APK
       - name: Build Signed APK
         run: |
           flutter build apk --release `
@@ -102,7 +81,7 @@ jobs:
             --dart-define=KEY_PASSWORD=$(Get-Content key_password.txt)
         shell: pwsh
       
-      #15 Rename the APK file
+      #10 Rename the APK file
       - name: Rename APK file
         shell: pwsh
         run: |
@@ -116,7 +95,7 @@ jobs:
           Write-Output "Renaming $APK_SOURCE to $folder/$NewFileName"
           Rename-Item -Path $APK_SOURCE -NewName $NewFileName
 
-      #16 Compress Artifacts
+      #11 Compress Artifacts
       - name: Compress Artifacts
         shell: powershell
         run: |
@@ -124,7 +103,7 @@ jobs:
           $NewFileName = "countapp-$version.zip"
           Compress-Archive -Path 'build/windows/x64/runner/Release/*' -DestinationPath $NewFileName
 
-      #17 Upload Artifacts
+      #12 Upload Artifacts
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -133,7 +112,7 @@ jobs:
             build/app/outputs/flutter-apk/countapp-${{ env.VERSION }}.apk
             countapp-${{ env.VERSION }}.zip
 
-      #18 Create Release
+      #13 Create Release
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
