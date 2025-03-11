@@ -73,11 +73,31 @@ jobs:
       - name: Build Windows Executable
         run: flutter build windows --release
 
-      #12 Building APK
-      - name: Build APK
-        run: flutter build apk --release
-
-      #13 Rename the APK file
+      #12 Decode Keystore File
+      - name: Decode Keystore File
+        run: |
+          [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String("${{ secrets.ANDROID_KEYSTORE }}")) | Set-Content -Path android/app/keystore.jks
+        shell: pwsh
+      
+      #13 Decode Keystore Credentials
+      - name: Decode Keystore Credentials
+        run: |
+          [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String("${{ secrets.KEYSTORE_ALIAS }}")) | Set-Content -Path keystore_alias.txt
+          [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String("${{ secrets.KEYSTORE_PASSWORD }}")) | Set-Content -Path keystore_password.txt
+          [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String("${{ secrets.KEY_PASSWORD }}")) | Set-Content -Path key_password.txt
+        shell: pwsh
+      
+      #14 Build Signed APK
+      - name: Build Signed APK
+        run: |
+          flutter build apk --release `
+            --dart-define=KEYSTORE_PATH=android/app/keystore.jks `
+            --dart-define=KEYSTORE_ALIAS=$(Get-Content keystore_alias.txt) `
+            --dart-define=KEYSTORE_PASSWORD=$(Get-Content keystore_password.txt) `
+            --dart-define=KEY_PASSWORD=$(Get-Content key_password.txt)
+        shell: pwsh
+      
+      #15 Rename the APK file
       - name: Rename APK file
         shell: pwsh
         run: |
@@ -91,7 +111,7 @@ jobs:
           Write-Output "Renaming $APK_SOURCE to $folder/$NewFileName"
           Rename-Item -Path $APK_SOURCE -NewName $NewFileName
 
-      #14 Compress Artifacts
+      #16 Compress Artifacts
       - name: Compress Artifacts
         shell: powershell
         run: |
@@ -99,7 +119,7 @@ jobs:
           $NewFileName = "countapp-$version.zip"
           Compress-Archive -Path 'build/windows/x64/runner/Release/*' -DestinationPath $NewFileName
 
-      #15 Upload Artifacts
+      #17 Upload Artifacts
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -108,7 +128,7 @@ jobs:
             build/app/outputs/flutter-apk/countapp-${{ env.VERSION }}.apk
             countapp-${{ env.VERSION }}.zip
 
-      #16 Create Release
+      #18 Create Release
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
