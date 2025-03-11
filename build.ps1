@@ -3,12 +3,6 @@ $APP_NAME = "countapp"
 $ANDROID_BUILD = "build\app\outputs\flutter-apk\app-release.apk"
 $WINDOWS_BUILD = "build\windows\x64\runner\Release\*"
 
-$MANIFEST_PATH = "android\app\src\main\AndroidManifest.xml"
-$PERMISSIONS = @"
-<uses-permission android:name="android.permission.INTERNET"/>
-<uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/>
-"@
-
 $VERSION = ""
 
 function GetVersion {
@@ -28,33 +22,6 @@ function GetVersion {
 }
 
 function GenerateEnvironment {
-    Write-Host "`nCleaning up previous builds..."
-    flutter clean
-
-    $ProgressPreference = 'SilentlyContinue'
-
-    Write-Host "`nCleaning up previous platforms..."
-    Remove-Item "android" -Force -Recurse -ErrorAction SilentlyContinue
-    Remove-Item "windows" -Force -Recurse -ErrorAction SilentlyContinue
-
-    Write-Host "`nInstalling dependencies..."
-    flutter pub get
-
-    Write-Host "`nCreating Android platform..."
-    flutter create --platforms=android --android-language=java .
-    Write-Host "`nAdding Permissions..."
-
-    (Get-Content $MANIFEST_PATH) | ForEach-Object {
-        if ($_ -match "</manifest>") {
-            $PERMISSIONS
-        }
-        $_
-    } | Set-Content $MANIFEST_PATH
-
-    Write-Host "`nCreating Windows platform..."
-    flutter create --platforms=windows .
-    Write-Host "`nRemoving Test folder..."
-    Remove-Item "test" -Force -Recurse -ErrorAction SilentlyContinue 
     Write-Host "`nRunning package_rename..."
     dart run package_rename
     Write-Host "`nRunning flutter_launcher_icons..."
@@ -62,6 +29,9 @@ function GenerateEnvironment {
 }
 
 function CleanEnvironment {
+    Write-Host "`nCleaning up previous builds..."
+    flutter clean
+
     if (Test-Path $RELEASE_FOLDER) {
         Remove-Item "$RELEASE_FOLDER\*" -Recurse -Force -ErrorAction SilentlyContinue
         Write-Host "`nCleaned release folder."
@@ -105,7 +75,6 @@ function BuildWindows {
 
 function All {
     GetVersion
-    GenerateEnvironment
     CleanEnvironment
     BuildAndroid
     BuildWindows
@@ -114,10 +83,10 @@ function All {
 $task = $args[0] 
 
 switch ($task) {
-    "generate" { GenerateEnvironment }
     "clean" { CleanEnvironment }
+    "generate" { GenerateEnvironment }
     "build_android" { BuildAndroid }
     "build_windows" { BuildWindows }
     "all" { All }
-    default { Write-Host "Invalid task. Available tasks: generate, clean, build_android, build_windows, all" }
+    default { Write-Host "Invalid task. Available tasks: clean, generate, build_android, build_windows, all" }
 }
