@@ -79,13 +79,18 @@ jobs:
           [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String("${{ secrets.ANDROID_KEYSTORE }}")) | Set-Content -Path android/app/keystore.jks
         shell: pwsh
       
-      #13 Decode Keystore Credentials
-      - name: Decode Keystore Credentials
+      #13 Create key.properties file
+      - name: Create key.properties
         run: |
-          [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String("${{ secrets.KEYSTORE_ALIAS }}")) | Set-Content -Path keystore_alias.txt
-          [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String("${{ secrets.KEYSTORE_PASSWORD }}")) | Set-Content -Path keystore_password.txt
-          [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String("${{ secrets.KEY_PASSWORD }}")) | Set-Content -Path key_password.txt
+          $content = @"
+          storePassword=${{ secrets.KEYSTORE_PASSWORD }}
+          keyPassword=${{ secrets.KEY_PASSWORD }}
+          keyAlias=${{ secrets.KEYSTORE_ALIAS }}
+          storeFile=keystore.jks
+          "@
+          Set-Content -Path android/app/key.properties -Value $content
         shell: pwsh
+
       
       #14 Build Signed APK
       - name: Build Signed APK
