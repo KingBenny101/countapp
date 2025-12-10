@@ -1,103 +1,80 @@
 # Core Concepts
 
-Understanding the fundamental concepts behind Count App's architecture and design.
+## Counter Abstraction
 
-## The Counter Abstraction
+All counters extend the `BaseCounter` abstract class, enabling polymorphism and extensibility.
 
-At the heart of Count App is the concept of **counters as polymorphic objects**. Each counter is an instance of a class that extends the abstract `BaseCounter` class.
+**Benefits:**
 
-### Why Abstraction?
-
-```mermaid
-graph TD
-    A[User wants to track something] --> B{What kind of counting?}
-    B -->|Simple tap| C[TapCounter]
-    B -->|Requires confirmation| D[TapCounter with confirmation]
-    B -->|Future: Long press| E[LongPressCounter]
-    B -->|Future: Gesture| F[SwipeCounter]
-
-    C --> G[All extend BaseCounter]
-    D --> G
-    E --> G
-    F --> G
-
-    G --> H[Uniform interface for UI]
-    H --> I[Easy to add new types]
-
-    style G fill:#e1f5ff
-```
-
-**Benefits**:
-
-- **Extensibility**: Add new counter types without changing existing code
-- **Consistency**: All counters behave predictably
-- **Maintainability**: Changes to base behavior propagate automatically
-- **Testability**: Mock and test through common interface
+- Add new counter types without modifying existing code
+- Consistent interface for UI
+- Easy testing through common interface
 
 ## State Management
 
-### Provider Pattern
-
-Count App uses the Provider pattern for reactive state management:
-
-```mermaid
-sequenceDiagram
-    participant UI as UI Widget
-    participant Provider as CounterProvider
-    participant Model as Counter Model
-    participant Storage as Hive Storage
-
-    UI->>Provider: Read counters
-    Provider-->>UI: List<BaseCounter>
-
-    UI->>Provider: updateCounter(index)
-    Provider->>Model: onInteraction()
-    Model-->>Provider: Updated
-    Provider->>Storage: Persist
-    Provider->>Provider: notifyListeners()
-    Provider-->>UI: Rebuild with new state
-```
-
-**Key Principles**:
-
-1. **Single Source of Truth**: Provider holds the authoritative state
-2. **Reactive Updates**: UI rebuilds automatically on state changes
-3. **Separation of Concerns**: Business logic in provider, presentation in widgets
-4. **Immutability**: State changes create new references for change detection
-
-### State Lifecycle
+Uses the **Provider pattern** with `ChangeNotifier`:
 
 ```dart
-// 1. Provider initialization
-final provider = Provider.of<CounterProvider>(context);
+// Provider holds state
+class CounterProvider extends ChangeNotifier {
+  List<BaseCounter> counters = [];
 
-// 2. Load state from storage
-await provider.loadCounters();
-
-// 3. Update state
-await provider.updateCounter(context, index);
-
-// 4. Notify listeners (automatic)
-// UI rebuilds with new state
+  Future<void> updateCounter(int index) async {
+    await counters[index].onInteraction(context);
+    notifyListeners(); // UI rebuilds
+    await _saveCounters();
+  }
+}
 ```
+
+**Flow:**
+
+1. UI reads state from Provider
+2. User action triggers Provider method
+3. Provider updates state
+4. `notifyListeners()` rebuilds UI
+5. Changes persisted to storage
 
 ## Data Persistence
 
-### Hive CE Storage
+**Hive CE** provides type-safe binary storage:
 
-Hive CE provides **NoSQL box-based storage** with type-safe serialization:
+- Fast local database
+- Generated type adapters
+- Automatic serialization
+- Cross-platform support
 
-```mermaid
-graph LR
-    A[Counter Object] -->|TypeAdapter| B[Binary Data]
-    B -->|Storage| C[Hive Box]
-    C -->|TypeAdapter| D[Counter Object]
+**Type Adapters:**
 
-    style B fill:#e1ffe1
-    style C fill:#e1ffe1
+```dart
+@HiveType(typeId: 1)
+class TapCounter extends BaseCounter {
+  @HiveField(0)
+  final int stepSize;
+
+  // ... fields with @HiveField annotations
+}
 ```
 
-**Why Hive?**
+Generate with: `dart run build_runner build`
+
+## Factory Pattern
+
+`CounterFactory` creates counters from JSON:
+
+```dart
+BaseCounter counter = CounterFactory.fromJson({
+  "counterType": "tap",
+  "name": "My Counter",
+  // ...
+});
+```
+
+This enables:
+
+- Import/export functionality
+- Dynamic counter creation
+- Type-safe deserialization
 
 - **Type Safety**: Generated adapters prevent serialization errors
 - **Performance**: Binary format is fast and compact

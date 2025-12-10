@@ -1,224 +1,104 @@
 # Architecture Overview
 
-Count App is built with a clean, modular architecture that emphasizes extensibility, maintainability, and testability. This document provides a high-level overview of the system design.
+Count App uses a clean, modular architecture with clear separation of concerns.
 
-## Architecture Diagram
+## High-Level Structure
 
 ```mermaid
 graph TB
-    subgraph "UI Layer"
-        A[Screens] --> B[Widgets]
-        B --> C[Theme]
-    end
+    A[UI Layer] --> B[Provider Layer]
+    B --> C[Business Logic]
+    C --> D[Data Layer]
+    D --> E[(Hive Storage)]
 
-    subgraph "State Management"
-        D[CounterProvider] --> E[ChangeNotifier]
-        F[ThemeNotifier] --> E
-    end
-
-    subgraph "Business Logic"
-        G[BaseCounter Abstract] --> H[TapCounter]
-        G --> I[Future Counter Types]
-        J[CounterFactory] --> G
-        K[DateStatistics] --> L[Statistics Utils]
-    end
-
-    subgraph "Data Layer"
-        M[Hive Storage] --> N[Type Adapters]
-        O[JSON Import/Export] --> P[File System]
-    end
-
-    A --> D
-    A --> F
-    D --> J
-    H --> M
-    I --> M
-    N --> H
-    N --> I
-
-    style G fill:#e1f5ff
-    style D fill:#ffe1e1
-    style M fill:#e1ffe1
+    C --> F[Counter Factory]
+    F --> G[TapCounter]
+    F --> H[Future Types]
 ```
-
-## Architectural Principles
-
-### 1. Separation of Concerns
-
-Each layer has a distinct responsibility:
-
-- **UI Layer**: Presentation and user interaction
-- **State Management**: Application state and reactivity
-- **Business Logic**: Counter behavior and rules
-- **Data Layer**: Persistence and serialization
-
-### 2. Extensibility
-
-The architecture supports adding new features without modifying existing code:
-
-- Abstract base classes define contracts
-- Factory pattern for dynamic type creation
-- Polymorphic method dispatch
-- Plugin-like counter system
-
-### 3. Type Safety
-
-Strong typing throughout the codebase:
-
-- Dart's null safety
-- Hive's typed storage
-- Code generation for adapters
-- Generic utilities where appropriate
-
-### 4. Testability
-
-Design facilitates testing:
-
-- Dependency injection via Provider
-- Pure functions in utilities
-- Mockable interfaces
-- Isolated counter logic
 
 ## Core Components
 
 ### Counter System
 
-```mermaid
-classDiagram
-    class BaseCounter {
-        <<abstract>>
-        +String id
-        +String name
-        +int value
-        +DateTime lastUpdated
-        +List~DateTime~ updates
-        +String counterType
-        +onInteraction() bool
-        +buildIcon() Widget
-        +getSubtitle() String
-        +getColor() Color
-        +toJson() Map
-        +validate() bool
-        +getStatisticsPage() Widget
-    }
+All counters inherit from `BaseCounter` abstract class:
 
-    class TapCounter {
-        +int stepSize
-        +bool isIncrement
-        +bool requireConfirmation
-        +onInteraction() bool
-        +buildIcon() Widget
-    }
+```dart
+abstract class BaseCounter {
+  String id;
+  String name;
+  int value;
+  DateTime? lastUpdated;
+  List<DateTime> updates;
 
-    class CounterFactory {
-        +fromJson() BaseCounter
-        +getSupportedTypes() List
-    }
-
-    BaseCounter <|-- TapCounter
-    CounterFactory ..> BaseCounter
+  // Must implement
+  String get counterType;
+  Future<bool> onInteraction(BuildContext context);
+  Widget buildIcon();
+  Color getColor();
+}
 ```
 
-**Key Features:**
-
-- **Polymorphism**: All counters implement `BaseCounter`
-- **Self-Contained**: Each counter manages its own logic
-- **Factory Pattern**: Dynamic instantiation from JSON
-- **Extensible**: Add new types without modifying existing code
+**CounterFactory** dynamically creates counters from JSON based on `counterType`.
 
 ### State Management
 
-```mermaid
-graph LR
-    A[UI Widget] -->|Read State| B[Provider]
-    B -->|Notify Listeners| A
-    A -->|Update Action| C[CounterProvider]
-    C -->|Modify State| D[Counter List]
-    C -->|Persist| E[Hive Box]
-    E -->|Load| C
-
-    style B fill:#ffe1e1
-    style C fill:#ffe1e1
-```
-
-**Provider Pattern:**
-
-- `CounterProvider`: Manages counter list and operations
-- `ThemeNotifier`: Handles theme state
-- `ChangeNotifier`: Reactive updates to UI
-- Scoped providers for efficient rebuilds
+- **CounterProvider**: Manages counter list, uses `ChangeNotifier`
+- **ThemeNotifier**: Handles theme state
+- UI widgets use `Consumer<T>` to rebuild on state changes
 
 ### Data Persistence
 
-```mermaid
-sequenceDiagram
-    participant App
-    participant Provider
-    participant Hive
-    participant Adapter
-    participant Storage
-
-    App->>Provider: addCounter()
-    Provider->>Hive: box.add()
-    Hive->>Adapter: write()
-    Adapter->>Storage: Binary Data
-    Storage-->>App: Success
-
-    App->>Provider: loadCounters()
-    Provider->>Hive: box.values
-    Hive->>Adapter: read()
-    Adapter->>Storage: Binary Data
-    Storage-->>Provider: Counter Objects
-    Provider-->>App: List<BaseCounter>
-```
-
-**Hive CE Storage:**
-
-- Type-safe binary serialization
-- Generated type adapters
-- Lazy box initialization
-- Atomic transactions
+- **Hive CE**: Type-safe binary storage
+- **Type Adapters**: Generated with `build_runner`
+- **Auto-save**: Provider automatically persists changes
 
 ## Directory Structure
 
 ```
 lib/
-├── counters/                   # Counter implementations
-│   ├── base/                   # Base classes and factory
-│   │   ├── base_counter.dart   # Abstract base class
-│   │   └── counter_factory.dart # Factory for instantiation
-│   └── tap_counter/            # TapCounter implementation
-│       ├── tap_counter.dart    # Main class
-│       ├── tap_counter.g.dart  # Generated adapter
-│       ├── tap_counter_config.dart     # Config UI
-│       ├── tap_counter_statistics.dart # Statistics UI
-│       └── tap_counter_updates.dart    # Updates UI
-├── models/                     # Legacy data models
-│   └── counter_model.dart      # Old Counter (for migration)
-├── providers/                  # State management
-│   └── counter_provider.dart   # Counter state provider
-├── screens/                    # Main application screens
-│   ├── home_page.dart          # Counter list
-│   ├── add_counter_page.dart   # Type selection
-│   ├── options_page.dart       # Settings
-│   ├── info_page.dart          # App info
-│   ├── about_page.dart         # About
-│   ├── guide_page.dart         # User guide
-│   ├── all_updates_page.dart   # All updates view
-│   └── update_page.dart        # Single update view
-├── theme/                      # Theme configuration
-│   └── theme_notifier.dart     # Theme state management
-├── utils/                      # Utility functions
-│   ├── constants.dart          # App constants
-│   ├── statistics.dart         # Date/time utilities
-│   ├── widgets.dart            # Reusable widgets
-│   ├── files.dart              # File operations
-│   ├── permissions.dart        # Permission handling
-│   ├── migration.dart          # Data migration
-│   └── updates.dart            # Update utilities
-├── hive_registrar.g.dart       # Generated Hive registration
-└── main.dart                   # Application entry point
+├── counters/
+│   ├── base/
+│   │   ├── base_counter.dart      # Abstract class
+│   │   └── counter_factory.dart   # Factory pattern
+│   └── tap_counter/
+│       ├── tap_counter.dart       # Implementation
+│       └── tap_counter_config.dart # UI
+├── providers/
+│   └── counter_provider.dart      # State management
+├── screens/                       # App screens
+├── theme/                         # Theme system
+└── utils/                         # Utilities
 ```
+
+## Key Principles
+
+- **Extensibility**: Add counter types without modifying existing code
+- **Polymorphism**: All counters implement `BaseCounter`
+- **Type Safety**: Strong typing with null safety
+- **Single Responsibility**: Each class has one clear purpose
+
+│ ├── home_page.dart # Counter list
+│ ├── add_counter_page.dart # Type selection
+│ ├── options_page.dart # Settings
+│ ├── info_page.dart # App info
+│ ├── about_page.dart # About
+│ ├── guide_page.dart # User guide
+│ ├── all_updates_page.dart # All updates view
+│ └── update_page.dart # Single update view
+├── theme/ # Theme configuration
+│ └── theme_notifier.dart # Theme state management
+├── utils/ # Utility functions
+│ ├── constants.dart # App constants
+│ ├── statistics.dart # Date/time utilities
+│ ├── widgets.dart # Reusable widgets
+│ ├── files.dart # File operations
+│ ├── permissions.dart # Permission handling
+│ ├── migration.dart # Data migration
+│ └── updates.dart # Update utilities
+├── hive_registrar.g.dart # Generated Hive registration
+└── main.dart # Application entry point
+
+````
 
 ## Design Patterns
 
@@ -240,7 +120,7 @@ class CounterFactory {
     }
   }
 }
-```
+````
 
 ### 2. Strategy Pattern
 

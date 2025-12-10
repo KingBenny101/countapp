@@ -1,102 +1,51 @@
 # Installation
 
-This guide will help you set up your development environment for Count App.
-
 ## Prerequisites
 
-Before you begin, ensure you have the following installed:
+- Flutter SDK 3.3.3+
+- Dart SDK 3.3.3+ (bundled with Flutter)
+- Git
 
-### Required Software
+### Platform Requirements
 
-#### 1. Flutter SDK
+- **Android**: Android Studio with SDK (API 21+)
+- **Windows**: Visual Studio 2022 with C++ desktop development
+- **Linux**: Standard development tools (`build-essential`, `libgtk-3-dev`)
 
-Install Flutter SDK version 3.3.3 or higher:
+## Setup
 
-=== "Windows"
+1. **Clone the repository**:
 
-    ```powershell
-    # Download Flutter SDK
-    # Visit https://docs.flutter.dev/get-started/install/windows
+   ```bash
+   git clone https://github.com/KingBenny101/countapp.git
+   cd countapp
+   ```
 
-    # Add Flutter to PATH
-    # Add C:\path\to\flutter\bin to your system PATH
+2. **Install dependencies**:
 
-    # Verify installation
-    flutter --version
-    ```
+   ```bash
+   flutter pub get
+   ```
 
-=== "Linux"
+3. **Generate code**:
 
-    ```bash
-    # Download and extract Flutter
-    cd ~/development
-    wget https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.16.0-stable.tar.xz
-    tar xf flutter_linux_3.16.0-stable.tar.xz
+   ```bash
+   dart run build_runner build --delete-conflicting-outputs
+   ```
 
-    # Add to PATH
-    export PATH="$PATH:`pwd`/flutter/bin"
+4. **Run the app**:
 
-    # Verify installation
-    flutter --version
-    ```
+   ```bash
+   flutter run
+   ```
 
-=== "macOS"
-
-    ```bash
-    # Download and extract Flutter
-    cd ~/development
-    curl -O https://storage.googleapis.com/flutter_infra_release/releases/stable/macos/flutter_macos_3.16.0-stable.zip
-    unzip flutter_macos_3.16.0-stable.zip
-
-    # Add to PATH
-    export PATH="$PATH:`pwd`/flutter/bin"
-
-    # Verify installation
-    flutter --version
-    ```
-
-#### 2. Dart SDK
-
-Dart SDK 3.3.3+ comes bundled with Flutter. Verify with:
+## Verify Installation
 
 ```bash
-dart --version
+flutter doctor
 ```
 
-#### 3. Platform-Specific Requirements
-
-=== "Android"
-
-    **Android Studio** and Android SDK:
-
-    1. Download [Android Studio](https://developer.android.com/studio)
-    2. Install Android SDK (API level 21 or higher)
-    3. Set up Android SDK tools:
-
-    ```bash
-    flutter doctor --android-licenses
-    ```
-
-    4. Set environment variables:
-
-    ```bash
-    export ANDROID_HOME=$HOME/Android/Sdk
-    export PATH=$PATH:$ANDROID_HOME/tools
-    export PATH=$PATH:$ANDROID_HOME/platform-tools
-    ```
-
-=== "Windows"
-
-    **Visual Studio 2022** with C++ desktop development:
-
-    1. Download [Visual Studio 2022](https://visualstudio.microsoft.com/downloads/)
-    2. Install with "Desktop development with C++" workload
-    3. Ensure the following components are selected:
-        - MSVC v142 or higher
-        - Windows 10 SDK
-        - C++ CMake tools for Windows
-
-=== "Linux"
+All required components should show checkmarks for your target platform.
 
     **Dependencies for Linux desktop**:
 

@@ -1,12 +1,6 @@
 # Quick Start
 
-Get Count App up and running in minutes! This guide assumes you've already completed the [Installation](installation.md) steps.
-
-## Running the App
-
-### Development Mode
-
-Run the app in debug mode on your connected device or emulator:
+## Run the App
 
 ```bash
 flutter run
@@ -14,90 +8,47 @@ flutter run
 
 Or specify a platform:
 
-=== "Android"
-
-    ```bash
-    flutter run -d android
-    ```
-
-=== "Windows"
-
-    ```bash
-    flutter run -d windows
-    ```
-
-=== "Linux"
-
-    ```bash
-    flutter run -d linux
-    ```
-
-### Hot Reload
-
-While the app is running, you can:
-
-- **Hot Reload**: Press `r` in the terminal to reload code changes
-- **Hot Restart**: Press `R` to restart the app
-- **Quit**: Press `q` to stop the app
-
-## First Time Setup
-
-When you first launch Count App:
-
-1. **Theme Selection**: The app automatically detects your system theme (light/dark)
-2. **Empty State**: You'll see an empty counter list
-3. **Ready to Use**: The app is ready to create your first counter!
-
-## Creating Your First Counter
-
-### Using the UI
-
-1. **Tap the FAB**: Click the floating action button (➕) at the bottom right
-2. **Select Counter Type**: Currently, "Tap Counter" is available
-3. **Configure Counter**:
-   - **Name**: Enter a descriptive name (e.g., "Water Intake")
-   - **Step Size**: Set increment/decrement value (e.g., 1)
-   - **Direction**: Toggle switch for increment (➕) or decrement (➖)
-   - **Initial Count**: Starting value (default: 0)
-4. **Create**: Tap the FAB to save
-
-### Example Configuration
-
+```bash
+flutter run -d android    # Android
+flutter run -d windows    # Windows
+flutter run -d linux      # Linux
 ```
-Counter Name: Daily Steps
-Step Size: 100
-Direction: Increment (ON)
-Initial Count: 0
-```
+
+## Creating a Counter
+
+1. Tap the ➕ button
+2. Select counter type (currently only "Tap Counter")
+3. Configure:
+   - **Name**: Counter name
+   - **Step Size**: Increment/decrement value
+   - **Direction**: Up or down
+   - **Initial Count**: Starting value
+4. Tap ➕ to create
 
 ## Using Counters
 
-### Update a Counter
+- **Tap counter** to update value
+- **Long-press** for options (statistics, delete)
+- **Menu** (⋮) for all updates, info, options, theme toggle
 
-1. **Tap the counter** in the list
-2. **Confirmation Dialog** appears (if enabled)
-3. **Confirm** to update the counter value
-4. **Snackbar** shows success message
+## Viewing Statistics
 
-### View Counter Details
+1. Long-press a counter and select "Statistics"
+2. View charts showing:
+   - Line chart: Value over time
+   - Bar chart: Updates by day
 
-Each counter displays:
+## Import/Export
 
-- **Icon**: Color-coded by type (blue for Tap Counter)
-- **Name**: Counter display name
-- **Current Value**: Large number showing count
-- **Subtitle**: Shows step size and direction
-- **Last Updated**: Timestamp of last update
+**Export**:
 
-### Counter Actions
+1. Menu → Options → Export Counters
+2. JSON file saved to device
 
-Long-press or select counters to access:
+**Import**:
 
-- **Statistics**: View detailed analytics and charts
-- **🗑️ Delete**: Remove selected counters
-- **Cancel**: Clear selection
-
-## Navigation
+1. Menu → Options → Import Counters
+2. Select JSON file
 
 ### Main Screen (Home)
 
