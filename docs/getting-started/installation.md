@@ -1,18 +1,11 @@
-# Installation
+# Setup
 
 ## Prerequisites
 
-- Flutter SDK 3.3.3+
-- Dart SDK 3.3.3+ (bundled with Flutter)
+- [Flutter SDK 3.3.3+](https://docs.flutter.dev/get-started/install)
 - Git
 
-### Platform Requirements
-
-- **Android**: Android Studio with SDK (API 21+)
-- **Windows**: Visual Studio 2022 with C++ desktop development
-- **Linux**: Standard development tools (`build-essential`, `libgtk-3-dev`)
-
-## Setup
+## Installation
 
 1. **Clone the repository**:
 
@@ -27,7 +20,7 @@
    flutter pub get
    ```
 
-3. **Generate code**:
+3. **Generate code** (required for Hive adapters):
 
    ```bash
    dart run build_runner build --delete-conflicting-outputs
@@ -39,13 +32,15 @@
    flutter run
    ```
 
-## Verify Installation
+## Troubleshooting
+
+If you encounter issues, run:
 
 ```bash
 flutter doctor
 ```
 
-All required components should show checkmarks for your target platform.
+This will check your Flutter installation and show any missing dependencies for your target platform.
 
     **Dependencies for Linux desktop**:
 

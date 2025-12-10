@@ -13,9 +13,10 @@ A Flutter counter app with extensible architecture, statistics, and cross-platfo
 
 ## Quick Links
 
-- [Quick Start](getting-started/quick-start.md) - Build and run the app
+- [Setup](getting-started/installation.md) - Clone and run the app
+- [Building](getting-started/building.md) - Create release builds
 - [API Reference](api/base-counter.md) - API documentation
-- [Adding Counter Types](guides/adding-counter-types.md) - Extend the app with new counter types
+- [Adding Counter Types](guides/adding-counter-types.md) - Extend the app
 
 ## Support
 

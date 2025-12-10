@@ -118,16 +118,9 @@ extra:
 nav:
   - Home: index.md
   - Getting Started:
-      - Installation: getting-started/installation.md
-      - Quick Start: getting-started/quick-start.md
+      - Setup: getting-started/installation.md
       - Building: getting-started/building.md
       - Configuration: getting-started/configuration.md
-  - Architecture:
-      - Overview: architecture/overview.md
-      - Core Concepts: architecture/core-concepts.md
-      - Counter System: architecture/counter-system.md
-      - State Management: architecture/state-management.md
-      - Data Persistence: architecture/data-persistence.md
   - API Reference:
       - Base Classes:
           - BaseCounter: api/base-counter.md
