@@ -30,7 +30,7 @@ jobs:
 
       - name: Extract version
         id: version
-        run: echo "VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: //' | tr -d '[:space:]')" >> $GITHUB_OUTPUT
+        run: echo "VERSION=$(grep '^version:' pubspec.yaml | awk '{print $2}')" >> $GITHUB_OUTPUT
 
       - name: Install Dependencies
         run: flutter pub get
@@ -112,7 +112,7 @@ jobs:
 
       - name: Extract version
         id: version
-        run: echo "VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: //' | tr -d '[:space:]')" >> $GITHUB_OUTPUT
+        run: echo "VERSION=$(grep '^version:' pubspec.yaml | awk '{print $2}')" >> $GITHUB_OUTPUT
 
       - name: Install Dependencies
         run: flutter pub get
@@ -142,7 +142,7 @@ jobs:
 
       - name: Extract version
         id: version
-        run: echo "VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: //' | tr -d '[:space:]')" >> $GITHUB_OUTPUT
+        run: echo "VERSION=$(grep '^version:' pubspec.yaml | awk '{print $2}')" >> $GITHUB_OUTPUT
 
       - name: Download All Artifacts
         uses: actions/download-artifact@v4
