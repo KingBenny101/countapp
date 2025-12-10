@@ -292,13 +292,26 @@ class HomePageState extends State<HomePage> {
 
                     if (result != null) {
                       final String filePath = result.files.single.path!;
-                      await importJSON(counterProvider, filePath);
 
-                      if (context.mounted) {
-                        Navigator.of(context).pop();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          buildAppSnackBar("Counters Imported Successfully!"),
-                        );
+                      try {
+                        await importJSON(counterProvider, filePath);
+
+                        if (context.mounted) {
+                          Navigator.of(context).pop();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            buildAppSnackBar("Counters Imported Successfully!"),
+                          );
+                        }
+                      } catch (e) {
+                        if (context.mounted) {
+                          Navigator.of(context).pop();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            buildAppSnackBar(
+                              "Failed to import: Invalid JSON format",
+                              success: false,
+                            ),
+                          );
+                        }
                       }
                     }
                   },
@@ -391,6 +404,7 @@ class HomePageState extends State<HomePage> {
                         final success = await exportJSON(exportFilePath);
 
                         if (context.mounted) {
+                          Navigator.of(context).pop();
                           ScaffoldMessenger.of(context).showSnackBar(
                             buildAppSnackBar(
                               success
