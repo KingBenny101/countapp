@@ -9,13 +9,13 @@
         <meta name="author" content="KingBenny101">
       
       
-        <link rel="canonical" href="https://kingbenny101.github.io/countapp/api/tap-counter/">
+        <link rel="canonical" href="https://kingbenny101.github.io/countapp/api/series-counter/">
       
       
-        <link rel="prev" href="../counter-factory/">
+        <link rel="prev" href="../tap-counter/">
       
       
-        <link rel="next" href="../series-counter/">
+        <link rel="next" href="../counter-provider/">
       
       
         
@@ -26,7 +26,7 @@
     
     
       
-        <title>TapCounter - Count App Documentation</title>
+        <title>SeriesCounter - Count App Documentation</title>
       
     
     
@@ -87,7 +87,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#tapcounter-api-reference" class="md-skip">
+        <a href="#seriescounter-api-reference" class="md-skip">
           Skip to content
         </a>
       
@@ -121,7 +121,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              TapCounter
+              SeriesCounter
             
           </span>
         </div>
@@ -773,6 +773,34 @@
                 
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../tap-counter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    TapCounter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
     
   
   
@@ -792,7 +820,7 @@
   <span class="md-ellipsis">
     
   
-    TapCounter
+    SeriesCounter
   
 
     
@@ -810,7 +838,7 @@
   <span class="md-ellipsis">
     
   
-    TapCounter
+    SeriesCounter
   
 
     
@@ -859,10 +887,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#stepsize" class="md-nav__link">
+  <a href="#seriesvalues" class="md-nav__link">
     <span class="md-ellipsis">
       
-        stepSize
+        seriesValues
       
     </span>
   </a>
@@ -870,10 +898,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#isincrement" class="md-nav__link">
+  <a href="#description" class="md-nav__link">
     <span class="md-ellipsis">
       
-        isIncrement
+        description
       
     </span>
   </a>
@@ -881,10 +909,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#requireconfirmation" class="md-nav__link">
+  <a href="#value" class="md-nav__link">
     <span class="md-ellipsis">
       
-        requireConfirmation
+        value
       
     </span>
   </a>
@@ -974,6 +1002,89 @@
   
 </li>
         
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#statistics-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Statistics Methods
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Statistics Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#getweeklyaverage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        getWeeklyAverage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getmonthlyaverage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        getMonthlyAverage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getweeklyhigh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        getWeeklyHigh
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getweeklylow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        getWeeklyLow
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getalltimehighest" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        getAllTimeHighest
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getalltimelowest" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        getAllTimeLowest
+      
+    </span>
+  </a>
+  
+</li>
+        
           <li class="md-nav__item">
   <a href="#getstatisticspage" class="md-nav__link">
     <span class="md-ellipsis">
@@ -991,22 +1102,83 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#factory-constructor" class="md-nav__link">
+  <a href="#ui-components" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Factory Constructor
+        UI Components
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Factory Constructor">
+    <nav class="md-nav" aria-label="UI Components">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#fromjson" class="md-nav__link">
+  <a href="#seriescounterconfigpage" class="md-nav__link">
     <span class="md-ellipsis">
       
-        fromJson
+        SeriesCounterConfigPage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#seriescounterstatisticspage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SeriesCounterStatisticsPage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#seriescounterupdatespage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SeriesCounterUpdatesPage
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#json-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JSON Format
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="JSON Format">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#importexport-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Import/Export Format
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#backward-compatibility" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backward Compatibility
       
     </span>
   </a>
@@ -1042,10 +1214,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#increment-counter" class="md-nav__link">
+  <a href="#adding-to-provider" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Increment Counter
+        Adding to Provider
       
     </span>
   </a>
@@ -1053,10 +1225,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#decrement-counter" class="md-nav__link">
+  <a href="#accessing-statistics" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Decrement Counter
+        Accessing Statistics
       
     </span>
   </a>
@@ -1064,10 +1236,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#quick-update-no-confirmation" class="md-nav__link">
+  <a href="#navigation-to-statistics" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Quick Update (No Confirmation)
+        Navigation to Statistics
       
     </span>
   </a>
@@ -1080,10 +1252,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#statistics-page" class="md-nav__link">
+  <a href="#related-documentation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Statistics Page
+        Related Documentation
       
     </span>
   </a>
@@ -1091,13 +1263,52 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#see-also" class="md-nav__link">
+  <a href="#integration" class="md-nav__link">
     <span class="md-ellipsis">
       
-        See Also
+        Integration
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Integration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#factory-registration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Factory Registration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#type-info" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Type Info
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hive-adapter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hive Adapter
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1105,34 +1316,6 @@
   
 </nav>
       
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../series-counter/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SeriesCounter
-  
-
-    
-  </span>
-  
-  
-
-      </a>
     </li>
   
 
@@ -1381,10 +1564,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#stepsize" class="md-nav__link">
+  <a href="#seriesvalues" class="md-nav__link">
     <span class="md-ellipsis">
       
-        stepSize
+        seriesValues
       
     </span>
   </a>
@@ -1392,10 +1575,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#isincrement" class="md-nav__link">
+  <a href="#description" class="md-nav__link">
     <span class="md-ellipsis">
       
-        isIncrement
+        description
       
     </span>
   </a>
@@ -1403,10 +1586,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#requireconfirmation" class="md-nav__link">
+  <a href="#value" class="md-nav__link">
     <span class="md-ellipsis">
       
-        requireConfirmation
+        value
       
     </span>
   </a>
@@ -1496,6 +1679,89 @@
   
 </li>
         
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#statistics-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Statistics Methods
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Statistics Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#getweeklyaverage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        getWeeklyAverage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getmonthlyaverage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        getMonthlyAverage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getweeklyhigh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        getWeeklyHigh
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getweeklylow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        getWeeklyLow
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getalltimehighest" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        getAllTimeHighest
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getalltimelowest" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        getAllTimeLowest
+      
+    </span>
+  </a>
+  
+</li>
+        
           <li class="md-nav__item">
   <a href="#getstatisticspage" class="md-nav__link">
     <span class="md-ellipsis">
@@ -1513,22 +1779,83 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#factory-constructor" class="md-nav__link">
+  <a href="#ui-components" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Factory Constructor
+        UI Components
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Factory Constructor">
+    <nav class="md-nav" aria-label="UI Components">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#fromjson" class="md-nav__link">
+  <a href="#seriescounterconfigpage" class="md-nav__link">
     <span class="md-ellipsis">
       
-        fromJson
+        SeriesCounterConfigPage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#seriescounterstatisticspage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SeriesCounterStatisticsPage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#seriescounterupdatespage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SeriesCounterUpdatesPage
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#json-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        JSON Format
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="JSON Format">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#importexport-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Import/Export Format
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#backward-compatibility" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backward Compatibility
       
     </span>
   </a>
@@ -1564,10 +1891,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#increment-counter" class="md-nav__link">
+  <a href="#adding-to-provider" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Increment Counter
+        Adding to Provider
       
     </span>
   </a>
@@ -1575,10 +1902,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#decrement-counter" class="md-nav__link">
+  <a href="#accessing-statistics" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Decrement Counter
+        Accessing Statistics
       
     </span>
   </a>
@@ -1586,10 +1913,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#quick-update-no-confirmation" class="md-nav__link">
+  <a href="#navigation-to-statistics" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Quick Update (No Confirmation)
+        Navigation to Statistics
       
     </span>
   </a>
@@ -1602,10 +1929,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#statistics-page" class="md-nav__link">
+  <a href="#related-documentation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Statistics Page
+        Related Documentation
       
     </span>
   </a>
@@ -1613,13 +1940,52 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#see-also" class="md-nav__link">
+  <a href="#integration" class="md-nav__link">
     <span class="md-ellipsis">
       
-        See Also
+        Integration
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Integration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#factory-registration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Factory Registration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#type-info" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Type Info
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hive-adapter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hive Adapter
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1643,73 +2009,74 @@
   
 
 
-<h1 id="tapcounter-api-reference">TapCounter API Reference<a class="headerlink" href="#tapcounter-api-reference" title="Permanent link">¶</a></h1>
-<p><code>TapCounter</code> is a concrete implementation of <code>BaseCounter</code> that updates its value when tapped, with configurable step size and direction.</p>
+<h1 id="seriescounter-api-reference">SeriesCounter API Reference<a class="headerlink" href="#seriescounter-api-reference" title="Permanent link">¶</a></h1>
+<p><code>SeriesCounter</code> is a concrete implementation of <code>BaseCounter</code> that stores a series of numeric values over time, allowing users to track trends and view statistics.</p>
 <h2 id="class-definition">Class Definition<a class="headerlink" href="#class-definition" title="Permanent link">¶</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nd">@HiveType</span><span class="p">(</span><span class="nl">typeId:</span><span class="w"> </span><span class="m">1</span><span class="p">)</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kd">class</span><span class="w"> </span><span class="nc">TapCounter</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">BaseCounter</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="n">TapCounter</span><span class="p">({</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nd">@HiveType</span><span class="p">(</span><span class="nl">typeId:</span><span class="w"> </span><span class="m">2</span><span class="p">)</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kd">class</span><span class="w"> </span><span class="nc">SeriesCounter</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">BaseCounter</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="n">SeriesCounter</span><span class="p">({</span>
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="kt">String</span><span class="o">?</span><span class="w"> </span><span class="n">id</span><span class="p">,</span>
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">name</span><span class="p">,</span>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">value</span><span class="p">,</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">stepSize</span><span class="p">,</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">    </span><span class="kd">required</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="n">isIncrement</span><span class="p">,</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="n">requireConfirmation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="n">lastUpdated</span><span class="p">,</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">DateTime</span><span class="o">&gt;?</span><span class="w"> </span><span class="n">updates</span><span class="p">,</span>
-<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">  </span><span class="p">});</span>
-<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>
-<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">  </span><span class="kd">factory</span><span class="w"> </span><span class="n">TapCounter</span><span class="p">.</span><span class="n">fromJson</span><span class="p">(</span><span class="n">Map</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span><span class="w"> </span><span class="kt">dynamic</span><span class="o">&gt;</span><span class="w"> </span><span class="n">json</span><span class="p">);</span>
-<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="p">}</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="n">description</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="n">lastUpdated</span><span class="p">,</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="n">DateTime</span><span class="o">&gt;?</span><span class="w"> </span><span class="n">updates</span><span class="p">,</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">    </span><span class="n">List</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;?</span><span class="w"> </span><span class="n">seriesValues</span><span class="p">,</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">  </span><span class="p">});</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">  </span><span class="kd">factory</span><span class="w"> </span><span class="n">SeriesCounter</span><span class="p">.</span><span class="n">fromJson</span><span class="p">(</span><span class="n">Map</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span><span class="w"> </span><span class="kt">dynamic</span><span class="o">&gt;</span><span class="w"> </span><span class="n">json</span><span class="p">);</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="p">}</span>
 </code></pre></div>
-<p><strong>Location</strong>: <code>lib/counters/tap_counter/tap_counter.dart</code></p>
-<p><strong>Hive TypeId</strong>: <code>1</code></p>
+<p><strong>Location</strong>: <code>lib/counters/series_counter/series_counter.dart</code></p>
+<p><strong>Hive TypeId</strong>: <code>2</code></p>
 <h2 id="properties">Properties<a class="headerlink" href="#properties" title="Permanent link">¶</a></h2>
-<h3 id="stepsize">stepSize<a class="headerlink" href="#stepsize" title="Permanent link">¶</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nd">@HiveField</span><span class="p">(</span><span class="m">0</span><span class="p">)</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kd">final</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">stepSize</span><span class="p">;</span>
+<h3 id="seriesvalues">seriesValues<a class="headerlink" href="#seriesvalues" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nd">@HiveField</span><span class="p">(</span><span class="m">5</span><span class="p">)</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">List</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">seriesValues</span><span class="p">;</span>
 </code></pre></div>
-<p>The amount by which the counter value changes on each update.</p>
+<p>List of all numeric values recorded in the series.</p>
 <ul>
-<li><strong>Type</strong>: <code>int</code></li>
-<li><strong>Required</strong>: Yes</li>
-<li><strong>Validation</strong>: Must be &gt; 0</li>
-<li><strong>Example</strong>: <code>1</code>, <code>5</code>, <code>10</code>, <code>100</code></li>
+<li><strong>Type</strong>: <code>List&lt;double&gt;</code></li>
+<li><strong>Required</strong>: No (defaults to empty list)</li>
+<li><strong>Storage</strong>: Values stored in chronological order (most recent first)</li>
+<li><strong>Precision</strong>: Supports decimal values (e.g., <code>5.5</code>, <code>12.75</code>, <code>100.2</code>)</li>
 </ul>
-<h3 id="isincrement">isIncrement<a class="headerlink" href="#isincrement" title="Permanent link">¶</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nd">@HiveField</span><span class="p">(</span><span class="m">1</span><span class="p">)</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kd">final</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">isIncrement</span><span class="p">;</span>
+<h3 id="description">description<a class="headerlink" href="#description" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nd">@HiveField</span><span class="p">(</span><span class="m">6</span><span class="p">)</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kt">String</span><span class="w"> </span><span class="n">description</span><span class="p">;</span>
 </code></pre></div>
-<p>Direction of updates. <code>true</code> for increment, <code>false</code> for decrement.</p>
+<p>Optional description for the counter, displayed as subtitle.</p>
 <ul>
-<li><strong>Type</strong>: <code>bool</code></li>
-<li><strong>Required</strong>: Yes</li>
-<li><strong>Default</strong>: <code>true</code> (increment)</li>
-<li><strong>Behavior</strong>:</li>
-<li><code>true</code>: Adds <code>stepSize</code> to value</li>
-<li><code>false</code>: Subtracts <code>stepSize</code> from value</li>
+<li><strong>Type</strong>: <code>String</code></li>
+<li><strong>Required</strong>: No (defaults to empty string)</li>
+<li><strong>UI Impact</strong>: Shown as subtitle in counter list</li>
+<li><strong>Example</strong>: "Daily weight tracking", "Monthly revenue"</li>
 </ul>
-<h3 id="requireconfirmation">requireConfirmation<a class="headerlink" href="#requireconfirmation" title="Permanent link">¶</a></h3>
+<h3 id="value">value<a class="headerlink" href="#value" title="Permanent link">¶</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nd">@HiveField</span><span class="p">(</span><span class="m">2</span><span class="p">)</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kd">final</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">requireConfirmation</span><span class="p">;</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="nd">@override</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="kt">num</span><span class="w"> </span><span class="n">value</span><span class="p">;</span>
 </code></pre></div>
-<p>Whether to show a confirmation dialog before updating.</p>
+<p>The most recently recorded value in the series.</p>
 <ul>
-<li><strong>Type</strong>: <code>bool</code></li>
-<li><strong>Required</strong>: No</li>
-<li><strong>Default</strong>: <code>true</code></li>
-<li><strong>UI Impact</strong>: When <code>true</code>, shows dialog before each update</li>
+<li><strong>Type</strong>: <code>num</code> (supports both int and double)</li>
+<li><strong>Required</strong>: Yes</li>
+<li><strong>Behavior</strong>: Updated each time a new value is added</li>
 </ul>
 <h2 id="methods">Methods<a class="headerlink" href="#methods" title="Permanent link">¶</a></h2>
 <h3 id="oninteraction">onInteraction<a class="headerlink" href="#oninteraction" title="Permanent link">¶</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nd">@override</span>
 <a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">Future</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">onInteraction</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span>
 </code></pre></div>
-<p>Handles tap interaction, optionally showing confirmation dialog, then updates the counter value.</p>
+<p>Handles user interaction by showing an input dialog for entering a new numeric value.</p>
 <p><strong>Behavior</strong>:</p>
 <ol>
-<li>Show confirmation dialog if <code>requireConfirmation</code> is true</li>
-<li>Update <code>value</code> by <code>stepSize</code> (add if increment, subtract if decrement)</li>
+<li>Display input dialog with last update timestamp</li>
+<li>Accept numeric input (supports decimals)</li>
+<li>Validate input is a valid number</li>
+<li>On confirmation:</li>
+<li>Update <code>value</code> to new input</li>
+<li>Add value to <code>seriesValues</code> list (at index 0)</li>
 <li>Update <code>lastUpdated</code> timestamp</li>
 <li>Add timestamp to <code>updates</code> list</li>
 <li>Return success status</li>
@@ -1717,150 +2084,219 @@
 <p><strong>Example</strong>:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kd">final</span><span class="w"> </span><span class="n">success</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">await</span><span class="w"> </span><span class="n">counter</span><span class="p">.</span><span class="n">onInteraction</span><span class="p">(</span><span class="n">context</span><span class="p">);</span>
 <a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">success</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">  </span><span class="n">print</span><span class="p">(</span><span class="s2">"Counter updated to </span><span class="si">${</span><span class="n">counter</span><span class="p">.</span><span class="n">value</span><span class="si">}</span><span class="s2">"</span><span class="p">);</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">  </span><span class="n">print</span><span class="p">(</span><span class="s2">"New value recorded: </span><span class="si">${</span><span class="n">counter</span><span class="p">.</span><span class="n">value</span><span class="si">}</span><span class="s2">"</span><span class="p">);</span>
 <a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="p">}</span>
 </code></pre></div>
 <h3 id="buildicon">buildIcon<a class="headerlink" href="#buildicon" title="Permanent link">¶</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nd">@override</span>
 <a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="n">Widget</span><span class="w"> </span><span class="n">buildIcon</span><span class="p">()</span>
 </code></pre></div>
-<p>Returns a blue CircleAvatar with plus or minus icon based on direction.</p>
-<p><strong>Icon Selection</strong>:</p>
-<ul>
-<li><code>isIncrement == true</code>: <code>Icons.add</code></li>
-<li><code>isIncrement == false</code>: <code>Icons.remove</code></li>
-</ul>
+<p>Returns a circular avatar with chart icon in deep purple.</p>
+<p><strong>Returns</strong>: <code>CircleAvatar</code> with <code>Icons.show_chart</code></p>
 <h3 id="getsubtitle">getSubtitle<a class="headerlink" href="#getsubtitle" title="Permanent link">¶</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nd">@override</span>
 <a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="kt">String</span><span class="w"> </span><span class="n">getSubtitle</span><span class="p">()</span>
 </code></pre></div>
-<p>Returns a string showing step size with direction sign.</p>
-<p><strong>Format</strong>: <code>"Step Size: +X"</code> or <code>"Step Size: -X"</code></p>
-<p><strong>Examples</strong>:</p>
+<p>Returns the subtitle text for display in counter list.</p>
+<p><strong>Returns</strong>:</p>
 <ul>
-<li><code>"Step Size: +1"</code></li>
-<li><code>"Step Size: -5"</code></li>
+<li>If no values recorded: <code>"No values recorded"</code></li>
+<li>If description exists: Returns the description</li>
+<li>If description is empty: Returns empty string</li>
 </ul>
 <h3 id="getcolor">getColor<a class="headerlink" href="#getcolor" title="Permanent link">¶</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nd">@override</span>
 <a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">Color</span><span class="w"> </span><span class="n">getColor</span><span class="p">()</span>
 </code></pre></div>
-<p>Returns <code>Colors.blueAccent</code> for TapCounter.</p>
+<p>Returns the color associated with series counters.</p>
+<p><strong>Returns</strong>: <code>Colors.deepPurple</code></p>
 <h3 id="tojson">toJson<a class="headerlink" href="#tojson" title="Permanent link">¶</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nd">@override</span>
 <a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="n">Map</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span><span class="w"> </span><span class="kt">dynamic</span><span class="o">&gt;</span><span class="w"> </span><span class="n">toJson</span><span class="p">()</span>
 </code></pre></div>
-<p>Serializes the counter to JSON format.</p>
-<p><strong>JSON Schema</strong>:</p>
+<p>Serializes the counter to JSON format for export.</p>
+<p><strong>Returns</strong>:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="p">{</span>
-<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">  </span><span class="nt">"counterType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"tap"</span><span class="p">,</span>
-<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">  </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span>
-<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">  </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span>
-<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">  </span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
-<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="w">  </span><span class="nt">"stepSize"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
-<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="w">  </span><span class="nt">"isIncrement"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
-<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="w">  </span><span class="nt">"requireConfirmation"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
-<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="w">  </span><span class="nt">"lastUpdated"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ISO8601 string or null"</span><span class="p">,</span>
-<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="w">  </span><span class="nt">"updates"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"ISO8601 strings"</span><span class="p">]</span>
-<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="p">}</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">  </span><span class="s2">"counterType"</span><span class="o">:</span><span class="w"> </span><span class="s2">"series"</span><span class="p">,</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">  </span><span class="s2">"id"</span><span class="o">:</span><span class="w"> </span><span class="s2">"uuid-string"</span><span class="p">,</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">  </span><span class="s2">"name"</span><span class="o">:</span><span class="w"> </span><span class="s2">"Counter Name"</span><span class="p">,</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">  </span><span class="s2">"value"</span><span class="o">:</span><span class="w"> </span><span class="m">123.45</span><span class="p">,</span>
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="w">  </span><span class="s2">"description"</span><span class="o">:</span><span class="w"> </span><span class="s2">"Optional description"</span><span class="p">,</span>
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="w">  </span><span class="s2">"lastUpdated"</span><span class="o">:</span><span class="w"> </span><span class="s2">"2024-01-01T12:00:00.000Z"</span><span class="p">,</span>
+<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="w">  </span><span class="s2">"updates"</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"2024-01-01T12:00:00.000Z"</span><span class="p">,</span><span class="w"> </span><span class="p">...],</span>
+<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="w">  </span><span class="s2">"seriesValues"</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="m">123.45</span><span class="p">,</span><span class="w"> </span><span class="m">100.0</span><span class="p">,</span><span class="w"> </span><span class="m">95.5</span><span class="p">,</span><span class="w"> </span><span class="p">...]</span>
+<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="p">}</span>
 </code></pre></div>
 <h3 id="validate">validate<a class="headerlink" href="#validate" title="Permanent link">¶</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="nd">@override</span>
 <a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="kt">bool</span><span class="w"> </span><span class="n">validate</span><span class="p">()</span>
 </code></pre></div>
-<p>Validates that name is not empty and stepSize is positive.</p>
-<p><strong>Returns</strong>: <code>true</code> if valid, <code>false</code> otherwise</p>
+<p>Validates the counter's configuration.</p>
+<p><strong>Returns</strong>: <code>true</code> if name is not empty</p>
+<h2 id="statistics-methods">Statistics Methods<a class="headerlink" href="#statistics-methods" title="Permanent link">¶</a></h2>
+<h3 id="getweeklyaverage">getWeeklyAverage<a class="headerlink" href="#getweeklyaverage" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="kt">double</span><span class="w"> </span><span class="n">getWeeklyAverage</span><span class="p">()</span>
+</code></pre></div>
+<p>Calculates the average of values recorded in the last 7 days.</p>
+<p><strong>Returns</strong>: Average value or <code>0.0</code> if no values in range</p>
+<h3 id="getmonthlyaverage">getMonthlyAverage<a class="headerlink" href="#getmonthlyaverage" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="kt">double</span><span class="w"> </span><span class="n">getMonthlyAverage</span><span class="p">()</span>
+</code></pre></div>
+<p>Calculates the average of values recorded in the last 30 days.</p>
+<p><strong>Returns</strong>: Average value or <code>0.0</code> if no values in range</p>
+<h3 id="getweeklyhigh">getWeeklyHigh<a class="headerlink" href="#getweeklyhigh" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="kt">double</span><span class="w"> </span><span class="n">getWeeklyHigh</span><span class="p">()</span>
+</code></pre></div>
+<p>Finds the highest value recorded in the last 7 days.</p>
+<p><strong>Returns</strong>: Highest value or <code>0.0</code> if no values in range</p>
+<h3 id="getweeklylow">getWeeklyLow<a class="headerlink" href="#getweeklylow" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="kt">double</span><span class="w"> </span><span class="n">getWeeklyLow</span><span class="p">()</span>
+</code></pre></div>
+<p>Finds the lowest value recorded in the last 7 days.</p>
+<p><strong>Returns</strong>: Lowest value or <code>0.0</code> if no values in range</p>
+<h3 id="getalltimehighest">getAllTimeHighest<a class="headerlink" href="#getalltimehighest" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="kt">double</span><span class="w"> </span><span class="n">getAllTimeHighest</span><span class="p">()</span>
+</code></pre></div>
+<p>Finds the highest value ever recorded.</p>
+<p><strong>Returns</strong>: Highest value or <code>0.0</code> if no values</p>
+<h3 id="getalltimelowest">getAllTimeLowest<a class="headerlink" href="#getalltimelowest" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="kt">double</span><span class="w"> </span><span class="n">getAllTimeLowest</span><span class="p">()</span>
+</code></pre></div>
+<p>Finds the lowest value ever recorded.</p>
+<p><strong>Returns</strong>: Lowest value or <code>0.0</code> if no values</p>
 <h3 id="getstatisticspage">getStatisticsPage<a class="headerlink" href="#getstatisticspage" title="Permanent link">¶</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="nd">@override</span>
-<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="n">Widget</span><span class="o">?</span><span class="w"> </span><span class="n">getStatisticsPage</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">index</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="nd">@override</span>
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="n">Widget</span><span class="o">?</span><span class="w"> </span><span class="n">getStatisticsPage</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">index</span><span class="p">)</span>
 </code></pre></div>
-<p>Returns a <code>TapCounterStatisticsPage</code> with detailed analytics.</p>
-<h2 id="factory-constructor">Factory Constructor<a class="headerlink" href="#factory-constructor" title="Permanent link">¶</a></h2>
-<h3 id="fromjson">fromJson<a class="headerlink" href="#fromjson" title="Permanent link">¶</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="kd">factory</span><span class="w"> </span><span class="n">TapCounter</span><span class="p">.</span><span class="n">fromJson</span><span class="p">(</span><span class="n">Map</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span><span class="w"> </span><span class="kt">dynamic</span><span class="o">&gt;</span><span class="w"> </span><span class="n">json</span><span class="p">)</span>
-</code></pre></div>
-<p>Creates a TapCounter from JSON with backward compatibility.</p>
-<p><strong>Backward Compatibility</strong>:</p>
+<p>Returns the statistics page widget for this counter.</p>
+<p><strong>Returns</strong>: <code>SeriesCounterStatisticsPage</code> instance</p>
+<h2 id="ui-components">UI Components<a class="headerlink" href="#ui-components" title="Permanent link">¶</a></h2>
+<h3 id="seriescounterconfigpage">SeriesCounterConfigPage<a class="headerlink" href="#seriescounterconfigpage" title="Permanent link">¶</a></h3>
+<p>Configuration page for creating a new series counter.</p>
+<p><strong>Location</strong>: <code>lib/counters/series_counter/series_counter_config.dart</code></p>
+<p><strong>Fields</strong>:</p>
 <ul>
-<li>Supports old <code>"type"</code> field (v1.3.9 and earlier)</li>
-<li>Supports old <code>"direction"</code> field (enum format)</li>
-<li>Supports new <code>"isIncrement"</code> field (boolean format)</li>
+<li>Counter Name (required)</li>
+<li>Description (optional)</li>
+<li>Initial Value (required, supports decimals)</li>
 </ul>
-<p><strong>Example</strong>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1">// Old format (still supported)</span>
-<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="kd">final</span><span class="w"> </span><span class="n">oldJson</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="w">  </span><span class="s2">"counterType"</span><span class="o">:</span><span class="w"> </span><span class="s2">"tap"</span><span class="p">,</span>
-<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="w">  </span><span class="s2">"type"</span><span class="o">:</span><span class="w"> </span><span class="s2">"increment"</span><span class="p">,</span><span class="w">  </span><span class="c1">// Old field</span>
-<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="w">  </span><span class="c1">// ...</span>
-<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="p">};</span>
-<a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a>
-<a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="c1">// New format</span>
-<a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a><span class="kd">final</span><span class="w"> </span><span class="n">newJson</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a><span class="w">  </span><span class="s2">"counterType"</span><span class="o">:</span><span class="w"> </span><span class="s2">"tap"</span><span class="p">,</span>
-<a id="__codelineno-14-11" name="__codelineno-14-11" href="#__codelineno-14-11"></a><span class="w">  </span><span class="s2">"isIncrement"</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">  </span><span class="c1">// New field</span>
-<a id="__codelineno-14-12" name="__codelineno-14-12" href="#__codelineno-14-12"></a><span class="w">  </span><span class="c1">// ...</span>
-<a id="__codelineno-14-13" name="__codelineno-14-13" href="#__codelineno-14-13"></a><span class="p">};</span>
-<a id="__codelineno-14-14" name="__codelineno-14-14" href="#__codelineno-14-14"></a>
-<a id="__codelineno-14-15" name="__codelineno-14-15" href="#__codelineno-14-15"></a><span class="kd">final</span><span class="w"> </span><span class="n">counter1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TapCounter</span><span class="p">.</span><span class="n">fromJson</span><span class="p">(</span><span class="n">oldJson</span><span class="p">);</span>
-<a id="__codelineno-14-16" name="__codelineno-14-16" href="#__codelineno-14-16"></a><span class="kd">final</span><span class="w"> </span><span class="n">counter2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TapCounter</span><span class="p">.</span><span class="n">fromJson</span><span class="p">(</span><span class="n">newJson</span><span class="p">);</span>
+<p><strong>Action</strong>: Floating Action Button to create counter</p>
+<h3 id="seriescounterstatisticspage">SeriesCounterStatisticsPage<a class="headerlink" href="#seriescounterstatisticspage" title="Permanent link">¶</a></h3>
+<p>Statistics and visualization page showing value trends and analytics.</p>
+<p><strong>Location</strong>: <code>lib/counters/series_counter/series_counter_statistics.dart</code></p>
+<p><strong>Features</strong>:</p>
+<ul>
+<li>Line chart with time-range filters (1W, 1M, 3M, 1Y, All)</li>
+<li>Statistics cards:</li>
+<li>Weekly Average</li>
+<li>Monthly Average</li>
+<li>Weekly High</li>
+<li>Weekly Low</li>
+<li>All Time Highest</li>
+<li>All Time Lowest</li>
+<li>"View All Updates" button</li>
+</ul>
+<p><strong>Time Range Filters</strong>:</p>
+<ul>
+<li><strong>1W</strong>: Last 7 days</li>
+<li><strong>1M</strong>: Last 30 days (default)</li>
+<li><strong>3M</strong>: Last 90 days</li>
+<li><strong>1Y</strong>: Last 365 days</li>
+<li><strong>All</strong>: All recorded values</li>
+</ul>
+<h3 id="seriescounterupdatespage">SeriesCounterUpdatesPage<a class="headerlink" href="#seriescounterupdatespage" title="Permanent link">¶</a></h3>
+<p>Page displaying all recorded values with timestamps in a searchable list.</p>
+<p><strong>Location</strong>: <code>lib/counters/series_counter/series_counter_updates.dart</code></p>
+<p><strong>Features</strong>:</p>
+<ul>
+<li>List of all values with timestamps</li>
+<li>Search functionality (by date or value)</li>
+<li>Format: Value (2 decimal places) | Date/Time</li>
+</ul>
+<h2 id="json-format">JSON Format<a class="headerlink" href="#json-format" title="Permanent link">¶</a></h2>
+<h3 id="importexport-format">Import/Export Format<a class="headerlink" href="#importexport-format" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="p">{</span>
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="w">  </span><span class="nt">"counterType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"series"</span><span class="p">,</span>
+<a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a><span class="w">  </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"550e8400-e29b-41d4-a716-446655440000"</span><span class="p">,</span>
+<a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="w">  </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Daily Weight"</span><span class="p">,</span>
+<a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a><span class="w">  </span><span class="nt">"value"</span><span class="p">:</span><span class="w"> </span><span class="mf">75.5</span><span class="p">,</span>
+<a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a><span class="w">  </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Track my weight daily"</span><span class="p">,</span>
+<a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a><span class="w">  </span><span class="nt">"lastUpdated"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2024-12-11T08:30:00.000Z"</span><span class="p">,</span>
+<a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a><span class="w">  </span><span class="nt">"updates"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-19-9" name="__codelineno-19-9" href="#__codelineno-19-9"></a><span class="w">    </span><span class="s2">"2024-12-11T08:30:00.000Z"</span><span class="p">,</span>
+<a id="__codelineno-19-10" name="__codelineno-19-10" href="#__codelineno-19-10"></a><span class="w">    </span><span class="s2">"2024-12-10T08:30:00.000Z"</span><span class="p">,</span>
+<a id="__codelineno-19-11" name="__codelineno-19-11" href="#__codelineno-19-11"></a><span class="w">    </span><span class="s2">"2024-12-09T08:30:00.000Z"</span>
+<a id="__codelineno-19-12" name="__codelineno-19-12" href="#__codelineno-19-12"></a><span class="w">  </span><span class="p">],</span>
+<a id="__codelineno-19-13" name="__codelineno-19-13" href="#__codelineno-19-13"></a><span class="w">  </span><span class="nt">"seriesValues"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="mf">75.5</span><span class="p">,</span><span class="w"> </span><span class="mf">76.0</span><span class="p">,</span><span class="w"> </span><span class="mf">75.8</span><span class="p">]</span>
+<a id="__codelineno-19-14" name="__codelineno-19-14" href="#__codelineno-19-14"></a><span class="p">}</span>
 </code></pre></div>
+<h3 id="backward-compatibility">Backward Compatibility<a class="headerlink" href="#backward-compatibility" title="Permanent link">¶</a></h3>
+<p>The <code>fromJson</code> factory handles various formats:</p>
+<ul>
+<li>Supports <code>value</code> as either <code>int</code> or <code>num</code> (converted to double)</li>
+<li>Defaults <code>description</code> to empty string if missing</li>
+<li>Handles missing <code>seriesValues</code> (defaults to empty list)</li>
+</ul>
 <h2 id="usage-examples">Usage Examples<a class="headerlink" href="#usage-examples" title="Permanent link">¶</a></h2>
 <h3 id="creating-a-counter">Creating a Counter<a class="headerlink" href="#creating-a-counter" title="Permanent link">¶</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="kd">final</span><span class="w"> </span><span class="n">counter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TapCounter</span><span class="p">(</span>
-<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="w">  </span><span class="nl">name:</span><span class="w"> </span><span class="s2">"Daily Steps"</span><span class="p">,</span>
-<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="w">  </span><span class="nl">value:</span><span class="w"> </span><span class="m">0</span><span class="p">,</span>
-<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="w">  </span><span class="nl">stepSize:</span><span class="w"> </span><span class="m">100</span><span class="p">,</span>
-<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="w">  </span><span class="nl">isIncrement:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
-<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="w">  </span><span class="nl">requireConfirmation:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="w">  </span><span class="nl">lastUpdated:</span><span class="w"> </span><span class="n">DateTime</span><span class="p">.</span><span class="n">now</span><span class="p">(),</span>
-<a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="kd">final</span><span class="w"> </span><span class="n">counter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SeriesCounter</span><span class="p">(</span>
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="w">  </span><span class="nl">name:</span><span class="w"> </span><span class="s2">"Body Temperature"</span><span class="p">,</span>
+<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="w">  </span><span class="nl">value:</span><span class="w"> </span><span class="m">98.6</span><span class="p">,</span>
+<a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a><span class="w">  </span><span class="nl">description:</span><span class="w"> </span><span class="s2">"Track daily temperature"</span><span class="p">,</span>
+<a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a><span class="w">  </span><span class="nl">seriesValues:</span><span class="w"> </span><span class="p">[</span><span class="m">98.6</span><span class="p">],</span>
+<a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a><span class="w">  </span><span class="nl">lastUpdated:</span><span class="w"> </span><span class="n">DateTime</span><span class="p">.</span><span class="n">now</span><span class="p">(),</span>
+<a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a><span class="w">  </span><span class="nl">updates:</span><span class="w"> </span><span class="p">[</span><span class="n">DateTime</span><span class="p">.</span><span class="n">now</span><span class="p">()],</span>
+<a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a><span class="p">);</span>
 </code></pre></div>
-<h3 id="increment-counter">Increment Counter<a class="headerlink" href="#increment-counter" title="Permanent link">¶</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="kd">final</span><span class="w"> </span><span class="n">incrementCounter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TapCounter</span><span class="p">(</span>
-<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="w">  </span><span class="nl">name:</span><span class="w"> </span><span class="s2">"Glasses of Water"</span><span class="p">,</span>
-<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="w">  </span><span class="nl">value:</span><span class="w"> </span><span class="m">0</span><span class="p">,</span>
-<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="w">  </span><span class="nl">stepSize:</span><span class="w"> </span><span class="m">1</span><span class="p">,</span>
-<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="w">  </span><span class="nl">isIncrement:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
-<a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a><span class="p">);</span>
+<h3 id="adding-to-provider">Adding to Provider<a class="headerlink" href="#adding-to-provider" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="kd">await</span><span class="w"> </span><span class="n">Provider</span><span class="p">.</span><span class="n">of</span><span class="o">&lt;</span><span class="n">CounterProvider</span><span class="o">&gt;</span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="nl">listen:</span><span class="w"> </span><span class="kc">false</span><span class="p">)</span>
+<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="w">    </span><span class="p">.</span><span class="n">addCounter</span><span class="p">(</span><span class="n">counter</span><span class="p">);</span>
 </code></pre></div>
-<h3 id="decrement-counter">Decrement Counter<a class="headerlink" href="#decrement-counter" title="Permanent link">¶</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="kd">final</span><span class="w"> </span><span class="n">decrementCounter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TapCounter</span><span class="p">(</span>
-<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="w">  </span><span class="nl">name:</span><span class="w"> </span><span class="s2">"Days Until Deadline"</span><span class="p">,</span>
-<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="w">  </span><span class="nl">value:</span><span class="w"> </span><span class="m">30</span><span class="p">,</span>
-<a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="w">  </span><span class="nl">stepSize:</span><span class="w"> </span><span class="m">1</span><span class="p">,</span>
-<a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="w">  </span><span class="nl">isIncrement:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
-<a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a><span class="p">);</span>
+<h3 id="accessing-statistics">Accessing Statistics<a class="headerlink" href="#accessing-statistics" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="kd">final</span><span class="w"> </span><span class="n">weeklyAvg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">counter</span><span class="p">.</span><span class="n">getWeeklyAverage</span><span class="p">();</span>
+<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="kd">final</span><span class="w"> </span><span class="n">allTimeHigh</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">counter</span><span class="p">.</span><span class="n">getAllTimeHighest</span><span class="p">();</span>
+<a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a><span class="n">print</span><span class="p">(</span><span class="s2">"Weekly average: </span><span class="si">${</span><span class="n">weeklyAvg</span><span class="p">.</span><span class="n">toStringAsFixed</span><span class="p">(</span><span class="m">2</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">);</span>
+<a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a><span class="n">print</span><span class="p">(</span><span class="s2">"All-time high: </span><span class="si">${</span><span class="n">allTimeHigh</span><span class="p">.</span><span class="n">toStringAsFixed</span><span class="p">(</span><span class="m">2</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">);</span>
 </code></pre></div>
-<h3 id="quick-update-no-confirmation">Quick Update (No Confirmation)<a class="headerlink" href="#quick-update-no-confirmation" title="Permanent link">¶</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="kd">final</span><span class="w"> </span><span class="n">quickCounter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TapCounter</span><span class="p">(</span>
-<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="w">  </span><span class="nl">name:</span><span class="w"> </span><span class="s2">"Quick Count"</span><span class="p">,</span>
-<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="w">  </span><span class="nl">value:</span><span class="w"> </span><span class="m">0</span><span class="p">,</span>
-<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="w">  </span><span class="nl">stepSize:</span><span class="w"> </span><span class="m">1</span><span class="p">,</span>
-<a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="w">  </span><span class="nl">isIncrement:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
-<a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a><span class="w">  </span><span class="nl">requireConfirmation:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">  </span><span class="c1">// No dialog</span>
-<a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a><span class="p">);</span>
+<h3 id="navigation-to-statistics">Navigation to Statistics<a class="headerlink" href="#navigation-to-statistics" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="n">Navigator</span><span class="p">.</span><span class="n">push</span><span class="p">(</span>
+<a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a><span class="w">  </span><span class="n">context</span><span class="p">,</span>
+<a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a><span class="w">  </span><span class="n">MaterialPageRoute</span><span class="p">(</span>
+<a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a><span class="w">    </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">SeriesCounterStatisticsPage</span><span class="p">(</span><span class="nl">index:</span><span class="w"> </span><span class="m">0</span><span class="p">),</span>
+<a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a><span class="w">  </span><span class="p">),</span>
+<a id="__codelineno-23-6" name="__codelineno-23-6" href="#__codelineno-23-6"></a><span class="p">);</span>
 </code></pre></div>
-<h2 id="statistics-page">Statistics Page<a class="headerlink" href="#statistics-page" title="Permanent link">¶</a></h2>
-<p>The <code>TapCounterStatisticsPage</code> provides:</p>
+<h2 id="related-documentation">Related Documentation<a class="headerlink" href="#related-documentation" title="Permanent link">¶</a></h2>
 <ul>
-<li>Daily update frequency chart</li>
-<li>Total updates count</li>
-<li>Average updates per day</li>
-<li>Most active day</li>
-<li>Day-of-week analysis</li>
-<li>Time window analysis</li>
-<li>Update history timeline</li>
+<li><a href="../base-counter/">BaseCounter</a> - Base class interface</li>
+<li><a href="../counter-factory/">CounterFactory</a> - Factory pattern for counter creation</li>
+<li><a href="../counter-provider/">CounterProvider</a> - State management</li>
+<li><a href="../tap-counter/">TapCounter</a> - Alternative counter type</li>
 </ul>
-<p>Access via:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="kd">final</span><span class="w"> </span><span class="n">statsPage</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">counter</span><span class="p">.</span><span class="n">getStatisticsPage</span><span class="p">(</span><span class="n">index</span><span class="p">);</span>
-<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="n">Navigator</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">MaterialPageRoute</span><span class="p">(</span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">statsPage</span><span class="o">!</span><span class="p">));</span>
+<h2 id="integration">Integration<a class="headerlink" href="#integration" title="Permanent link">¶</a></h2>
+<h3 id="factory-registration">Factory Registration<a class="headerlink" href="#factory-registration" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="c1">// In counter_factory.dart</span>
+<a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a><span class="kd">static</span><span class="w"> </span><span class="kd">final</span><span class="w"> </span><span class="n">Map</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span><span class="w"> </span><span class="n">BaseCounter</span><span class="w"> </span><span class="kt">Function</span><span class="p">(</span><span class="n">Map</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span><span class="w"> </span><span class="kt">dynamic</span><span class="o">&gt;</span><span class="p">)</span><span class="o">&gt;</span>
+<a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a><span class="w">    </span><span class="n">_registry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a><span class="w">  </span><span class="s2">"series"</span><span class="o">:</span><span class="w"> </span><span class="n">SeriesCounter</span><span class="p">.</span><span class="n">fromJson</span><span class="p">,</span>
+<a id="__codelineno-24-5" name="__codelineno-24-5" href="#__codelineno-24-5"></a><span class="w">  </span><span class="c1">// ...</span>
+<a id="__codelineno-24-6" name="__codelineno-24-6" href="#__codelineno-24-6"></a><span class="p">};</span>
 </code></pre></div>
-<h2 id="see-also">See Also<a class="headerlink" href="#see-also" title="Permanent link">¶</a></h2>
-<ul>
-<li><a href="../base-counter/">BaseCounter</a> - Base class documentation</li>
-<li><a href="../counter-factory/">CounterFactory</a> - Factory pattern</li>
-<li><a href="../../guides/adding-counter-types/">Adding Counter Types</a> - Create custom counters</li>
-</ul>
+<h3 id="type-info">Type Info<a class="headerlink" href="#type-info" title="Permanent link">¶</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="n">CounterTypeInfo</span><span class="p">(</span>
+<a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a><span class="w">  </span><span class="nl">type:</span><span class="w"> </span><span class="s2">"series"</span><span class="p">,</span>
+<a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a><span class="w">  </span><span class="nl">name:</span><span class="w"> </span><span class="s2">"Series Counter"</span><span class="p">,</span>
+<a id="__codelineno-25-4" name="__codelineno-25-4" href="#__codelineno-25-4"></a><span class="w">  </span><span class="nl">description:</span><span class="w"> </span><span class="s2">"Track a series of values over time"</span><span class="p">,</span>
+<a id="__codelineno-25-5" name="__codelineno-25-5" href="#__codelineno-25-5"></a><span class="w">  </span><span class="nl">icon:</span><span class="w"> </span><span class="n">Icons</span><span class="p">.</span><span class="n">show_chart</span><span class="p">,</span>
+<a id="__codelineno-25-6" name="__codelineno-25-6" href="#__codelineno-25-6"></a><span class="p">)</span>
+</code></pre></div>
+<h3 id="hive-adapter">Hive Adapter<a class="headerlink" href="#hive-adapter" title="Permanent link">¶</a></h3>
+<p>Generated via <code>build_runner</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>dart<span class="w"> </span>run<span class="w"> </span>build_runner<span class="w"> </span>build
+</code></pre></div>
+<p>Registers as:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="n">Hive</span><span class="p">.</span><span class="n">registerAdapter</span><span class="p">(</span><span class="n">SeriesCounterAdapter</span><span class="p">());</span>
+</code></pre></div>
 
 
 
