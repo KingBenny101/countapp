@@ -5,14 +5,25 @@ import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:hive_ce/hive.dart";
 
-class ThemeNotifier extends ChangeNotifier {
+enum AppTheme {
+  blue,
+  purple,
+  green,
+  red,
+  orange,
+  pink,
+}
 
+class ThemeNotifier extends ChangeNotifier {
   ThemeNotifier() {
     _settingsBox = Hive.box(AppConstants.settingsBox);
     _themeMode = _loadThemeMode();
+    _currentTheme = _loadCurrentTheme();
   }
+
   late final Box _settingsBox;
   late ThemeMode _themeMode;
+  late AppTheme _currentTheme;
 
   ThemeMode _loadThemeMode() {
     final theme = _settingsBox.get(AppConstants.themeModeSetting);
@@ -23,7 +34,17 @@ class ThemeNotifier extends ChangeNotifier {
         : ThemeMode.light;
   }
 
+  AppTheme _loadCurrentTheme() {
+    final themeName = _settingsBox.get(AppConstants.currentThemeSetting,
+        defaultValue: "blue");
+    return AppTheme.values.firstWhere(
+      (theme) => theme.name == themeName,
+      orElse: () => AppTheme.blue,
+    );
+  }
+
   ThemeMode get themeMode => _themeMode;
+  AppTheme get currentTheme => _currentTheme;
 
   void toggleTheme() {
     _themeMode =
@@ -33,15 +54,65 @@ class ThemeNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setTheme(AppTheme theme) {
+    _currentTheme = theme;
+    _saveCurrentTheme();
+    updateSystemUiOverlay();
+    notifyListeners();
+  }
+
   void _saveThemeMode() {
-    _settingsBox.put(AppConstants.themeModeSetting,
-        _themeMode == ThemeMode.dark ? "dark" : "light");
+    _settingsBox.put(
+      AppConstants.themeModeSetting,
+      _themeMode == ThemeMode.dark ? "dark" : "light",
+    );
+  }
+
+  void _saveCurrentTheme() {
+    _settingsBox.put(AppConstants.currentThemeSetting, _currentTheme.name);
+  }
+
+  Color getThemeSeedColor() {
+    switch (_currentTheme) {
+      case AppTheme.blue:
+        return Colors.blue;
+      case AppTheme.purple:
+        return Colors.purple;
+      case AppTheme.green:
+        return Colors.green;
+      case AppTheme.red:
+        return Colors.red;
+      case AppTheme.orange:
+        return Colors.orange;
+      case AppTheme.pink:
+        return Colors.pink;
+    }
+  }
+
+  ThemeData getLightTheme() {
+    return ThemeData(
+      useMaterial3: true,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: getThemeSeedColor(),
+        brightness: Brightness.light,
+      ),
+    );
+  }
+
+  ThemeData getDarkTheme() {
+    return ThemeData(
+      useMaterial3: true,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: getThemeSeedColor(),
+        brightness: Brightness.dark,
+      ),
+    );
   }
 
   void updateSystemUiOverlay() {
     final backgroundColor = _themeMode == ThemeMode.dark
-        ? ThemeData.dark().scaffoldBackgroundColor
-        : ThemeData.light().scaffoldBackgroundColor;
+        ? getDarkTheme().scaffoldBackgroundColor
+        : getLightTheme().scaffoldBackgroundColor;
 
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(
