@@ -6,13 +6,16 @@ import "package:flutter/services.dart";
 import "package:hive_ce/hive.dart";
 
 class ThemeNotifier extends ChangeNotifier {
-  ThemeNotifier() : _themeMode = _loadThemeMode();
-  ThemeMode _themeMode;
-  final Box _settingsBox = Hive.box(AppConstants.settingsBox);
+  late final Box _settingsBox;
+  late ThemeMode _themeMode;
 
-  static ThemeMode _loadThemeMode() {
-    final theme =
-        Hive.box(AppConstants.settingsBox).get(AppConstants.themeModeSetting);
+  ThemeNotifier() {
+    _settingsBox = Hive.box(AppConstants.settingsBox);
+    _themeMode = _loadThemeMode();
+  }
+
+  ThemeMode _loadThemeMode() {
+    final theme = _settingsBox.get(AppConstants.themeModeSetting);
     if (theme == "light") return ThemeMode.light;
     if (theme == "dark") return ThemeMode.dark;
     return PlatformDispatcher.instance.platformBrightness == Brightness.dark

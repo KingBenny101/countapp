@@ -11,7 +11,9 @@ Future<bool> exportJSON(String exportFilePath) async {
   final bool hasPermission = await checkAndRequestStoragePermission();
 
   if (hasPermission) {
-    final box = await Hive.openBox(AppConstants.countersBox);
+    final box = Hive.isBoxOpen(AppConstants.countersBox)
+        ? Hive.box(AppConstants.countersBox)
+        : await Hive.openBox(AppConstants.countersBox);
     final file = File(exportFilePath);
     final counters = box.values.toList();
     final jsonCounters = json.encode(counters);
@@ -27,7 +29,9 @@ Future<void> importJSON(
   CounterProvider counterProvider,
   String importFilePath,
 ) async {
-  final box = await Hive.openBox(AppConstants.countersBox);
+  final box = Hive.isBoxOpen(AppConstants.countersBox)
+      ? Hive.box(AppConstants.countersBox)
+      : await Hive.openBox(AppConstants.countersBox);
   final file = File(importFilePath);
   final jsonCounters = await file.readAsString();
   final countersData = json.decode(jsonCounters) as List<dynamic>;

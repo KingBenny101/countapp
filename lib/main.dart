@@ -45,11 +45,9 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeNotifier = Provider.of<ThemeNotifier>(context);
-    themeNotifier.updateSystemUiOverlay();
-
     return Consumer<ThemeNotifier>(
       builder: (context, themeNotifier, child) {
+        themeNotifier.updateSystemUiOverlay();
         return MaterialApp(
           theme: ThemeData.light(),
           darkTheme: ThemeData.dark(),

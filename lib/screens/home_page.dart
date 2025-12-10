@@ -19,6 +19,13 @@ class HomePageState extends State<HomePage> {
   List<bool> _selectedCounters = [];
   bool _isSelecting = false;
 
+  void _resetSelection(int counterCount) {
+    setState(() {
+      _isSelecting = false;
+      _selectedCounters = List<bool>.filled(counterCount, false);
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -41,13 +48,7 @@ class HomePageState extends State<HomePage> {
     return GestureDetector(
       onTap: () {
         if (_isSelecting) {
-          setState(() {
-            _isSelecting = false;
-            _selectedCounters = List<bool>.filled(
-              counterProvider.counters.length,
-              false,
-            );
-          });
+          _resetSelection(counterProvider.counters.length);
         }
       },
       child: Scaffold(
@@ -82,13 +83,7 @@ class HomePageState extends State<HomePage> {
                   IconButton(
                     icon: const Icon(Icons.close),
                     onPressed: () {
-                      setState(() {
-                        _isSelecting = false;
-                        _selectedCounters = List<bool>.filled(
-                          counterProvider.counters.length,
-                          false,
-                        );
-                      });
+                      _resetSelection(counterProvider.counters.length);
                     },
                   ),
                 ]
@@ -109,10 +104,9 @@ class HomePageState extends State<HomePage> {
                           _selectedCounters[index] = !_selectedCounters[index];
                         });
                       } else {
-                        await Provider.of<CounterProvider>(
-                          context,
-                          listen: false,
-                        ).updateCounter(context, index);
+                        await context
+                            .read<CounterProvider>()
+                            .updateCounter(context, index);
                       }
                     },
                     onLongPress: () {
@@ -204,77 +198,12 @@ class HomePageState extends State<HomePage> {
               ),
             ),
             if (_isSelecting && _selectedCounters.any((selected) => selected))
-              Padding(
-                padding: const EdgeInsets.symmetric(
+              const Padding(
+                padding: EdgeInsets.symmetric(
                   vertical: 16.0,
                   horizontal: 24.0,
                 ),
-                child: ElevatedButton(
-                  onPressed: () async {
-                    // Show confirmation dialog before deleting
-                    final bool? confirmDelete = await showDialog<bool>(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: const Text("Confirm Deletion"),
-                          content: const Text(
-                            "Delete the selected Counters?",
-                          ),
-                          actions: <Widget>[
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context)
-                                    .pop(false); // Cancel delete
-                              },
-                              child: const Text("Cancel"),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context)
-                                    .pop(true); // Proceed with delete
-                              },
-                              child: const Text("Confirm"),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-
-                    if (confirmDelete == true) {
-                      final selectedIndices = <int>[];
-                      for (int i = 0; i < _selectedCounters.length; i++) {
-                        if (_selectedCounters[i]) {
-                          selectedIndices.add(i);
-                        }
-                      }
-
-                      if (selectedIndices.isNotEmpty) {
-                        await counterProvider.removeCounters(selectedIndices);
-
-                        setState(() {
-                          _selectedCounters = List<bool>.filled(
-                            counterProvider.counters.length,
-                            false,
-                          );
-                          _isSelecting = false;
-                        });
-
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            buildAppSnackBar(
-                              "${selectedIndices.length} Counters Deleted Successfully!",
-                            ),
-                          );
-                        }
-                      }
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.all(16),
-                    shape: const CircleBorder(),
-                  ),
-                  child: const Icon(Icons.delete, size: 30),
-                ),
+                child: _DeleteButton(),
               ),
           ],
         ),
@@ -521,6 +450,72 @@ class HomePageState extends State<HomePage> {
           child: const Icon(Icons.add),
         ),
       ),
+    );
+  }
+}
+
+class _DeleteButton extends StatelessWidget {
+  const _DeleteButton();
+
+  @override
+  Widget build(BuildContext context) {
+    final counterProvider = context.watch<CounterProvider>();
+    final homePageState = context.findAncestorStateOfType<HomePageState>()!;
+
+    return ElevatedButton(
+      onPressed: () async {
+        // Show confirmation dialog before deleting
+        final bool? confirmDelete = await showDialog<bool>(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text("Confirm Deletion"),
+              content: const Text("Delete the selected Counters?"),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(false);
+                  },
+                  child: const Text("Cancel"),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(true);
+                  },
+                  child: const Text("Confirm"),
+                ),
+              ],
+            );
+          },
+        );
+
+        if (confirmDelete == true) {
+          final selectedIndices = <int>[];
+          for (int i = 0; i < homePageState._selectedCounters.length; i++) {
+            if (homePageState._selectedCounters[i]) {
+              selectedIndices.add(i);
+            }
+          }
+
+          if (selectedIndices.isNotEmpty) {
+            await counterProvider.removeCounters(selectedIndices);
+            homePageState._resetSelection(counterProvider.counters.length);
+
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                buildAppSnackBar(
+                  "${selectedIndices.length} Counters Deleted Successfully!",
+                ),
+              );
+            }
+          }
+        }
+      },
+      style: ElevatedButton.styleFrom(
+        padding: const EdgeInsets.all(16),
+        shape: const CircleBorder(),
+      ),
+      child: const Icon(Icons.delete, size: 30),
     );
   }
 }

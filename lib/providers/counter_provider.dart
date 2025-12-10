@@ -7,11 +7,17 @@ import "package:hive_ce/hive.dart";
 
 class CounterProvider with ChangeNotifier {
   List<BaseCounter> _counters = [];
+  Box? _box;
 
   List<BaseCounter> get counters => _counters;
 
+  Future<Box> _getBox() async {
+    _box ??= await Hive.openBox(AppConstants.countersBox);
+    return _box!;
+  }
+
   Future<void> loadCounters() async {
-    final box = await Hive.openBox(AppConstants.countersBox);
+    final box = await _getBox();
     _counters = box.values
         .map((json) =>
             CounterFactory.fromJson(Map<String, dynamic>.from(json as Map)))
@@ -20,21 +26,21 @@ class CounterProvider with ChangeNotifier {
   }
 
   Future<void> addCounter(BaseCounter counter) async {
-    final box = await Hive.openBox(AppConstants.countersBox);
+    final box = await _getBox();
     await box.add(counter.toJson());
     _counters.add(counter);
     notifyListeners();
   }
 
   Future<void> removeCounter(int index) async {
-    final box = await Hive.openBox(AppConstants.countersBox);
+    final box = await _getBox();
     await box.deleteAt(index);
     _counters.removeAt(index);
     notifyListeners();
   }
 
   Future<void> removeCounters(List<int> indices) async {
-    final box = await Hive.openBox(AppConstants.countersBox);
+    final box = await _getBox();
 
     // Sort in reverse to avoid index shifting issues
     final sortedIndices = indices.toList()..sort((a, b) => b.compareTo(a));
@@ -52,7 +58,7 @@ class CounterProvider with ChangeNotifier {
     final success = await counter.onInteraction(context);
 
     if (success) {
-      final box = await Hive.openBox(AppConstants.countersBox);
+      final box = await _getBox();
       await box.putAt(index, counter.toJson());
       notifyListeners();
 
