@@ -1,4 +1,4 @@
-# Building for Release
+# Building
 
 This guide covers building Count App for production distribution.
 
