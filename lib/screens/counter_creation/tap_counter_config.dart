@@ -1,28 +1,29 @@
-import "package:countapp/models/counter_model.dart";
+import "package:countapp/counters/tap_counter.dart";
 import "package:countapp/providers/counter_provider.dart";
+import "package:countapp/utils/constants.dart";
+import "package:countapp/utils/widgets.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:provider/provider.dart";
-import "package:toastification/toastification.dart";
 
-class AddCounterPage extends StatefulWidget {
-  const AddCounterPage({super.key});
+class TapCounterConfigPage extends StatefulWidget {
+  const TapCounterConfigPage({super.key});
 
   @override
-  AddCounterPageState createState() => AddCounterPageState();
+  TapCounterConfigPageState createState() => TapCounterConfigPageState();
 }
 
-class AddCounterPageState extends State<AddCounterPage> {
+class TapCounterConfigPageState extends State<TapCounterConfigPage> {
   final _formKey = GlobalKey<FormState>();
   String _name = "";
-  int _stepSize = 1;
-  int _initialCount = 0;
-  bool _isIncrement = true;
+  int _stepSize = AppConstants.defaultStepSize;
+  int _initialCount = AppConstants.defaultInitialValue;
+  TapDirection _direction = TapDirection.increment;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Create a New Counter")),
+      appBar: AppBar(title: const Text("Create a Tap Counter")),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
@@ -58,8 +59,10 @@ class AddCounterPageState extends State<AddCounterPage> {
                   inputFormatters: <TextInputFormatter>[
                     FilteringTextInputFormatter.digitsOnly,
                   ],
+                  initialValue: _stepSize.toString(),
                   onChanged: (value) {
-                    _stepSize = int.tryParse(value) ?? 1;
+                    _stepSize =
+                        int.tryParse(value) ?? AppConstants.defaultStepSize;
                   },
                 ),
                 const SizedBox(height: 16),
@@ -73,8 +76,10 @@ class AddCounterPageState extends State<AddCounterPage> {
                   inputFormatters: <TextInputFormatter>[
                     FilteringTextInputFormatter.digitsOnly,
                   ],
+                  initialValue: _initialCount.toString(),
                   onChanged: (value) {
-                    _initialCount = int.tryParse(value) ?? 0;
+                    _initialCount =
+                        int.tryParse(value) ?? AppConstants.defaultInitialValue;
                   },
                 ),
                 const SizedBox(height: 16),
@@ -86,14 +91,16 @@ class AddCounterPageState extends State<AddCounterPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           Text(
-                            'Type: ${_isIncrement ? 'Increment' : 'Decrement'}',
+                            "Direction: ${_direction == TapDirection.increment ? 'Increment' : 'Decrement'}",
                             style: const TextStyle(fontSize: 16),
                           ),
                           Switch(
-                            value: _isIncrement,
+                            value: _direction == TapDirection.increment,
                             onChanged: (value) {
                               setState(() {
-                                _isIncrement = value;
+                                _direction = value
+                                    ? TapDirection.increment
+                                    : TapDirection.decrement;
                               });
                             },
                           ),
@@ -104,14 +111,16 @@ class AddCounterPageState extends State<AddCounterPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Type: ${_isIncrement ? 'Increment' : 'Decrement'}',
+                            "Direction: ${_direction == TapDirection.increment ? 'Increment' : 'Decrement'}",
                             style: const TextStyle(fontSize: 16),
                           ),
                           Switch(
-                            value: _isIncrement,
+                            value: _direction == TapDirection.increment,
                             onChanged: (value) {
                               setState(() {
-                                _isIncrement = value;
+                                _direction = value
+                                    ? TapDirection.increment
+                                    : TapDirection.decrement;
                               });
                             },
                           ),
@@ -128,25 +137,22 @@ class AddCounterPageState extends State<AddCounterPage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           if (_formKey.currentState!.validate()) {
-            final newCounter = Counter(
+            final newCounter = TapCounter(
               name: _name,
               value: _initialCount,
-              type: _isIncrement ? "increment" : "decrement",
               stepSize: _stepSize,
+              direction: _direction,
               lastUpdated: DateTime.now(),
             );
             Provider.of<CounterProvider>(context, listen: false)
                 .addCounter(newCounter);
-            Navigator.pop(context);
 
-            toastification.show(
-              type: ToastificationType.success,
-              alignment: Alignment.bottomCenter,
-              style: ToastificationStyle.simple,
-              title: const Text("Counter Added Successfully!"),
-              autoCloseDuration: const Duration(seconds: 2),
-              closeOnClick: true,
-            );
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                buildAppSnackBar("Counter Added Successfully!"),
+              );
+              Navigator.pop(context);
+            }
           }
         },
         tooltip: "Add Counter",
