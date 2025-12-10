@@ -1,5 +1,7 @@
+import "package:countapp/theme/theme_notifier.dart";
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
+import "package:provider/provider.dart";
 
 Widget buildStepCard(String step) {
   return Card(
@@ -129,4 +131,93 @@ Widget buildSummaryCard({
       ),
     ),
   );
+}
+
+class ThemeSelector extends StatelessWidget {
+  const ThemeSelector({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
+
+    return ListTile(
+      contentPadding: const EdgeInsets.symmetric(
+        vertical: 12.0,
+        horizontal: 20.0,
+      ),
+      title: const Text(
+        "Color Theme",
+        style: TextStyle(fontSize: 18),
+      ),
+      subtitle: Text(
+        _getThemeName(themeNotifier.currentTheme),
+        style: const TextStyle(fontSize: 14),
+      ),
+      trailing: DropdownButton<AppTheme>(
+        value: themeNotifier.currentTheme,
+        underline: const SizedBox(),
+        focusColor: Colors.transparent,
+        items: AppTheme.values.map((theme) {
+          return DropdownMenuItem(
+            value: theme,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 20,
+                  height: 20,
+                  decoration: BoxDecoration(
+                    color: _getThemeColor(theme),
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(_getThemeName(theme)),
+              ],
+            ),
+          );
+        }).toList(),
+        onChanged: (theme) {
+          if (theme != null) {
+            themeNotifier.setTheme(theme);
+            FocusScope.of(context).unfocus();
+          }
+        },
+      ),
+    );
+  }
+
+  Color _getThemeColor(AppTheme theme) {
+    switch (theme) {
+      case AppTheme.blue:
+        return Colors.blue;
+      case AppTheme.purple:
+        return Colors.purple;
+      case AppTheme.green:
+        return Colors.green;
+      case AppTheme.red:
+        return Colors.red;
+      case AppTheme.orange:
+        return Colors.orange;
+      case AppTheme.pink:
+        return Colors.pink;
+    }
+  }
+
+  String _getThemeName(AppTheme theme) {
+    switch (theme) {
+      case AppTheme.blue:
+        return "Blue";
+      case AppTheme.purple:
+        return "Purple";
+      case AppTheme.green:
+        return "Green";
+      case AppTheme.red:
+        return "Red";
+      case AppTheme.orange:
+        return "Orange";
+      case AppTheme.pink:
+        return "Pink";
+    }
+  }
 }

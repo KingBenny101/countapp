@@ -47,8 +47,8 @@ class MainApp extends StatelessWidget {
       builder: (context, themeNotifier, child) {
         themeNotifier.updateSystemUiOverlay();
         return MaterialApp(
-          theme: ThemeData.light(),
-          darkTheme: ThemeData.dark(),
+          theme: themeNotifier.getLightTheme(),
+          darkTheme: themeNotifier.getDarkTheme(),
           themeMode: themeNotifier.themeMode,
           home: const HomePage(),
           routes: {
