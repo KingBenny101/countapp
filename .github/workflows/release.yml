@@ -5,9 +5,9 @@ on:
     branches: ['master']
 
 jobs:
-  build:
-    name: Build & Release
-    runs-on: windows-latest
+  build-android:
+    name: Build Android
+    runs-on: ubuntu-latest
     permissions:
       contents: write
 
@@ -16,95 +16,144 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set Up Java
-        uses: actions/setup-java@v3.12.0
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '20.0.2'
+          java-version: '17'
+          cache: 'gradle'
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: stable
+          cache: true
+
+      - name: Extract version
+        id: version
+        run: echo "VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: //' | tr -d '[:space:]')" >> $GITHUB_OUTPUT
 
       - name: Install Dependencies
         run: flutter pub get
 
-      - name: Extract version from pubspec.yaml
-        id: extract_version_windows
-        shell: pwsh
-        run: |
-          $pubspecContent = Get-Content "pubspec.yaml"
-          foreach ($line in $pubspecContent) {
-              if ($line -match '^version:\s*(\S+)') {
-                  $version = $Matches[1]
-                  break
-              }
-          }
-          echo "Extracted version: $version"
-          Add-Content -Path $env:GITHUB_ENV -Value "VERSION=$version"
+      - name: Decode Keystore
+        run: echo "${{ secrets.ANDROID_KEYSTORE }}" | base64 -d > android/app/keystore.jks
 
-      - name: Decode Keystore File
-        run: |
-          $base64Content = "${{ secrets.ANDROID_KEYSTORE }}"
-          if (-not [string]::IsNullOrEmpty($base64Content)) {
-              $bytes = [System.Convert]::FromBase64String($base64Content)
-              [System.IO.File]::WriteAllBytes("android/app/keystore.jks", $bytes)
-              Write-Output "File 'keystore.jks' written successfully."
-          } else {
-              Write-Error "The ANDROID_KEYSTORE secret is empty or not found."
-          }
-        shell: pwsh
-      
       - name: Create key.properties
         run: |
-          $content = @"
+          cat > android/app/key.properties << EOF
           storePassword=${{ secrets.KEYSTORE_PASSWORD }}
           keyPassword=${{ secrets.KEY_PASSWORD }}
           keyAlias=${{ secrets.KEYSTORE_ALIAS }}
           storeFile=keystore.jks
-          "@
-          Set-Content -Path android/app/key.properties -Value $content
-        shell: pwsh
+          EOF
 
-      - name: Build Signed APK
-        run: flutter build apk --release
-      
-      - name: Rename APK file
-        shell: pwsh
-        run: |
-          $APK_SOURCE = "build/app/outputs/flutter-apk/app-release.apk"
-          $folder = Split-Path $APK_SOURCE
-          $version = ${env:VERSION}
-          if ([string]::IsNullOrEmpty($version)) {
-            $version = "default"
-          }
-          $NewFileName = "countapp-$version.apk"
-          Write-Output "Renaming $APK_SOURCE to $folder/$NewFileName"
-          Rename-Item -Path $APK_SOURCE -NewName $NewFileName
+      - name: Build APK
+        run: dart run tool/build.dart build_android
 
-      - name: Build Windows Executable
-        run: flutter build windows --release
-
-      - name: Compress Artifacts
-        shell: powershell
-        run: |
-          $version = $env:VERSION
-          $NewFileName = "countapp-$version.zip"
-          Compress-Archive -Path 'build/windows/x64/runner/Release/*' -DestinationPath $NewFileName
-
-      - name: Upload Artifacts
+      - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Releases
-          path: |
-            build/app/outputs/flutter-apk/countapp-${{ env.VERSION }}.apk
-            countapp-${{ env.VERSION }}.zip
+          name: android-apk
+          path: release/countapp-${{ steps.version.outputs.VERSION }}.apk
+
+  build-windows:
+    name: Build Windows
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Extract version
+        id: version
+        run: echo "VERSION=$(grep '^version:' pubspec.yaml | cut -d' ' -f2 | tr -d '\r')" >> $GITHUB_OUTPUT
+        shell: bash
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Build Windows
+        run: dart run tool/build.dart build_windows
+
+      - name: Compress Windows Build
+        run: Compress-Archive -Path release/windows/* -DestinationPath countapp-${{ steps.version.outputs.VERSION }}-windows.zip
+        shell: pwsh
+
+      - name: Upload Windows Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-exe
+          path: countapp-${{ steps.version.outputs.VERSION }}-windows.zip
+
+  build-linux:
+    name: Build Linux
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install Linux Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Extract version
+        id: version
+        run: echo "VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: //' | tr -d '[:space:]')" >> $GITHUB_OUTPUT
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Build Linux
+        run: dart run tool/build.dart build_linux
+
+      - name: Compress Linux Build
+        run: tar -czf countapp-${{ steps.version.outputs.VERSION }}-linux.tar.gz -C release/linux .
+
+      - name: Upload Linux Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-exe
+          path: countapp-${{ steps.version.outputs.VERSION }}-linux.tar.gz
+
+  release:
+    name: Create Release
+    needs: [build-android, build-windows, build-linux]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Extract version
+        id: version
+        run: echo "VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: //' | tr -d '[:space:]')" >> $GITHUB_OUTPUT
+
+      - name: Download All Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
 
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: 'build/app/outputs/flutter-apk/countapp-${{ env.VERSION }}.apk,countapp-${{ env.VERSION }}.zip'
+          artifacts: 'artifacts/**/*'
           allowUpdates: true
           generateReleaseNotes: true
-          name: Count App ${{ env.VERSION }}
-          tag: ${{ env.VERSION }}
+          name: Count App ${{ steps.version.outputs.VERSION }}
+          tag: ${{ steps.version.outputs.VERSION }}
