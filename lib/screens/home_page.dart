@@ -295,6 +295,7 @@ class HomePageState extends State<HomePage> {
                       await importJSON(counterProvider, filePath);
 
                       if (context.mounted) {
+                        Navigator.of(context).pop();
                         ScaffoldMessenger.of(context).showSnackBar(
                           buildAppSnackBar("Counters Imported Successfully!"),
                         );
