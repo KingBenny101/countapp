@@ -96,3 +96,8 @@ version: 1.4.0 # MAJOR.MINOR.PATCH
 ```
 
 The build script automatically extracts the version and names output files accordingly.
+
+## Next Steps
+
+- [Configuration](configuration.md) - Customize app settings
+- [Adding Counter Types](../guides/adding-counter-types.md) - Extend the app

@@ -36,3 +36,9 @@ class AppConstants {
 ```
 
 After modifying constants, rebuild the app for changes to take effect.
+
+## Next Steps
+
+- [Building](building.md) - Create release builds
+- [API Reference](../api/base-counter.md) - Explore the API
+- [Adding Counter Types](../guides/adding-counter-types.md) - Extend the app

@@ -1,15 +1,13 @@
 site_name: Count App Documentation
-site_description: 'Comprehensive documentation for Count App - A Flutter-based extensible counter tracking application'
+site_description: 'Documentation for Count App - A Flutter counter tracking application'
 site_author: 'KingBenny101'
 site_url: 'https://kingbenny101.github.io/countapp/'
 repo_url: 'https://github.com/KingBenny101/countapp'
 repo_name: 'KingBenny101/countapp'
-edit_uri: 'edit/master/docs/'
 
 theme:
   name: material
   palette:
-    # Light mode
     - media: '(prefers-color-scheme: light)'
       scheme: default
       primary: blue
@@ -17,7 +15,6 @@ theme:
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
-    # Dark mode
     - media: '(prefers-color-scheme: dark)'
       scheme: slate
       primary: blue
@@ -27,74 +24,28 @@ theme:
         name: Switch to light mode
   features:
     - navigation.instant
-    - navigation.tracking
     - navigation.tabs
-    - navigation.tabs.sticky
     - navigation.sections
-    - navigation.expand
-    - navigation.path
     - navigation.top
-    - navigation.footer
     - toc.follow
     - search.suggest
     - search.highlight
-    - search.share
     - content.code.copy
-    - content.code.annotate
-    - content.tabs.link
   icon:
     repo: fontawesome/brands/github
-    edit: material/pencil
-    view: material/eye
-  font:
-    text: Roboto
-    code: Roboto Mono
 
 plugins:
-  - search:
-      lang: en
-      separator: '[\s\-,:!=\[\]()"/]+|(?!\b)(?=[A-Z][a-z])|\.(?!\d)|&[lg]t;'
-  - tags
-  - glightbox:
-      touchNavigation: true
-      loop: false
-      effect: zoom
-      slide_effect: slide
-      width: 100%
-      height: auto
-      zoomable: true
-      draggable: true
-      auto_caption: false
-      caption_position: bottom
+  - search
+  - glightbox
 
 markdown_extensions:
-  - abbr
   - admonition
   - attr_list
-  - def_list
-  - footnotes
-  - md_in_html
   - tables
   - toc:
       permalink: true
-      toc_depth: 4
-  - pymdownx.arithmatex:
-      generic: true
-  - pymdownx.betterem:
-      smart_enable: all
-  - pymdownx.caret
-  - pymdownx.details
-  - pymdownx.emoji:
-      emoji_index: !!python/name:material.extensions.emoji.twemoji
-      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - pymdownx.highlight:
       anchor_linenums: true
-      line_spans: __span
-      pygments_lang_class: true
-  - pymdownx.inlinehilite
-  - pymdownx.keys
-  - pymdownx.mark
-  - pymdownx.smartsymbols
   - pymdownx.superfences:
       custom_fences:
         - name: mermaid
@@ -104,16 +55,11 @@ markdown_extensions:
       alternate_style: true
   - pymdownx.tasklist:
       custom_checkbox: true
-  - pymdownx.tilde
 
 extra:
-  version:
-    provider: mike
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/KingBenny101
-    - icon: fontawesome/brands/flutter
-      link: https://flutter.dev
 
 nav:
   - Home: index.md
