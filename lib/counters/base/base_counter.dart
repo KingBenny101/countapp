@@ -3,6 +3,15 @@ import "package:flutter/material.dart";
 /// Abstract base class for all counter types
 /// Each counter type implements its own update logic and UI presentation
 abstract class BaseCounter {
+
+  /// Constructor
+  BaseCounter({
+    required this.id,
+    required this.name,
+    required this.value,
+    this.lastUpdated,
+    List<DateTime>? updates,
+  }) : updates = updates ?? [];
   /// Unique identifier for this counter instance
   final String id;
 
@@ -17,15 +26,6 @@ abstract class BaseCounter {
 
   /// History of all update timestamps
   List<DateTime> updates;
-
-  /// Constructor
-  BaseCounter({
-    required this.id,
-    required this.name,
-    required this.value,
-    this.lastUpdated,
-    List<DateTime>? updates,
-  }) : updates = updates ?? [];
 
   /// Unique type identifier for this counter type (e.g., 'tap', 'long_press')
   String get counterType;

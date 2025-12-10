@@ -6,13 +6,13 @@ import "package:flutter/services.dart";
 import "package:hive_ce/hive.dart";
 
 class ThemeNotifier extends ChangeNotifier {
-  late final Box _settingsBox;
-  late ThemeMode _themeMode;
 
   ThemeNotifier() {
     _settingsBox = Hive.box(AppConstants.settingsBox);
     _themeMode = _loadThemeMode();
   }
+  late final Box _settingsBox;
+  late ThemeMode _themeMode;
 
   ThemeMode _loadThemeMode() {
     final theme = _settingsBox.get(AppConstants.themeModeSetting);

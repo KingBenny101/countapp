@@ -1,4 +1,4 @@
-import "package:countapp/counters/tap_counter.dart";
+import "package:countapp/counters/tap_counter/tap_counter.dart";
 import "package:countapp/providers/counter_provider.dart";
 import "package:countapp/utils/constants.dart";
 import "package:countapp/utils/widgets.dart";

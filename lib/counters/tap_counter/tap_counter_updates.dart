@@ -2,16 +2,16 @@ import "package:countapp/utils/widgets.dart";
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
 
-class AllUpdatesPage extends StatefulWidget {
-  const AllUpdatesPage({super.key, required this.name, required this.data});
+class TapCounterUpdatesPage extends StatefulWidget {
+  const TapCounterUpdatesPage({super.key, required this.name, required this.data});
   final String name;
   final List<DateTime> data;
 
   @override
-  _AllUpdatesPageState createState() => _AllUpdatesPageState();
+  _TapCounterUpdatesPageState createState() => _TapCounterUpdatesPageState();
 }
 
-class _AllUpdatesPageState extends State<AllUpdatesPage> {
+class _TapCounterUpdatesPageState extends State<TapCounterUpdatesPage> {
   late List<DateTime> filteredData;
 
   @override

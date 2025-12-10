@@ -1,6 +1,6 @@
+import "package:countapp/counters/tap_counter/tap_counter_statistics.dart";
 import "package:countapp/providers/counter_provider.dart";
-import "package:countapp/screens/counter_creation/counter_type_selection.dart";
-import "package:countapp/screens/counter_details/info_page.dart";
+import "package:countapp/screens/selection_page.dart";
 import "package:countapp/utils/files.dart";
 import "package:countapp/utils/widgets.dart";
 import "package:file_picker/file_picker.dart";
@@ -72,7 +72,7 @@ class HomePageState extends State<HomePage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => InfoPage(index: index),
+                            builder: (context) => TapCounterStatisticsPage(index: index),
                           ),
                         );
                       },

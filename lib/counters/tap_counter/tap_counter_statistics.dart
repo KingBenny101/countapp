@@ -1,6 +1,6 @@
+import "package:countapp/counters/tap_counter/tap_counter.dart";
+import "package:countapp/counters/tap_counter/tap_counter_updates.dart";
 import "package:countapp/providers/counter_provider.dart";
-import "package:countapp/screens/counter_details/all_updates_page.dart";
-import "package:countapp/utils/statistics.dart";
 import "package:fl_chart/fl_chart.dart";
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
@@ -13,17 +13,19 @@ class ChartData {
   final double y;
 }
 
-class InfoPage extends StatefulWidget {
-  const InfoPage({super.key, required this.index});
+class TapCounterStatisticsPage extends StatefulWidget {
+  const TapCounterStatisticsPage({super.key, required this.index});
   final int index;
 
   @override
-  InfoPageState createState() => InfoPageState();
+  TapCounterStatisticsPageState createState() =>
+      TapCounterStatisticsPageState();
 }
 
-class InfoPageState extends State<InfoPage> {
+class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
   final int _numberOfDates = 7;
   late CounterProvider _counterProvider;
+  late TapCounter _counter;
   late String _counterName;
   late List<DateTime> _updatesData;
   late List<Widget> _statsWidget;
@@ -35,15 +37,15 @@ class InfoPageState extends State<InfoPage> {
   void initState() {
     super.initState();
     _counterProvider = Provider.of<CounterProvider>(context, listen: false);
-    _counterName = _counterProvider.counters[widget.index].name;
-    _updatesData = _counterProvider.counters[widget.index].updates;
+    _counter = _counterProvider.counters[widget.index] as TapCounter;
+    _counterName = _counter.name;
+    _updatesData = _counter.updates;
 
-    final StatisticsGenerator statisticsGenerator =
-        StatisticsGenerator(_updatesData);
-    _statsWidget = statisticsGenerator.generateStatsWidgets();
+    // Use counter's methods to generate statistics
+    _statsWidget = _counter.generateStatisticsWidgets();
 
     _updatesPerDay = Map<String, int>.fromEntries(
-      (statisticsGenerator.updatesPerDay).entries.toList()
+      _counter.getUpdatesPerDay().entries.toList()
         ..sort(
           (MapEntry<String, int> a, MapEntry<String, int> b) =>
               a.key.compareTo(b.key),
@@ -51,8 +53,7 @@ class InfoPageState extends State<InfoPage> {
     ).entries.toList();
 
     _indexOfEndDate = _updatesPerDay.length - 1;
-    _daysPerUpdateCount = statisticsGenerator.daysPerUpdateCount.entries
-        .toList()
+    _daysPerUpdateCount = _counter.getDaysPerUpdateCount().entries.toList()
       ..sort((a, b) => a.key.compareTo(b.key));
   }
 
@@ -146,7 +147,7 @@ class InfoPageState extends State<InfoPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => AllUpdatesPage(
+                    builder: (context) => TapCounterUpdatesPage(
                       name: _counterName,
                       data: _updatesData,
                     ),

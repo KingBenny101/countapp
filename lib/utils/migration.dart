@@ -1,4 +1,4 @@
-import "package:countapp/counters/tap_counter.dart";
+import "package:countapp/counters/tap_counter/tap_counter.dart";
 import "package:countapp/models/counter_model.dart";
 import "package:countapp/utils/constants.dart";
 import "package:hive_ce/hive.dart";
