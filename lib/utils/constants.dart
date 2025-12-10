@@ -6,6 +6,7 @@ class AppConstants {
 
   // Settings keys
   static const String themeModeSetting = "themeMode";
+  static const String currentThemeSetting = "currentTheme";
 
   // Hive type IDs
   static const int tapCounterTypeId = 1;

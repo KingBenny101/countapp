@@ -1,9 +1,9 @@
-import "package:countapp/counters/tap_counter.dart";
+import "package:countapp/counters/tap_counter/tap_counter.dart";
+import "package:countapp/counters/series_counter/series_counter.dart";
 import "package:countapp/models/counter_model.dart";
 import "package:countapp/providers/counter_provider.dart";
-import "package:countapp/screens/about_page.dart";
-import "package:countapp/screens/guide_page.dart";
 import "package:countapp/screens/home_page.dart";
+import "package:countapp/screens/info_page.dart";
 import "package:countapp/screens/options_page.dart";
 import "package:countapp/screens/update_page.dart";
 import "package:countapp/theme/theme_notifier.dart";
@@ -24,7 +24,7 @@ void main() async {
 
   // Register new adapters
   Hive.registerAdapter(TapCounterAdapter());
-  Hive.registerAdapter(TapDirectionAdapter());
+  Hive.registerAdapter(SeriesCounterAdapter());
 
   // Perform migration if needed
   await CounterMigration.migrateIfNeeded();
@@ -49,15 +49,14 @@ class MainApp extends StatelessWidget {
       builder: (context, themeNotifier, child) {
         themeNotifier.updateSystemUiOverlay();
         return MaterialApp(
-          theme: ThemeData.light(),
-          darkTheme: ThemeData.dark(),
+          theme: themeNotifier.getLightTheme(),
+          darkTheme: themeNotifier.getDarkTheme(),
           themeMode: themeNotifier.themeMode,
           home: const HomePage(),
           routes: {
             "/updates": (context) => const UpdatePage(),
             "/options": (context) => const OptionsPage(),
-            "/guide": (context) => const GuidePage(),
-            "/about": (context) => const AboutPage(),
+            "/info": (context) => const InfoPage(),
           },
         );
       },

@@ -1,0 +1,82 @@
+site_name: Count App Documentation
+site_description: 'Documentation for Count App - A Flutter counter tracking application'
+site_author: 'KingBenny101'
+site_url: 'https://kingbenny101.github.io/countapp/'
+repo_url: 'https://github.com/KingBenny101/countapp'
+repo_name: 'KingBenny101/countapp'
+
+theme:
+  name: material
+  palette:
+    - media: '(prefers-color-scheme: light)'
+      scheme: default
+      primary: blue
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: '(prefers-color-scheme: dark)'
+      scheme: slate
+      primary: blue
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+  icon:
+    repo: fontawesome/brands/github
+
+plugins:
+  - search
+  - glightbox
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/KingBenny101
+
+nav:
+  - Home: index.md
+  - Getting Started:
+      - Setup: getting-started/installation.md
+      - Building: getting-started/building.md
+      - Configuration: getting-started/configuration.md
+  - API Reference:
+      - Base Classes:
+          - BaseCounter: api/base-counter.md
+          - CounterFactory: api/counter-factory.md
+      - Counter Types:
+          - TapCounter: api/tap-counter.md
+          - SeriesCounter: api/series-counter.md
+      - Providers:
+          - CounterProvider: api/counter-provider.md
+  - Guides:
+      - Adding New Counter Types: guides/adding-counter-types.md
+
+copyright: Copyright &copy; 2025 KingBenny101

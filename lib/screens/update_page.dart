@@ -37,7 +37,7 @@ class _UpdatePageState extends State<UpdatePage> {
 
     if (!checkInternet) {
       setState(() {
-        _updateText = "No internet connection. Please check your connection.";
+        _updateText = "No internet connection. Please check your connection!";
       });
       _isLoading = false;
       _checkFailed = true;
@@ -49,7 +49,7 @@ class _UpdatePageState extends State<UpdatePage> {
 
     if (latestVersion == Version.parse("0.0.0")) {
       setState(() {
-        _updateText = "Failed to check for updates. Please try again later";
+        _updateText = "Failed to check for updates. Please try again later!";
       });
       _isLoading = false;
       _checkFailed = true;
@@ -58,7 +58,7 @@ class _UpdatePageState extends State<UpdatePage> {
 
     if (currentVersion < latestVersion) {
       setState(() {
-        _updateText = "A newer version $latestVersion is available";
+        _updateText = "A newer version $latestVersion is available. Always export your counters before updating!";
         _updateAvailable = true;
       });
       _isLoading = false;

@@ -1,254 +1,191 @@
-import "package:countapp/providers/counter_provider.dart";
-import "package:countapp/screens/all_updates_page.dart";
-import "package:countapp/utils/statistics.dart";
-import "package:fl_chart/fl_chart.dart";
+import "package:countapp/utils/updates.dart";
+import "package:countapp/utils/widgets.dart";
 import "package:flutter/material.dart";
-import "package:intl/intl.dart";
-import "package:provider/provider.dart";
-import "package:syncfusion_flutter_charts/charts.dart";
-
-class ChartData {
-  ChartData(this.x, this.y);
-  final String x;
-  final double y;
-}
+import "package:font_awesome_flutter/font_awesome_flutter.dart";
+import "package:url_launcher/url_launcher.dart";
 
 class InfoPage extends StatefulWidget {
-  const InfoPage({super.key, required this.index});
-  final int index;
+  const InfoPage({super.key});
 
   @override
-  InfoPageState createState() => InfoPageState();
+  _InfoPageState createState() => _InfoPageState();
 }
 
-class InfoPageState extends State<InfoPage> {
-  final int _numberOfDates = 7;
-  late CounterProvider _counterProvider;
-  late String _counterName;
-  late List<DateTime> _updatesData;
-  late List<Widget> _statsWidget;
-  late List<MapEntry<String, int>> _updatesPerDay;
-  late List<MapEntry<int, int>> _daysPerUpdateCount;
-  late int _indexOfEndDate;
+class _InfoPageState extends State<InfoPage>
+    with SingleTickerProviderStateMixin {
+  String version = "Loading...";
+  String repoUrl = "https://github.com/KingBenny101/countapp";
+  late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
-    _counterProvider = Provider.of<CounterProvider>(context, listen: false);
-    _counterName = _counterProvider.counters[widget.index].name;
-    _updatesData = _counterProvider.counters[widget.index].updates;
-
-    final StatisticsGenerator statisticsGenerator =
-        StatisticsGenerator(_updatesData);
-    _statsWidget = statisticsGenerator.generateStatsWidgets();
-
-    _updatesPerDay = Map<String, int>.fromEntries(
-      (statisticsGenerator.updatesPerDay).entries.toList()
-        ..sort(
-          (MapEntry<String, int> a, MapEntry<String, int> b) =>
-              a.key.compareTo(b.key),
-        ),
-    ).entries.toList();
-
-    _indexOfEndDate = _updatesPerDay.length - 1;
-    _daysPerUpdateCount = statisticsGenerator.daysPerUpdateCount.entries
-        .toList()
-      ..sort((a, b) => a.key.compareTo(b.key));
+    _tabController = TabController(length: 2, vsync: this);
+    _loadVersion();
   }
 
-  List<ChartData> _getHistogramData() {
-    final List<ChartData> histogramData = [];
-    for (int i = 0; i < _daysPerUpdateCount.length; i++) {
-      histogramData.add(
-        ChartData(_daysPerUpdateCount[i].key.toString(),
-            _daysPerUpdateCount[i].value.toDouble()),
-      );
-    }
-    return histogramData;
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadVersion() async {
+    final tmp = await getVersion();
+    setState(() {
+      version = tmp.canonicalizedVersion;
+    });
+  }
+
+  Future<void> _launchURL() async {
+    final Uri url = Uri.parse(repoUrl);
+    await launchUrl(url);
   }
 
   @override
   Widget build(BuildContext context) {
-    final int startIndex =
-        (_indexOfEndDate - _numberOfDates + 1).clamp(0, _updatesPerDay.length);
-
-    final int endIndex = (_indexOfEndDate + 1).clamp(0, _updatesPerDay.length);
-
-    final plotData = _updatesPerDay.sublist(startIndex, endIndex);
-    final chartData = _getHistogramData();
-
     return Scaffold(
-      appBar: AppBar(title: Text("Info for $_counterName")),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _indexOfEndDate -= _numberOfDates;
-
-                      if (_indexOfEndDate < 0) {
-                        _indexOfEndDate += _numberOfDates;
-                      }
-                    });
-                  },
-                  child: const Text("Previous"),
-                ),
-                const SizedBox(width: 30),
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _indexOfEndDate += _numberOfDates;
-
-                      if (_indexOfEndDate >= _updatesPerDay.length) {
-                        _indexOfEndDate = _updatesPerDay.length - 1;
-                      }
-                    });
-                  },
-                  child: const Text("Next"),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Container(
-              height: 300,
-              padding: const EdgeInsets.all(16.0),
-              child: BarChart(
-                BarChartData(
-                  titlesData: customAxisTitles(plotData),
-                  borderData: FlBorderData(show: false),
-                  gridData: const FlGridData(show: false),
-                  barGroups: List.generate(plotData.length, (index) {
-                    return BarChartGroupData(
-                      x: index,
-                      barRods: [
-                        BarChartRodData(
-                          toY: plotData[index].value.toDouble(),
-                          width: 16,
-                        ),
-                      ],
-                    );
-                  }),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: _statsWidget,
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AllUpdatesPage(
-                      name: _counterName,
-                      data: _updatesData,
-                    ),
-                  ),
-                );
-              },
-              child: const Text("View All Updates"),
-            ),
-            const SizedBox(height: 16),
-            Center(
-              child: SfCircularChart(
-                  title: const ChartTitle(
-                    text: "Updates Pie",
-                    textStyle:
-                        TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  legend: const Legend(isVisible: true),
-                  series: <CircularSeries>[
-                    PieSeries<ChartData, String>(
-                        explode: true,
-                        dataSource: chartData,
-                        xValueMapper: (ChartData data, _) => data.x,
-                        yValueMapper: (ChartData data, _) => data.y,
-                        dataLabelMapper: (ChartData data, _) =>
-                            data.y.toInt().toString(),
-                        dataLabelSettings:
-                            const DataLabelSettings(isVisible: true)),
-                  ]),
-            ),
+      appBar: AppBar(
+        title: const Text("Info"),
+        bottom: TabBar(
+          controller: _tabController,
+          tabs: const [
+            Tab(text: "Guide"),
+            Tab(text: "About"),
           ],
         ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          _buildGuidePage(),
+          _buildAboutPage(),
+        ],
       ),
     );
   }
 
-  FlTitlesData customAxisTitles(List<MapEntry<String, int>> dates) {
-    final maxValue =
-        dates.reduce((a, b) => a.value > b.value ? a : b).value.toDouble();
-    const maxTiles = 5;
-    final interval = maxValue ~/ maxTiles;
-
-    return FlTitlesData(
-      topTitles: const AxisTitles(),
-      rightTitles: const AxisTitles(),
-      leftTitles: AxisTitles(
-        sideTitles: SideTitles(
-          showTitles: true,
-          interval: 1,
-          getTitlesWidget: (double value, TitleMeta meta) {
-            if (maxValue <= maxTiles) {
-              if (value % 1 == 0) {
-                return Align(
-                  alignment: Alignment.centerRight,
-                  child: Padding(
-                    padding: EdgeInsets.zero,
-                    child: Text(
-                      value.toInt().toString(),
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                  ),
-                );
-              }
-            } else {
-              if (value % interval == 0) {
-                return Align(
-                  alignment: Alignment.centerRight,
-                  child: Padding(
-                    padding: EdgeInsets.zero,
-                    child: Text(
-                      value.toInt().toString(),
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                  ),
-                );
-              }
-            }
-            return const SizedBox();
-          },
+  Widget _buildGuidePage() {
+    return ListView(
+      padding: const EdgeInsets.all(24.0),
+      children: [
+        const Text(
+          "A simple guide to using Count App.",
+          style: TextStyle(fontSize: 18, fontStyle: FontStyle.italic),
         ),
-      ),
-      bottomTitles: AxisTitles(
-        sideTitles: SideTitles(
-          showTitles: true,
-          getTitlesWidget: (value, meta) {
-            final int index = value.toInt();
-            if (index < 0 || index >= dates.length) {
-              return Container();
-            }
+        const SizedBox(height: 20),
+        const Divider(),
+        const SizedBox(height: 20),
+        const Text(
+          "Adding Counters:",
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 10),
+        buildStepCard(
+          "You can add counters by pressing the floating action button on the home page.",
+        ),
+        const SizedBox(height: 10),
+        const Text(
+          "Updating Counters:",
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 10),
+        buildStepCard(
+          "You can update a counter by simply tapping on it. This will allow you to increment or decrement the value.",
+        ),
+        const SizedBox(height: 10),
+        const Text(
+          "Deleting Counters:",
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 10),
+        buildStepCard(
+          "To delete a counter, long-press on the counter, and it will become available for deletion.",
+        ),
+        const SizedBox(height: 20),
+        const Text(
+          "Exporting Counters:",
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 10),
+        buildStepCard(
+          "Use the Export option in the menu to save your counters to a JSON file. You can specify the file name or let the app create one for you.",
+        ),
+        const SizedBox(height: 10),
+        const Text(
+          "Importing Counters:",
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 10),
+        buildStepCard(
+          "Use the Import option in the menu to load counters from a JSON file. Ensure the file is correctly formatted.",
+        ),
+        const SizedBox(height: 10),
+        const Text(
+          "Counter Info:",
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 10),
+        buildStepCard(
+          "To see info for a counter, long-press on the counter, and press the info button on the appbar.",
+        ),
+      ],
+    );
+  }
 
-            final String formattedDate =
-                DateFormat("MMM dd").format(DateTime.parse(dates[index].key));
-            return RotatedBox(
-              quarterTurns: 3,
-              child: Text(
-                formattedDate,
-                style: const TextStyle(fontSize: 12),
+  Widget _buildAboutPage() {
+    return ListView(
+      padding: const EdgeInsets.all(24.0),
+      children: [
+        const Text(
+          "A simple application to help users keep track of their counts effortlessly.",
+          style: TextStyle(fontSize: 18, fontStyle: FontStyle.italic),
+        ),
+        const SizedBox(height: 20),
+        const Divider(),
+        const SizedBox(height: 10),
+        Align(
+          child: Card(
+            elevation: 4,
+            margin: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Padding(
+              padding: const EdgeInsets.all(15),
+              child: Column(
+                children: [
+                  Text(
+                    "Version: $version",
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  const SizedBox(height: 10),
+                  const Text(
+                    "© 2025 KingBenny101. All rights reserved.",
+                    style: TextStyle(fontSize: 12),
+                  ),
+                ],
               ),
-            );
-          },
-          reservedSize: 45,
+            ),
+          ),
         ),
-      ),
+        Align(
+          child: ElevatedButton(
+            onPressed: _launchURL,
+            child: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                FaIcon(
+                  FontAwesomeIcons.github,
+                  size: 24,
+                ),
+                SizedBox(width: 10),
+                Text(
+                  "View Source on GitHub",
+                  style: TextStyle(fontSize: 16),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
