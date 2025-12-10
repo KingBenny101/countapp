@@ -128,7 +128,7 @@ Future<void> _runCommand(String command, List<String> args) async {
 }
 
 Future<void> _copyDirectory(Directory source, Directory destination) async {
-  await for (final entity in source.list(recursive: false)) {
+  await for (final entity in source.list()) {
     final newPath = destination.path +
         Platform.pathSeparator +
         entity.path.split(Platform.pathSeparator).last;
@@ -166,25 +166,19 @@ void main(List<String> arguments) async {
     switch (task) {
       case "clean":
         await cleanEnvironment();
-        break;
       case "generate":
         await generateEnvironment();
-        break;
       case "build_android":
         await getVersion();
         await buildAndroid();
-        break;
       case "build_windows":
         await getVersion();
         await buildWindows();
-        break;
       case "build_linux":
         await getVersion();
         await buildLinux();
-        break;
       case "all":
         await buildAll();
-        break;
       default:
         print("Invalid task: $task");
         printUsage();
