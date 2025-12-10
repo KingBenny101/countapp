@@ -1,5 +1,6 @@
 import "package:countapp/counters/base/base_counter.dart";
 import "package:countapp/counters/tap_counter/tap_counter.dart";
+import "package:countapp/counters/series_counter/series_counter.dart";
 import "package:flutter/material.dart";
 
 /// Factory for creating counters from JSON with backward compatibility
@@ -8,6 +9,7 @@ class CounterFactory {
   static final Map<String, BaseCounter Function(Map<String, dynamic>)>
       _registry = {
     "tap": TapCounter.fromJson,
+    "series": SeriesCounter.fromJson,
     // Future counter types will be registered here:
     // "long_press": LongPressCounter.fromJson,
     // "swipe": SwipeCounter.fromJson,
@@ -42,6 +44,12 @@ class CounterFactory {
         description: "Update count with a single tap",
         icon: Icons.touch_app,
       ),
+      CounterTypeInfo(
+        type: "series",
+        name: "Series Counter",
+        description: "Track a series of values over time",
+        icon: Icons.show_chart,
+      ),
       // Future counter types will be added here
     ];
   }
@@ -49,7 +57,6 @@ class CounterFactory {
 
 /// Information about a counter type for display in UI
 class CounterTypeInfo {
-
   CounterTypeInfo({
     required this.type,
     required this.name,
