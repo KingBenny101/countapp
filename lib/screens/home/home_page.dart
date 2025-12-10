@@ -1,6 +1,6 @@
 import "package:countapp/providers/counter_provider.dart";
 import "package:countapp/screens/counter_creation/counter_type_selection.dart";
-import "package:countapp/screens/info_page.dart";
+import "package:countapp/screens/counter_details/info_page.dart";
 import "package:countapp/utils/files.dart";
 import "package:countapp/utils/widgets.dart";
 import "package:file_picker/file_picker.dart";
@@ -407,29 +407,13 @@ class HomePageState extends State<HomePage> {
                       horizontal: 10,
                     ),
                     child: Text(
-                      "Guide",
+                      "Info",
                       style: TextStyle(fontSize: 18, color: textColor),
                     ),
                   ),
                   onTap: () async {
                     FocusScope.of(context).unfocus();
-                    await Navigator.pushNamed(context, "/guide");
-                  },
-                  splashColor: Colors.transparent,
-                ),
-                ListTile(
-                  leading: const Icon(Icons.info),
-                  title: Container(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 10,
-                      horizontal: 10,
-                    ),
-                    child: Text("About",
-                        style: TextStyle(fontSize: 18, color: textColor)),
-                  ),
-                  onTap: () async {
-                    FocusScope.of(context).unfocus();
-                    await Navigator.pushNamed(context, "/about");
+                    await Navigator.pushNamed(context, "/help");
                   },
                   splashColor: Colors.transparent,
                 ),
