@@ -87,7 +87,7 @@ class TapCounter extends BaseCounter {
 
   @HiveField(5)
   @override
-  int value;
+  num value;
 
   @HiveField(6)
   @override

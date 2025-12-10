@@ -3,12 +3,14 @@
 // Check in to version control
 
 import 'package:hive_ce/hive.dart';
+import 'package:countapp/counters/series_counter/series_counter.dart';
 import 'package:countapp/counters/tap_counter/tap_counter.dart';
 import 'package:countapp/models/counter_model.dart';
 
 extension HiveRegistrar on HiveInterface {
   void registerAdapters() {
     registerAdapter(CounterAdapter());
+    registerAdapter(SeriesCounterAdapter());
     registerAdapter(TapCounterAdapter());
   }
 }
@@ -16,6 +18,7 @@ extension HiveRegistrar on HiveInterface {
 extension IsolatedHiveRegistrar on IsolatedHiveInterface {
   void registerAdapters() {
     registerAdapter(CounterAdapter());
+    registerAdapter(SeriesCounterAdapter());
     registerAdapter(TapCounterAdapter());
   }
 }

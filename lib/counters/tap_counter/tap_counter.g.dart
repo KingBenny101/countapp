@@ -19,7 +19,7 @@ class TapCounterAdapter extends TypeAdapter<TapCounter> {
     return TapCounter(
       id: fields[3] as String?,
       name: fields[4] as String,
-      value: (fields[5] as num).toInt(),
+      value: fields[5] as num,
       stepSize: (fields[0] as num).toInt(),
       isIncrement: fields[1] as bool,
       requireConfirmation: fields[2] == null ? true : fields[2] as bool,

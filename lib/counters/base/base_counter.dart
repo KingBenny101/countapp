@@ -19,7 +19,7 @@ abstract class BaseCounter {
   String name;
 
   /// Current count value
-  int value;
+  num value;
 
   /// Timestamp of the last update
   DateTime? lastUpdated;
