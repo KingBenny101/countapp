@@ -21,7 +21,7 @@ class TapCounterAdapter extends TypeAdapter<TapCounter> {
       name: fields[4] as String,
       value: (fields[5] as num).toInt(),
       stepSize: (fields[0] as num).toInt(),
-      direction: fields[1] as TapDirection,
+      isIncrement: fields[1] as bool,
       requireConfirmation: fields[2] == null ? true : fields[2] as bool,
       lastUpdated: fields[6] as DateTime?,
       updates: (fields[7] as List?)?.cast<DateTime>(),
@@ -35,7 +35,7 @@ class TapCounterAdapter extends TypeAdapter<TapCounter> {
       ..writeByte(0)
       ..write(obj.stepSize)
       ..writeByte(1)
-      ..write(obj.direction)
+      ..write(obj.isIncrement)
       ..writeByte(2)
       ..write(obj.requireConfirmation)
       ..writeByte(3)
@@ -57,43 +57,6 @@ class TapCounterAdapter extends TypeAdapter<TapCounter> {
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is TapCounterAdapter &&
-          runtimeType == other.runtimeType &&
-          typeId == other.typeId;
-}
-
-class TapDirectionAdapter extends TypeAdapter<TapDirection> {
-  @override
-  final typeId = 2;
-
-  @override
-  TapDirection read(BinaryReader reader) {
-    switch (reader.readByte()) {
-      case 0:
-        return TapDirection.increment;
-      case 1:
-        return TapDirection.decrement;
-      default:
-        return TapDirection.increment;
-    }
-  }
-
-  @override
-  void write(BinaryWriter writer, TapDirection obj) {
-    switch (obj) {
-      case TapDirection.increment:
-        writer.writeByte(0);
-      case TapDirection.decrement:
-        writer.writeByte(1);
-    }
-  }
-
-  @override
-  int get hashCode => typeId.hashCode;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is TapDirectionAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

@@ -1,135 +1,137 @@
-import "package:countapp/utils/widgets.dart";
-import "package:flutter/material.dart";
 import "package:intl/intl.dart";
 
-class StatisticsGenerator {
-  StatisticsGenerator(this.updatesData) {
-    _processUpdates();
+/// Result of time window analysis
+class TimeWindowResult {
+
+  const TimeWindowResult({
+    required this.count,
+    required this.windowStart,
+    required this.windowEnd,
+  });
+  final int count;
+  final DateTime windowStart;
+  final DateTime windowEnd;
+
+  String toFormattedString() {
+    final DateFormat dateFormat = DateFormat("yyyy-MM-dd");
+    final DateFormat timeFormat = DateFormat("HH:mm");
+    return "$count|${dateFormat.format(windowStart)}|${timeFormat.format(windowStart)}-${timeFormat.format(windowEnd)}";
   }
-  final List<DateTime> updatesData;
-  late Map<String, int> updatesPerDay;
-  late Map<String, List<int>> updatesPerDayWithTimes;
-  late Map<int, int> daysPerUpdateCount;
-  late DateTime _firstDate;
-  late DateTime _lastDate;
-  late double _totalDays;
-  late List<int> _updatesList;
-  late double _avgUpdatesPerDay;
-  late String _mostUpdatesDay;
-  late int _mostUpdatesCount;
-  late double _avgUpdatesLast7Days;
-  late double _avgUpdatesLast30Days;
-  late double _percentDaysWithNoUpdates;
-  late String _mostActive180TimeWindow;
-  late String _mostActive60TimeWindow;
-  late String _mostActive360TimeWindow;
-  late String _mostActive720TimeWindow;
-  late String _mostActive1080TimeWindow;
-  late String _mostActive1440TimeWindow;
+}
 
-  void _processUpdates() {
-    updatesPerDay = {};
-    updatesPerDayWithTimes = {};
-    daysPerUpdateCount = {};
+/// Generic statistics utilities for date/time data analysis
+class DateStatistics {
+  /// Group DateTime list by date, returning a map of date strings to update counts
+  static Map<String, int> groupUpdatesByDay(List<DateTime> updates) {
+    final Map<String, int> updatesPerDay = {};
+    final DateFormat formatter = DateFormat("yyyy-MM-dd");
 
-    for (final update in updatesData) {
-      final String formattedDate = DateFormat("yyyy-MM-dd").format(update);
-      updatesPerDay[formattedDate] = (updatesPerDay[formattedDate] ?? 0) + 1;
-      updatesPerDayWithTimes[formattedDate] =
-          updatesPerDayWithTimes[formattedDate] ?? [];
-      updatesPerDayWithTimes[formattedDate]!
-          .add(update.hour * 60 + update.minute);
+    for (final update in updates) {
+      final dateKey = formatter.format(update);
+      updatesPerDay[dateKey] = (updatesPerDay[dateKey] ?? 0) + 1;
     }
 
-    for (final updateCount in updatesPerDay.values) {
-      daysPerUpdateCount[updateCount] =
-          (daysPerUpdateCount[updateCount] ?? 0) + 1;
+    return updatesPerDay;
+  }
+
+  /// Count how many days had each specific number of updates
+  /// Returns a map of update count to number of days with that count
+  static Map<int, int> countDaysByUpdateFrequency(
+      Map<String, int> updatesPerDay) {
+    final Map<int, int> daysPerUpdateCount = {};
+
+    for (final count in updatesPerDay.values) {
+      daysPerUpdateCount[count] = (daysPerUpdateCount[count] ?? 0) + 1;
     }
 
-    _firstDate = updatesData.reduce((a, b) => a.isBefore(b) ? a : b);
-    _lastDate = updatesData.reduce((a, b) => a.isAfter(b) ? a : b);
-    _totalDays =
-        (_lastDate.difference(_firstDate).inHours / 24).roundToDouble() + 1;
-    _updatesList = updatesPerDay.values.toList();
-
-    _calcAvgUpdatesPerDay();
-    _calcMostUpdatesDayAndCount();
-    _calcAvgUpdatesLastNDays();
-    _calcPercentDaysWithNoUpdates();
-    _mostActive180TimeWindow = _calcMostActiveTimeWindow(180);
-    _mostActive60TimeWindow = _calcMostActiveTimeWindow(60);
-    _mostActive360TimeWindow = _calcMostActiveTimeWindow(360);
-    _mostActive720TimeWindow = _calcMostActiveTimeWindow(720);
-    _mostActive1080TimeWindow = _calcMostActiveTimeWindow(1080);
-    _mostActive1440TimeWindow = _calcMostActiveTimeWindow(1440);
+    return daysPerUpdateCount;
   }
 
-  // Average Updates per Day
-  void _calcAvgUpdatesPerDay() {
-    _avgUpdatesPerDay =
-        _updatesList.fold(0, (sum, updates) => sum + updates) / _totalDays;
+  /// Calculate average updates per day over all days
+  static double calculateAverageUpdatesPerDay(
+    List<DateTime> updates,
+    int totalDays,
+  ) {
+    if (totalDays == 0) return 0.0;
+    return updates.length / totalDays;
   }
 
-  // Most Updates Day and Count
-  void _calcMostUpdatesDayAndCount() {
-    final mostUpdatesEntry =
-        updatesPerDay.entries.reduce((a, b) => a.value > b.value ? a : b);
-    _mostUpdatesDay = mostUpdatesEntry.key;
-    _mostUpdatesCount = mostUpdatesEntry.value;
-  }
+  /// Find the date with the most updates
+  /// Returns [date, count] or ["No updates", 0] if empty
+  static List<dynamic> findMostUpdatesDay(Map<String, int> updatesPerDay) {
+    if (updatesPerDay.isEmpty) return ["No updates", 0];
 
-  // Average of last 7 days and 30 days
-  void _calcAvgUpdatesLastNDays() {
-    final today = DateTime.now();
-    final last7Days = today.subtract(const Duration(days: 7));
-    final last30Days = today.subtract(const Duration(days: 30));
+    String mostUpdatesDay = "";
+    int mostUpdatesCount = 0;
 
-    final List<int> updatesLast7Days = [];
-    final List<int> updatesLast30Days = [];
-    for (final date in updatesPerDay.keys) {
-      final DateTime dateObj = DateFormat("yyyy-MM-dd").parse(date);
-      if (dateObj.isAfter(last7Days) && dateObj.isBefore(today)) {
-        updatesLast7Days.add(updatesPerDay[date]!);
-      }
-      if (dateObj.isAfter(last30Days) && dateObj.isBefore(today)) {
-        updatesLast30Days.add(updatesPerDay[date]!);
+    for (final entry in updatesPerDay.entries) {
+      if (entry.value > mostUpdatesCount) {
+        mostUpdatesDay = entry.key;
+        mostUpdatesCount = entry.value;
       }
     }
 
-    final totalUpdatesLast7Days =
-        updatesLast7Days.fold(0, (sum, updates) => sum + updates);
-    final totalUpdatesLast30Days =
-        updatesLast30Days.fold(0, (sum, updates) => sum + updates);
-
-    _avgUpdatesLast7Days =
-        updatesLast7Days.isEmpty ? 0.0 : totalUpdatesLast7Days / 7;
-
-    _avgUpdatesLast30Days =
-        updatesLast30Days.isEmpty ? 0.0 : totalUpdatesLast30Days / 30;
+    return [mostUpdatesDay, mostUpdatesCount];
   }
 
-  // Calculate percentage of days with no updates'
-  void _calcPercentDaysWithNoUpdates() {
-    final double daysWithNoUpdates = _totalDays - updatesPerDay.length;
-    _percentDaysWithNoUpdates = (daysWithNoUpdates / _totalDays) * 100;
+  /// Calculate average updates over the last N days
+  static double calculateAverageLastNDays(
+    Map<String, int> updatesPerDay,
+    int days,
+  ) {
+    if (updatesPerDay.isEmpty) return 0.0;
+
+    // Get the last N days from the map
+    final sortedDates = updatesPerDay.keys.toList()..sort();
+    final recentDates = sortedDates.length > days
+        ? sortedDates.sublist(sortedDates.length - days)
+        : sortedDates;
+
+    final totalUpdates =
+        recentDates.fold(0, (sum, date) => sum + (updatesPerDay[date] ?? 0));
+
+    return totalUpdates / days;
   }
 
-  String _calcMostActiveTimeWindow(int windowSize) {
-    if (updatesData.isEmpty) return "No updates";
+  /// Calculate percentage of days with no updates
+  static double calculatePercentDaysWithNoUpdates(
+    Map<String, int> updatesPerDay,
+    int totalDays,
+  ) {
+    if (totalDays == 0) return 0.0;
+    final daysWithNoUpdates = totalDays - updatesPerDay.length;
+    return (daysWithNoUpdates / totalDays) * 100;
+  }
 
-    // Convert all times to DateTime and sort them
-    final sortedTimes = List<DateTime>.from(updatesData)..sort();
+  /// Find the most active time window of specified size (in minutes)
+  /// Uses sliding window algorithm to find period with most updates
+  static TimeWindowResult findMostActiveTimeWindow(
+    List<DateTime> updates,
+    int windowSizeMinutes,
+  ) {
+    if (updates.isEmpty) {
+      final now = DateTime.now();
+      return TimeWindowResult(
+        count: 0,
+        windowStart: now,
+        windowEnd: now,
+      );
+    }
+
+    // Sort times
+    final sortedTimes = List<DateTime>.from(updates)..sort();
 
     int maxCount = 0;
-    DateTime? windowStart;
-    DateTime? windowEnd;
+    DateTime windowStart = sortedTimes[0];
+    DateTime windowEnd =
+        sortedTimes[0].add(Duration(minutes: windowSizeMinutes));
 
     // Sliding window approach
     int start = 0;
     for (int end = 0; end < sortedTimes.length; end++) {
       // Move start forward until within window size
       while (sortedTimes[end].difference(sortedTimes[start]) >
-          Duration(minutes: windowSize)) {
+          Duration(minutes: windowSizeMinutes)) {
         start++;
       }
 
@@ -138,91 +140,26 @@ class StatisticsGenerator {
       if (currentCount > maxCount) {
         maxCount = currentCount;
         windowStart = sortedTimes[start];
-        windowEnd = sortedTimes[start].add(Duration(minutes: windowSize));
-        // windowEnd = sortedTimes[end];
+        windowEnd =
+            sortedTimes[start].add(Duration(minutes: windowSizeMinutes));
       }
     }
 
-    final DateFormat dateFormat = DateFormat("yyyy-MM-dd");
-    final DateFormat timeFormat = DateFormat("HH:mm");
-
-    return "$maxCount|"
-        "${dateFormat.format(windowStart!)}|"
-        "${timeFormat.format(windowStart)}-"
-        "${timeFormat.format(windowEnd!)}";
+    return TimeWindowResult(
+      count: maxCount,
+      windowStart: windowStart,
+      windowEnd: windowEnd,
+    );
   }
 
-  List<Widget> generateStatsWidgets() {
-    return [
-      buildInfoCard(
-        "Average Updates per Day",
-        _avgUpdatesPerDay.toStringAsFixed(2),
-      ),
-      buildInfoCard("Most Updates Day", _mostUpdatesDay),
-      buildInfoCard("Most Updates Count", _mostUpdatesCount.toString()),
-      buildInfoCard(
-        "Average over the Last 7 Days",
-        _avgUpdatesLast7Days.toStringAsFixed(2),
-      ),
-      buildInfoCard(
-        "Average over the Last 30 Days",
-        _avgUpdatesLast30Days.toStringAsFixed(2),
-      ),
-      buildInfoCard(
-        "Days with No Updates",
-        "${_percentDaysWithNoUpdates.toStringAsFixed(2)}%",
-      ),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          buildSummaryCard(
-            title: "1h Max",
-            count: _mostActive60TimeWindow.split("|")[0],
-            date: _mostActive60TimeWindow.split("|")[1],
-            timeRange: _mostActive60TimeWindow.split("|")[2],
-          ),
-          buildSummaryCard(
-            title: "3h Max",
-            count: _mostActive180TimeWindow.split("|")[0],
-            date: _mostActive180TimeWindow.split("|")[1],
-            timeRange: _mostActive180TimeWindow.split("|")[2],
-          ),
-        ],
-      ),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          buildSummaryCard(
-            title: "6h Max",
-            count: _mostActive360TimeWindow.split("|")[0],
-            date: _mostActive360TimeWindow.split("|")[1],
-            timeRange: _mostActive360TimeWindow.split("|")[2],
-          ),
-          buildSummaryCard(
-            title: "12h Max",
-            count: _mostActive720TimeWindow.split("|")[0],
-            date: _mostActive720TimeWindow.split("|")[1],
-            timeRange: _mostActive720TimeWindow.split("|")[2],
-          ),
-        ],
-      ),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          buildSummaryCard(
-            title: "18h Max",
-            count: _mostActive1080TimeWindow.split("|")[0],
-            date: _mostActive1080TimeWindow.split("|")[1],
-            timeRange: _mostActive1080TimeWindow.split("|")[2],
-          ),
-          buildSummaryCard(
-            title: "24h Max",
-            count: _mostActive1440TimeWindow.split("|")[0],
-            date: _mostActive1440TimeWindow.split("|")[1],
-            timeRange: _mostActive1440TimeWindow.split("|")[2],
-          ),
-        ],
-      ),
-    ];
+  /// Calculate total days between first and last update
+  static int calculateTotalDays(List<DateTime> updates) {
+    if (updates.isEmpty) return 0;
+
+    final sortedUpdates = List<DateTime>.from(updates)..sort();
+    final firstUpdate = sortedUpdates.first;
+    final lastUpdate = sortedUpdates.last;
+
+    return lastUpdate.difference(firstUpdate).inDays + 1;
   }
 }

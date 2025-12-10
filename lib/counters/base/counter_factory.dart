@@ -1,5 +1,5 @@
 import "package:countapp/counters/base/base_counter.dart";
-import "package:countapp/counters/tap_counter.dart";
+import "package:countapp/counters/tap_counter/tap_counter.dart";
 import "package:flutter/material.dart";
 
 /// Factory for creating counters from JSON with backward compatibility
@@ -49,10 +49,6 @@ class CounterFactory {
 
 /// Information about a counter type for display in UI
 class CounterTypeInfo {
-  final String type;
-  final String name;
-  final String description;
-  final IconData icon;
 
   CounterTypeInfo({
     required this.type,
@@ -60,4 +56,8 @@ class CounterTypeInfo {
     required this.description,
     required this.icon,
   });
+  final String type;
+  final String name;
+  final String description;
+  final IconData icon;
 }

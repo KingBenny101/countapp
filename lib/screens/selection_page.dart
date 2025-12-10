@@ -1,5 +1,5 @@
 import "package:countapp/counters/base/counter_factory.dart";
-import "package:countapp/screens/counter_creation/tap_counter_config.dart";
+import "package:countapp/counters/tap_counter/tap_counter_config.dart";
 import "package:flutter/material.dart";
 
 class CounterTypeSelectionPage extends StatelessWidget {
@@ -61,7 +61,6 @@ class CounterTypeSelectionPage extends StatelessWidget {
     switch (type) {
       case "tap":
         configPage = const TapCounterConfigPage();
-        break;
       // Future counter types will be added here:
       // case "long_press":
       //   configPage = const LongPressCounterConfigPage();

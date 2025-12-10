@@ -1,4 +1,4 @@
-import "package:countapp/counters/tap_counter.dart";
+import "package:countapp/counters/tap_counter/tap_counter.dart";
 import "package:countapp/models/counter_model.dart";
 import "package:countapp/utils/constants.dart";
 import "package:hive_ce/hive.dart";
@@ -35,9 +35,7 @@ class CounterMigration {
           name: oldCounter.name,
           value: oldCounter.value,
           stepSize: oldCounter.stepSize,
-          direction: oldCounter.type == "increment"
-              ? TapDirection.increment
-              : TapDirection.decrement,
+          isIncrement: oldCounter.type == "increment",
           lastUpdated: oldCounter.lastUpdated,
           updates: oldCounter.updates,
         );
