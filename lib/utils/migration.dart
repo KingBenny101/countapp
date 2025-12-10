@@ -35,9 +35,7 @@ class CounterMigration {
           name: oldCounter.name,
           value: oldCounter.value,
           stepSize: oldCounter.stepSize,
-          direction: oldCounter.type == "increment"
-              ? TapDirection.increment
-              : TapDirection.decrement,
+          isIncrement: oldCounter.type == "increment",
           lastUpdated: oldCounter.lastUpdated,
           updates: oldCounter.updates,
         );

@@ -1,4 +1,3 @@
-import "package:countapp/counters/tap_counter/tap_counter_statistics.dart";
 import "package:countapp/providers/counter_provider.dart";
 import "package:countapp/screens/selection_page.dart";
 import "package:countapp/utils/files.dart";
@@ -69,12 +68,18 @@ class HomePageState extends State<HomePage> {
                           false,
                         );
                         FocusScope.of(context).unfocus();
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => TapCounterStatisticsPage(index: index),
-                          ),
-                        );
+
+                        final counter = counterProvider.counters[index];
+                        final statisticsPage = counter.getStatisticsPage(index);
+
+                        if (statisticsPage != null) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => statisticsPage,
+                            ),
+                          );
+                        }
                       },
                     )
                   else
@@ -413,7 +418,7 @@ class HomePageState extends State<HomePage> {
                   ),
                   onTap: () async {
                     FocusScope.of(context).unfocus();
-                    await Navigator.pushNamed(context, "/help");
+                    await Navigator.pushNamed(context, "/info");
                   },
                   splashColor: Colors.transparent,
                 ),

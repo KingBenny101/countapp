@@ -1,4 +1,5 @@
 import "package:countapp/counters/base/base_counter.dart";
+import "package:countapp/counters/tap_counter/tap_counter_statistics.dart";
 import "package:countapp/utils/statistics.dart";
 import "package:countapp/utils/widgets.dart";
 import "package:flutter/material.dart";
@@ -8,25 +9,15 @@ import "package:uuid/uuid.dart";
 
 part "tap_counter.g.dart";
 
-/// Direction for tap counter updates
-@HiveType(typeId: 2)
-enum TapDirection {
-  @HiveField(0)
-  increment,
-  @HiveField(1)
-  decrement,
-}
-
 /// A counter that updates on tap with configurable step size and direction
 @HiveType(typeId: 1)
 class TapCounter extends BaseCounter {
-
   TapCounter({
     String? id,
     required this.name,
     required this.value,
     required this.stepSize,
-    required this.direction,
+    required this.isIncrement,
     this.requireConfirmation = true,
     this.lastUpdated,
     List<DateTime>? updates,
@@ -43,17 +34,16 @@ class TapCounter extends BaseCounter {
   /// Create TapCounter from JSON with backward compatibility
   factory TapCounter.fromJson(Map<String, dynamic> json) {
     // Backward compatibility with old format
-    TapDirection dir;
+    bool isInc;
     if (json.containsKey("type")) {
       // Old format: "type": "increment" or "decrement"
-      dir = json["type"] == "increment"
-          ? TapDirection.increment
-          : TapDirection.decrement;
+      isInc = json["type"] == "increment";
+    } else if (json.containsKey("direction")) {
+      // Old format: "direction": "increment" or "decrement"
+      isInc = json["direction"] == "increment";
     } else {
-      // New format: "direction": "increment" or "decrement"
-      dir = json["direction"] == "increment"
-          ? TapDirection.increment
-          : TapDirection.decrement;
+      // New format: "isIncrement": true or false
+      isInc = json["isIncrement"] as bool? ?? true;
     }
 
     final DateTime? lastUpdated = json["lastUpdated"] != null
@@ -65,7 +55,7 @@ class TapCounter extends BaseCounter {
       name: json["name"] as String,
       value: json["value"] as int,
       stepSize: json["stepSize"] as int,
-      direction: dir,
+      isIncrement: isInc,
       requireConfirmation: json["requireConfirmation"] as bool? ?? true,
       lastUpdated: lastUpdated,
       updates: (json["updates"] as List<dynamic>?)
@@ -74,13 +64,14 @@ class TapCounter extends BaseCounter {
           (lastUpdated != null ? [lastUpdated] : []),
     );
   }
+
   /// Step size for each update
   @HiveField(0)
   final int stepSize;
 
-  /// Direction of updates (increment or decrement)
+  /// Direction of updates (true = increment, false = decrement)
   @HiveField(1)
-  final TapDirection direction;
+  final bool isIncrement;
 
   /// Whether to show confirmation dialog before updating
   @HiveField(2)
@@ -117,7 +108,7 @@ class TapCounter extends BaseCounter {
     }
 
     // Update logic
-    if (direction == TapDirection.increment) {
+    if (isIncrement) {
       value += stepSize;
     } else {
       value -= stepSize;
@@ -135,7 +126,7 @@ class TapCounter extends BaseCounter {
     return CircleAvatar(
       backgroundColor: getColor(),
       child: Icon(
-        direction == TapDirection.increment ? Icons.add : Icons.remove,
+        isIncrement ? Icons.add : Icons.remove,
         color: Colors.white,
         size: 24,
       ),
@@ -144,7 +135,7 @@ class TapCounter extends BaseCounter {
 
   @override
   String getSubtitle() {
-    final sign = direction == TapDirection.increment ? "+" : "-";
+    final sign = isIncrement ? "+" : "-";
     return "Step Size: $sign$stepSize";
   }
 
@@ -159,7 +150,7 @@ class TapCounter extends BaseCounter {
       "name": name,
       "value": value,
       "stepSize": stepSize,
-      "direction": direction.name,
+      "isIncrement": isIncrement,
       "requireConfirmation": requireConfirmation,
       "lastUpdated": lastUpdated?.toIso8601String(),
       "updates": updates.map((e) => e.toIso8601String()).toList(),
@@ -183,7 +174,7 @@ class TapCounter extends BaseCounter {
         return AlertDialog(
           title: const Text("Confirm Update"),
           content: Text(
-            "${direction == TapDirection.increment ? 'Increase' : 'Decrease'} the $name Counter by $stepSize? \nLast Updated: $lastUpdatedParsed",
+            "${isIncrement ? 'Increase' : 'Decrease'} the $name Counter by $stepSize? \nLast Updated: $lastUpdatedParsed",
           ),
           actions: <Widget>[
             TextButton(
@@ -307,5 +298,10 @@ class TapCounter extends BaseCounter {
   Map<int, int> getDaysPerUpdateCount() {
     final updatesPerDay = DateStatistics.groupUpdatesByDay(updates);
     return DateStatistics.countDaysByUpdateFrequency(updatesPerDay);
+  }
+
+  @override
+  Widget? getStatisticsPage(int index) {
+    return TapCounterStatisticsPage(index: index);
   }
 }

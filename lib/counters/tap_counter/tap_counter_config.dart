@@ -18,7 +18,7 @@ class TapCounterConfigPageState extends State<TapCounterConfigPage> {
   String _name = "";
   int _stepSize = AppConstants.defaultStepSize;
   int _initialCount = AppConstants.defaultInitialValue;
-  TapDirection _direction = TapDirection.increment;
+  bool _isIncrement = true;
 
   @override
   Widget build(BuildContext context) {
@@ -91,16 +91,14 @@ class TapCounterConfigPageState extends State<TapCounterConfigPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           Text(
-                            "Direction: ${_direction == TapDirection.increment ? 'Increment' : 'Decrement'}",
+                            "Direction: ${_isIncrement ? 'Increment' : 'Decrement'}",
                             style: const TextStyle(fontSize: 16),
                           ),
                           Switch(
-                            value: _direction == TapDirection.increment,
+                            value: _isIncrement,
                             onChanged: (value) {
                               setState(() {
-                                _direction = value
-                                    ? TapDirection.increment
-                                    : TapDirection.decrement;
+                                _isIncrement = value;
                               });
                             },
                           ),
@@ -111,16 +109,14 @@ class TapCounterConfigPageState extends State<TapCounterConfigPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "Direction: ${_direction == TapDirection.increment ? 'Increment' : 'Decrement'}",
+                            "Direction: ${_isIncrement ? 'Increment' : 'Decrement'}",
                             style: const TextStyle(fontSize: 16),
                           ),
                           Switch(
-                            value: _direction == TapDirection.increment,
+                            value: _isIncrement,
                             onChanged: (value) {
                               setState(() {
-                                _direction = value
-                                    ? TapDirection.increment
-                                    : TapDirection.decrement;
+                                _isIncrement = value;
                               });
                             },
                           ),
@@ -141,7 +137,7 @@ class TapCounterConfigPageState extends State<TapCounterConfigPage> {
               name: _name,
               value: _initialCount,
               stepSize: _stepSize,
-              direction: _direction,
+              isIncrement: _isIncrement,
               lastUpdated: DateTime.now(),
             );
             Provider.of<CounterProvider>(context, listen: false)

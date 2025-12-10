@@ -3,7 +3,6 @@ import "package:flutter/material.dart";
 /// Abstract base class for all counter types
 /// Each counter type implements its own update logic and UI presentation
 abstract class BaseCounter {
-
   /// Constructor
   BaseCounter({
     required this.id,
@@ -12,6 +11,7 @@ abstract class BaseCounter {
     this.lastUpdated,
     List<DateTime>? updates,
   }) : updates = updates ?? [];
+
   /// Unique identifier for this counter instance
   final String id;
 
@@ -49,5 +49,11 @@ abstract class BaseCounter {
   /// Validate the counter's configuration
   bool validate() {
     return name.isNotEmpty;
+  }
+
+  /// Navigate to counter-specific statistics page
+  /// Returns null if counter doesn't have a statistics page
+  Widget? getStatisticsPage(int index) {
+    return null; // Default: no statistics page
   }
 }

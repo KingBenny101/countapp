@@ -23,7 +23,6 @@ void main() async {
 
   // Register new adapters
   Hive.registerAdapter(TapCounterAdapter());
-  Hive.registerAdapter(TapDirectionAdapter());
 
   // Perform migration if needed
   await CounterMigration.migrateIfNeeded();
@@ -55,7 +54,7 @@ class MainApp extends StatelessWidget {
           routes: {
             "/updates": (context) => const UpdatePage(),
             "/options": (context) => const OptionsPage(),
-            "/help": (context) => const InfoPage(),
+            "/info": (context) => const InfoPage(),
           },
         );
       },

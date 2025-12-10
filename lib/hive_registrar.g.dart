@@ -10,7 +10,6 @@ extension HiveRegistrar on HiveInterface {
   void registerAdapters() {
     registerAdapter(CounterAdapter());
     registerAdapter(TapCounterAdapter());
-    registerAdapter(TapDirectionAdapter());
   }
 }
 
@@ -18,6 +17,5 @@ extension IsolatedHiveRegistrar on IsolatedHiveInterface {
   void registerAdapters() {
     registerAdapter(CounterAdapter());
     registerAdapter(TapCounterAdapter());
-    registerAdapter(TapDirectionAdapter());
   }
 }
