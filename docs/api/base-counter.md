@@ -570,7 +570,6 @@ if (counter.validate()) {
 - [CounterFactory](counter-factory.md) - Dynamic counter instantiation
 - [TapCounter](tap-counter.md) - Concrete implementation example
 - [Adding Counter Types](../guides/adding-counter-types.md) - Implementation guide
-- [Architecture](../architecture/counter-system.md) - System design
 
 ## Related Types
 

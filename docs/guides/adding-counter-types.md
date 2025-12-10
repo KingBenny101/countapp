@@ -18,7 +18,6 @@ Adding a new counter type involves:
 Before you begin:
 
 - Complete the [Installation](../getting-started/installation.md) guide
-- Understand the [Architecture](../architecture/counter-system.md)
 - Familiarize yourself with [BaseCounter](../api/base-counter.md) API
 
 ## Step-by-Step Guide
@@ -799,9 +798,6 @@ factory LongPressCounter.fromJson(Map<String, dynamic> json) {
 ## Next Steps
 
 - **[API Reference →](../api/base-counter.md)** - Detailed BaseCounter API
-- **[Architecture →](../architecture/counter-system.md)** - Counter system design
-- **[Testing →](testing.md)** - Testing strategies
-- **[Contributing →](contributing.md)** - Contribution guidelines
 
 !!! success "Counter Type Added!"
 You've successfully added a new counter type! Test thoroughly and consider contributing it back to the project.

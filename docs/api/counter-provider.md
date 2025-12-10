@@ -149,4 +149,3 @@ Consumer<CounterProvider>(
 ## See Also
 
 - [BaseCounter](base-counter.md)
-- [State Management](../architecture/state-management.md)

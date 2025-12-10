@@ -42,8 +42,6 @@ flutter doctor
 
 This will check your Flutter installation and show any missing dependencies for your target platform.
 
-    **Dependencies for Linux desktop**:
-
     ```bash
     # Ubuntu/Debian
     sudo apt-get update
@@ -232,9 +230,7 @@ If you encounter issues:
 
 Now that you have everything installed:
 
-- **[Quick Start →](quick-start.md)** - Run the app and explore features
 - **[Building →](building.md)** - Create release builds
-- **[Architecture →](../architecture/overview.md)** - Understand the codebase
 
 !!! success "Setup Complete!"
-Your development environment is ready! Proceed to the Quick Start guide to run the app.
+Your development environment is ready!
