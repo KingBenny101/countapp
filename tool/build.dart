@@ -53,6 +53,10 @@ Future<void> buildAndroid() async {
   print('\nBuilding for Android...');
   await _runCommand('flutter', ['build', 'apk', '--release']);
 
+  // Ensure release folder exists
+  final releaseDir = Directory(releaseFolder);
+  await releaseDir.create(recursive: true);
+
   final apkFile = File(androidBuild);
   if (await apkFile.exists()) {
     final newName = '$appName-$version.apk';
