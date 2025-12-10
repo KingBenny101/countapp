@@ -1,11 +1,9 @@
-import "package:countapp/models/counter_model.dart";
 import "package:countapp/providers/counter_provider.dart";
-import "package:countapp/screens/add_counter_page.dart";
+import "package:countapp/screens/counter_creation/counter_type_selection.dart";
 import "package:countapp/screens/info_page.dart";
 import "package:countapp/utils/files.dart";
 import "package:file_picker/file_picker.dart";
 import "package:flutter/material.dart";
-import "package:hive_ce/hive.dart";
 import "package:intl/intl.dart";
 import "package:provider/provider.dart";
 import "package:toastification/toastification.dart";
@@ -32,8 +30,6 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final counterProvider = Provider.of<CounterProvider>(context);
-
-    bool isUpdating = false;
 
     if (_selectedCounters.length != counterProvider.counters.length) {
       _selectedCounters =
@@ -112,19 +108,11 @@ class HomePageState extends State<HomePage> {
                         setState(() {
                           _selectedCounters[index] = !_selectedCounters[index];
                         });
-                      } else if (!isUpdating) {
-                        setState(() {
-                          isUpdating = true;
-                        });
-
+                      } else {
                         await Provider.of<CounterProvider>(
                           context,
                           listen: false,
                         ).updateCounter(context, index);
-
-                        setState(() {
-                          isUpdating = false;
-                        });
                       }
                     },
                     onLongPress: () {
@@ -179,16 +167,7 @@ class HomePageState extends State<HomePage> {
                               curve: Curves.easeInOut,
                               width: _isSelecting ? 40 : 48,
                               height: _isSelecting ? 40 : 48,
-                              child: CircleAvatar(
-                                backgroundColor: Colors.blueAccent,
-                                child: Icon(
-                                  counter.type == "increment"
-                                      ? Icons.add
-                                      : Icons.remove,
-                                  color: Colors.white,
-                                  size: 24,
-                                ),
-                              ),
+                              child: counter.buildIcon(),
                             ),
                             const SizedBox(width: 8),
                           ],
@@ -201,9 +180,7 @@ class HomePageState extends State<HomePage> {
                               color: textColor),
                         ),
                         subtitle: Text(
-                          counter.type == "increment"
-                              ? "Step Size: +${counter.stepSize}"
-                              : "Step Size: -${counter.stepSize}",
+                          counter.getSubtitle(),
                           style:
                               const TextStyle(fontSize: 14, color: Colors.grey),
                         ),
@@ -264,25 +241,15 @@ class HomePageState extends State<HomePage> {
                     );
 
                     if (confirmDelete == true) {
-                      final selectedCount = _selectedCounters
-                          .where((selected) => selected)
-                          .length;
-
-                      if (selectedCount > 0) {
-                        // Get the Hive box
-                        final box = Hive.box<Counter>("countersBox");
-
-                        // Remove selected counters from the Hive box and in-memory list
-                        for (int index = counterProvider.counters.length - 1;
-                            index >= 0;
-                            index--) {
-                          if (_selectedCounters[index]) {
-                            // Remove from Hive
-                            box.deleteAt(index);
-                            // Remove from the in-memory list
-                            counterProvider.counters.removeAt(index);
-                          }
+                      final selectedIndices = <int>[];
+                      for (int i = 0; i < _selectedCounters.length; i++) {
+                        if (_selectedCounters[i]) {
+                          selectedIndices.add(i);
                         }
+                      }
+
+                      if (selectedIndices.isNotEmpty) {
+                        await counterProvider.removeCounters(selectedIndices);
 
                         setState(() {
                           _selectedCounters = List<bool>.filled(
@@ -297,7 +264,7 @@ class HomePageState extends State<HomePage> {
                           alignment: Alignment.bottomCenter,
                           style: ToastificationStyle.simple,
                           title: Text(
-                            "$selectedCount Counters Deleted Successfully!",
+                            "${selectedIndices.length} Counters Deleted Successfully!",
                           ),
                           autoCloseDuration: const Duration(seconds: 2),
                           closeOnClick: true,
@@ -541,7 +508,8 @@ class HomePageState extends State<HomePage> {
             _isSelecting = false;
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const AddCounterPage()),
+              MaterialPageRoute(
+                  builder: (context) => const CounterTypeSelectionPage()),
             );
           },
           tooltip: "Add Counter",

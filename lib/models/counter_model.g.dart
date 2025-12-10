@@ -8,7 +8,7 @@ part of 'counter_model.dart';
 
 class CounterAdapter extends TypeAdapter<Counter> {
   @override
-  final int typeId = 0;
+  final typeId = 0;
 
   @override
   Counter read(BinaryReader reader) {
