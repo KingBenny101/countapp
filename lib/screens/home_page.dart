@@ -2,11 +2,11 @@ import "package:countapp/providers/counter_provider.dart";
 import "package:countapp/screens/counter_creation/counter_type_selection.dart";
 import "package:countapp/screens/info_page.dart";
 import "package:countapp/utils/files.dart";
+import "package:countapp/utils/widgets.dart";
 import "package:file_picker/file_picker.dart";
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
 import "package:provider/provider.dart";
-import "package:toastification/toastification.dart";
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -259,16 +259,13 @@ class HomePageState extends State<HomePage> {
                           _isSelecting = false;
                         });
 
-                        toastification.show(
-                          type: ToastificationType.success,
-                          alignment: Alignment.bottomCenter,
-                          style: ToastificationStyle.simple,
-                          title: Text(
-                            "${selectedIndices.length} Counters Deleted Successfully!",
-                          ),
-                          autoCloseDuration: const Duration(seconds: 2),
-                          closeOnClick: true,
-                        );
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            buildAppSnackBar(
+                              "${selectedIndices.length} Counters Deleted Successfully!",
+                            ),
+                          );
+                        }
                       }
                     }
                   },
@@ -363,14 +360,11 @@ class HomePageState extends State<HomePage> {
                       final String filePath = result.files.single.path!;
                       await importJSON(counterProvider, filePath);
 
-                      toastification.show(
-                        type: ToastificationType.success,
-                        alignment: Alignment.bottomCenter,
-                        style: ToastificationStyle.simple,
-                        title: const Text("Counters Imported Successfully!"),
-                        autoCloseDuration: const Duration(seconds: 2),
-                        closeOnClick: true,
-                      );
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          buildAppSnackBar("Counters Imported Successfully!"),
+                        );
+                      }
                     }
                   },
                   splashColor: Colors.transparent,
@@ -459,7 +453,18 @@ class HomePageState extends State<HomePage> {
                         }
 
                         final exportFilePath = "$selectedDirectory/$fileName";
-                        await exportJSON(exportFilePath);
+                        final success = await exportJSON(exportFilePath);
+
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            buildAppSnackBar(
+                              success
+                                  ? "Counters Exported Successfully!"
+                                  : "Export failed: No permission!",
+                              success: success,
+                            ),
+                          );
+                        }
                       }
                     }
                   },

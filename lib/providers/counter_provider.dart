@@ -1,9 +1,9 @@
 import "package:countapp/counters/base/base_counter.dart";
 import "package:countapp/counters/base/counter_factory.dart";
 import "package:countapp/utils/constants.dart";
+import "package:countapp/utils/widgets.dart";
 import "package:flutter/material.dart";
 import "package:hive_ce/hive.dart";
-import "package:toastification/toastification.dart";
 
 class CounterProvider with ChangeNotifier {
   List<BaseCounter> _counters = [];
@@ -56,18 +56,11 @@ class CounterProvider with ChangeNotifier {
       await box.putAt(index, counter.toJson());
       notifyListeners();
 
-      _showSuccessToast();
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          buildAppSnackBar("Counter Updated Successfully!"),
+        );
+      }
     }
-  }
-
-  void _showSuccessToast() {
-    toastification.show(
-      type: ToastificationType.success,
-      alignment: Alignment.bottomCenter,
-      style: ToastificationStyle.simple,
-      title: const Text("Counter Updated Successfully!"),
-      autoCloseDuration: const Duration(seconds: 2),
-      closeOnClick: true,
-    );
   }
 }

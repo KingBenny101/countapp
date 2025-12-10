@@ -12,7 +12,6 @@ import "package:countapp/utils/migration.dart";
 import "package:flutter/material.dart";
 import "package:hive_ce_flutter/hive_flutter.dart";
 import "package:provider/provider.dart";
-import "package:toastification/toastification.dart";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -51,19 +50,17 @@ class MainApp extends StatelessWidget {
 
     return Consumer<ThemeNotifier>(
       builder: (context, themeNotifier, child) {
-        return ToastificationWrapper(
-          child: MaterialApp(
-            theme: ThemeData.light(),
-            darkTheme: ThemeData.dark(),
-            themeMode: themeNotifier.themeMode,
-            home: const HomePage(),
-            routes: {
-              "/updates": (context) => const UpdatePage(),
-              "/options": (context) => const OptionsPage(),
-              "/guide": (context) => const GuidePage(),
-              "/about": (context) => const AboutPage(),
-            },
-          ),
+        return MaterialApp(
+          theme: ThemeData.light(),
+          darkTheme: ThemeData.dark(),
+          themeMode: themeNotifier.themeMode,
+          home: const HomePage(),
+          routes: {
+            "/updates": (context) => const UpdatePage(),
+            "/options": (context) => const OptionsPage(),
+            "/guide": (context) => const GuidePage(),
+            "/about": (context) => const AboutPage(),
+          },
         );
       },
     );

@@ -1,16 +1,13 @@
 import "dart:convert";
 import "dart:io";
 
-import "package:countapp/counters/base/base_counter.dart";
 import "package:countapp/counters/base/counter_factory.dart";
 import "package:countapp/providers/counter_provider.dart";
 import "package:countapp/utils/constants.dart";
 import "package:countapp/utils/permissions.dart";
-import "package:flutter/material.dart";
 import "package:hive_ce/hive.dart";
-import "package:toastification/toastification.dart";
 
-Future<void> exportJSON(String exportFilePath) async {
+Future<bool> exportJSON(String exportFilePath) async {
   final bool hasPermission = await checkAndRequestStoragePermission();
 
   if (hasPermission) {
@@ -20,23 +17,9 @@ Future<void> exportJSON(String exportFilePath) async {
     final jsonCounters = json.encode(counters);
 
     await file.writeAsString(jsonCounters);
-
-    toastification.show(
-      type: ToastificationType.success,
-      alignment: Alignment.bottomCenter,
-      style: ToastificationStyle.simple,
-      title: const Text("Counters Exported Successfully!"),
-      autoCloseDuration: const Duration(seconds: 2),
-      closeOnClick: true,
-    );
+    return true;
   } else {
-    toastification.show(
-      type: ToastificationType.error,
-      alignment: Alignment.bottomCenter,
-      style: ToastificationStyle.simple,
-      title: const Text("No permission!"),
-      autoCloseDuration: const Duration(seconds: 2),
-    );
+    return false;
   }
 }
 

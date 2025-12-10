@@ -1,10 +1,10 @@
 import "package:countapp/counters/tap_counter.dart";
 import "package:countapp/providers/counter_provider.dart";
 import "package:countapp/utils/constants.dart";
+import "package:countapp/utils/widgets.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:provider/provider.dart";
-import "package:toastification/toastification.dart";
 
 class TapCounterConfigPage extends StatefulWidget {
   const TapCounterConfigPage({super.key});
@@ -146,16 +146,13 @@ class TapCounterConfigPageState extends State<TapCounterConfigPage> {
             );
             Provider.of<CounterProvider>(context, listen: false)
                 .addCounter(newCounter);
-            Navigator.pop(context);
 
-            toastification.show(
-              type: ToastificationType.success,
-              alignment: Alignment.bottomCenter,
-              style: ToastificationStyle.simple,
-              title: const Text("Counter Added Successfully!"),
-              autoCloseDuration: const Duration(seconds: 2),
-              closeOnClick: true,
-            );
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                buildAppSnackBar("Counter Added Successfully!"),
+              );
+              Navigator.pop(context);
+            }
           }
         },
         tooltip: "Add Counter",
