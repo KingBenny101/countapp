@@ -21,6 +21,7 @@ The app uses a clean, extensible architecture where each counter type is self-co
 
 - Android
 - Windows
+- Linux
 
 ## Development
 
@@ -39,7 +40,7 @@ The app uses a clean, extensible architecture where each counter type is self-co
    Or use the build script:
 
    ```bash
-   .\build.ps1 generate
+   dart run tool/build.dart generate
    ```
 
 3. **Run the app:**
@@ -47,11 +48,29 @@ The app uses a clean, extensible architecture where each counter type is self-co
    flutter run
    ```
 
+## Building for Release
+
+Use the cross-platform build script:
+
+```bash
+# Clean build artifacts
+dart run tool/build.dart clean
+
+# Build for Android
+dart run tool/build.dart build_android
+
+# Build for Windows
+dart run tool/build.dart build_windows
+
+# Build for Linux
+dart run tool/build.dart build_linux
+
+# Build for current platform + Android
+dart run tool/build.dart all
+```
+
+Builds will be output to the `release/` folder.
+
 ## Adding New Counter Types
 
 See [ARCHITECTURE.md](ARCHITECTURE.md) for step-by-step instructions on adding new counter types.
-
-## Developer
-
-- ChatGPT (with human oversight)
-- KingBenny101
