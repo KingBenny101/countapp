@@ -464,30 +464,13 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#overview" class="md-nav__link">
+  <a href="#features" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Overview
+        Features
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="Overview">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#key-features" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Key Features
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -496,78 +479,6 @@
     <span class="md-ellipsis">
       
         Quick Links
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#architecture-highlights" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Architecture Highlights
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Architecture Highlights">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#core-principles" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Core Principles
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#platform-support" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Platform Support
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#technology-stack" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Technology Stack
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#getting-started" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Getting Started
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#documentation-structure" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Documentation Structure
       
     </span>
   </a>
@@ -1444,117 +1355,26 @@
 
 
 <h1 id="count-app-documentation">Count App Documentation<a class="headerlink" href="#count-app-documentation" title="Permanent link">¶</a></h1>
-<p>Welcome to the comprehensive documentation for <strong>Count App</strong> - a modern, extensible Flutter application for tracking counters with rich statistics and visualization capabilities.</p>
-<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">¶</a></h2>
-<p>Count App is a sophisticated counter tracking application built with Flutter, featuring an extensible architecture that allows for multiple counter types, comprehensive statistics, and seamless data management.</p>
-<h3 id="key-features">Key Features<a class="headerlink" href="#key-features" title="Permanent link">¶</a></h3>
+<p>A Flutter counter app with extensible architecture, statistics, and cross-platform support.</p>
+<h2 id="features">Features<a class="headerlink" href="#features" title="Permanent link">¶</a></h2>
 <ul>
-<li>Multiple Counter Types: Extensible system supporting various counter implementations</li>
-<li>Rich Statistics: Detailed analytics with interactive charts and visualizations</li>
-<li>Data Persistence: Reliable local storage using Hive CE</li>
-<li>Theme Support: Beautiful dark and light themes</li>
-<li>Import/Export: JSON-based data portability</li>
-<li>Backward Compatible: Migration support for older versions</li>
-<li>Cross-Platform: Runs on Android, Windows, and Linux</li>
+<li>Multiple counter types with extensible architecture</li>
+<li>Statistics and charts</li>
+<li>Local storage with Hive CE</li>
+<li>Dark/light themes</li>
+<li>JSON import/export</li>
+<li>Cross-platform (Android, Windows, Linux)</li>
 </ul>
 <h2 id="quick-links">Quick Links<a class="headerlink" href="#quick-links" title="Permanent link">¶</a></h2>
 <ul>
-<li><a href="getting-started/quick-start/">Quick Start</a> - Get up and running in minutes</li>
-<li><a href="architecture/overview/">Architecture</a> - Learn about the clean, extensible architecture design</li>
-<li><a href="api/base-counter/">API Reference</a> - Comprehensive API documentation for all classes and methods</li>
-<li><a href="guides/adding-counter-types/">Adding Counter Types</a> - Step-by-step guide to extending the app</li>
-</ul>
-<h2 id="architecture-highlights">Architecture Highlights<a class="headerlink" href="#architecture-highlights" title="Permanent link">¶</a></h2>
-<p>Count App uses a clean, modular architecture with clear separation of concerns:</p>
-<pre class="mermaid"><code>graph TD
-    A[UI Layer] --&gt; B[Provider Layer]
-    B --&gt; C[Business Logic]
-    C --&gt; D[Data Layer]
-    D --&gt; E[(Hive Storage)]
-
-    C --&gt; F[Counter Factory]
-    F --&gt; G[TapCounter]
-    F --&gt; H[Future Counter Types]
-
-    G --&gt; I[Statistics]
-    I --&gt; J[Charts &amp; Visualizations]</code></pre>
-<h3 id="core-principles">Core Principles<a class="headerlink" href="#core-principles" title="Permanent link">¶</a></h3>
-<ul>
-<li><strong>Extensibility</strong>: Add new counter types without modifying existing code</li>
-<li><strong>Polymorphism</strong>: All counters inherit from <code>BaseCounter</code> abstract class</li>
-<li><strong>Separation of Concerns</strong>: Clear boundaries between UI, business logic, and data</li>
-<li><strong>State Management</strong>: Provider pattern for reactive state updates</li>
-<li><strong>Type Safety</strong>: Strong typing with Dart and code generation</li>
-</ul>
-<h2 id="platform-support">Platform Support<a class="headerlink" href="#platform-support" title="Permanent link">¶</a></h2>
-<table>
-<thead>
-<tr>
-<th>Platform</th>
-<th>Status</th>
-<th>Minimum Version</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Android</td>
-<td>Supported</td>
-<td>Android 5.0 (API 21)</td>
-</tr>
-<tr>
-<td>Windows</td>
-<td>Supported</td>
-<td>Windows 10+</td>
-</tr>
-<tr>
-<td>Linux</td>
-<td>Supported</td>
-<td>Ubuntu 20.04+</td>
-</tr>
-<tr>
-<td>iOS</td>
-<td>Planned</td>
-<td>-</td>
-</tr>
-<tr>
-<td>macOS</td>
-<td>Planned</td>
-<td>-</td>
-</tr>
-<tr>
-<td>Web</td>
-<td>Planned</td>
-<td>-</td>
-</tr>
-</tbody>
-</table>
-<h2 id="technology-stack">Technology Stack<a class="headerlink" href="#technology-stack" title="Permanent link">¶</a></h2>
-<ul>
-<li><strong>Framework</strong>: Flutter 3.3.3+</li>
-<li><strong>Language</strong>: Dart 3.3.3+</li>
-<li><strong>State Management</strong>: Provider 6.1.2</li>
-<li><strong>Local Storage</strong>: Hive CE 2.7.0+</li>
-<li><strong>Charts</strong>: FL Chart 1.1.0, Syncfusion Charts 31.1.17</li>
-<li><strong>Code Generation</strong>: build_runner, hive_ce_generator</li>
-</ul>
-<h2 id="getting-started">Getting Started<a class="headerlink" href="#getting-started" title="Permanent link">¶</a></h2>
-<p>Ready to dive in? Start with one of these guides:</p>
-<ol>
-<li><a href="getting-started/installation/">Installation</a> - Set up your development environment</li>
 <li><a href="getting-started/quick-start/">Quick Start</a> - Build and run the app</li>
-<li><a href="getting-started/building/">Building</a> - Create release builds for all platforms</li>
-</ol>
-<h2 id="documentation-structure">Documentation Structure<a class="headerlink" href="#documentation-structure" title="Permanent link">¶</a></h2>
-<ul>
-<li><strong>Getting Started</strong>: Installation, setup, and first steps</li>
-<li><strong>Architecture</strong>: Deep dive into the app's design and structure</li>
-<li><strong>API Reference</strong>: Complete API documentation for all classes</li>
-<li><strong>Guides</strong>: How-to guides for extending the application</li>
+<li><a href="api/base-counter/">API Reference</a> - API documentation</li>
+<li><a href="guides/adding-counter-types/">Adding Counter Types</a> - Extend the app with new counter types</li>
 </ul>
 <h2 id="support">Support<a class="headerlink" href="#support" title="Permanent link">¶</a></h2>
 <ul>
-<li><strong>Issues</strong>: <a href="https://github.com/KingBenny101/countapp/issues">GitHub Issues</a></li>
-<li><strong>Source Code</strong>: <a href="https://github.com/KingBenny101/countapp">GitHub Repository</a></li>
+<li><a href="https://github.com/KingBenny101/countapp/issues">GitHub Issues</a></li>
+<li><a href="https://github.com/KingBenny101/countapp">Source Code</a></li>
 </ul>
 
 

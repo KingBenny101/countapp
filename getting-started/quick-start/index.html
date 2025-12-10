@@ -578,49 +578,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#running-the-app" class="md-nav__link">
+  <a href="#run-the-app" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Running the App
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Running the App">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#development-mode" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Development Mode
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#hot-reload" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Hot Reload
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#first-time-setup" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        First Time Setup
+        Run the App
       
     </span>
   </a>
@@ -628,41 +589,13 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#creating-your-first-counter" class="md-nav__link">
+  <a href="#creating-a-counter" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Creating Your First Counter
+        Creating a Counter
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="Creating Your First Counter">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#using-the-ui" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Using the UI
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#example-configuration" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Example Configuration
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -675,57 +608,29 @@
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Using Counters">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#update-a-counter" class="md-nav__link">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#viewing-statistics" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Update a Counter
+        Viewing Statistics
       
     </span>
   </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#view-counter-details" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        View Counter Details
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#counter-actions" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Counter Actions
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#navigation" class="md-nav__link">
+  <a href="#importexport" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Navigation
+        Import/Export
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Navigation">
+    <nav class="md-nav" aria-label="Import/Export">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1806,102 +1711,65 @@
 
 
 <h1 id="quick-start">Quick Start<a class="headerlink" href="#quick-start" title="Permanent link">¶</a></h1>
-<p>Get Count App up and running in minutes! This guide assumes you've already completed the <a href="../installation/">Installation</a> steps.</p>
-<h2 id="running-the-app">Running the App<a class="headerlink" href="#running-the-app" title="Permanent link">¶</a></h2>
-<h3 id="development-mode">Development Mode<a class="headerlink" href="#development-mode" title="Permanent link">¶</a></h3>
-<p>Run the app in debug mode on your connected device or emulator:</p>
+<h2 id="run-the-app">Run the App<a class="headerlink" href="#run-the-app" title="Permanent link">¶</a></h2>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>flutter<span class="w"> </span>run
 </span></code></pre></div>
 <p>Or specify a platform:</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio"><input id="__tabbed_1_2" name="__tabbed_1" type="radio"><input id="__tabbed_1_3" name="__tabbed_1" type="radio"><div class="tabbed-labels"><label for="__tabbed_1_1">Android</label><label for="__tabbed_1_2">Windows</label><label for="__tabbed_1_3">Linux</label></div>
-<div class="tabbed-content">
-<div class="tabbed-block">
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>flutter<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>android
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>flutter<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>android<span class="w">    </span><span class="c1"># Android</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>flutter<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>windows<span class="w">    </span><span class="c1"># Windows</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>flutter<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>linux<span class="w">      </span><span class="c1"># Linux</span>
 </span></code></pre></div>
-</div>
-<div class="tabbed-block">
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>flutter<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>windows
-</span></code></pre></div>
-</div>
-<div class="tabbed-block">
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>flutter<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>linux
-</span></code></pre></div>
-</div>
-</div>
-</div>
-<h3 id="hot-reload">Hot Reload<a class="headerlink" href="#hot-reload" title="Permanent link">¶</a></h3>
-<p>While the app is running, you can:</p>
-<ul>
-<li><strong>Hot Reload</strong>: Press <code>r</code> in the terminal to reload code changes</li>
-<li><strong>Hot Restart</strong>: Press <code>R</code> to restart the app</li>
-<li><strong>Quit</strong>: Press <code>q</code> to stop the app</li>
-</ul>
-<h2 id="first-time-setup">First Time Setup<a class="headerlink" href="#first-time-setup" title="Permanent link">¶</a></h2>
-<p>When you first launch Count App:</p>
+<h2 id="creating-a-counter">Creating a Counter<a class="headerlink" href="#creating-a-counter" title="Permanent link">¶</a></h2>
 <ol>
-<li><strong>Theme Selection</strong>: The app automatically detects your system theme (light/dark)</li>
-<li><strong>Empty State</strong>: You'll see an empty counter list</li>
-<li><strong>Ready to Use</strong>: The app is ready to create your first counter!</li>
+<li>Tap the ➕ button</li>
+<li>Select counter type (currently only "Tap Counter")</li>
+<li>Configure:</li>
+<li><strong>Name</strong>: Counter name</li>
+<li><strong>Step Size</strong>: Increment/decrement value</li>
+<li><strong>Direction</strong>: Up or down</li>
+<li><strong>Initial Count</strong>: Starting value</li>
+<li>Tap ➕ to create</li>
 </ol>
-<h2 id="creating-your-first-counter">Creating Your First Counter<a class="headerlink" href="#creating-your-first-counter" title="Permanent link">¶</a></h2>
-<h3 id="using-the-ui">Using the UI<a class="headerlink" href="#using-the-ui" title="Permanent link">¶</a></h3>
-<ol>
-<li><strong>Tap the FAB</strong>: Click the floating action button (➕) at the bottom right</li>
-<li><strong>Select Counter Type</strong>: Currently, "Tap Counter" is available</li>
-<li><strong>Configure Counter</strong>:</li>
-<li><strong>Name</strong>: Enter a descriptive name (e.g., "Water Intake")</li>
-<li><strong>Step Size</strong>: Set increment/decrement value (e.g., 1)</li>
-<li><strong>Direction</strong>: Toggle switch for increment (➕) or decrement (➖)</li>
-<li><strong>Initial Count</strong>: Starting value (default: 0)</li>
-<li><strong>Create</strong>: Tap the FAB to save</li>
-</ol>
-<h3 id="example-configuration">Example Configuration<a class="headerlink" href="#example-configuration" title="Permanent link">¶</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>Counter Name: Daily Steps
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>Step Size: 100
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>Direction: Increment (ON)
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>Initial Count: 0
-</span></code></pre></div>
 <h2 id="using-counters">Using Counters<a class="headerlink" href="#using-counters" title="Permanent link">¶</a></h2>
-<h3 id="update-a-counter">Update a Counter<a class="headerlink" href="#update-a-counter" title="Permanent link">¶</a></h3>
+<ul>
+<li><strong>Tap counter</strong> to update value</li>
+<li><strong>Long-press</strong> for options (statistics, delete)</li>
+<li><strong>Menu</strong> (⋮) for all updates, info, options, theme toggle</li>
+</ul>
+<h2 id="viewing-statistics">Viewing Statistics<a class="headerlink" href="#viewing-statistics" title="Permanent link">¶</a></h2>
 <ol>
-<li><strong>Tap the counter</strong> in the list</li>
-<li><strong>Confirmation Dialog</strong> appears (if enabled)</li>
-<li><strong>Confirm</strong> to update the counter value</li>
-<li><strong>Snackbar</strong> shows success message</li>
+<li>Long-press a counter and select "Statistics"</li>
+<li>View charts showing:</li>
+<li>Line chart: Value over time</li>
+<li>Bar chart: Updates by day</li>
 </ol>
-<h3 id="view-counter-details">View Counter Details<a class="headerlink" href="#view-counter-details" title="Permanent link">¶</a></h3>
-<p>Each counter displays:</p>
-<ul>
-<li><strong>Icon</strong>: Color-coded by type (blue for Tap Counter)</li>
-<li><strong>Name</strong>: Counter display name</li>
-<li><strong>Current Value</strong>: Large number showing count</li>
-<li><strong>Subtitle</strong>: Shows step size and direction</li>
-<li><strong>Last Updated</strong>: Timestamp of last update</li>
-</ul>
-<h3 id="counter-actions">Counter Actions<a class="headerlink" href="#counter-actions" title="Permanent link">¶</a></h3>
-<p>Long-press or select counters to access:</p>
-<ul>
-<li><strong>Statistics</strong>: View detailed analytics and charts</li>
-<li><strong>🗑️ Delete</strong>: Remove selected counters</li>
-<li><strong>Cancel</strong>: Clear selection</li>
-</ul>
-<h2 id="navigation">Navigation<a class="headerlink" href="#navigation" title="Permanent link">¶</a></h2>
+<h2 id="importexport">Import/Export<a class="headerlink" href="#importexport" title="Permanent link">¶</a></h2>
+<p><strong>Export</strong>:</p>
+<ol>
+<li>Menu → Options → Export Counters</li>
+<li>JSON file saved to device</li>
+</ol>
+<p><strong>Import</strong>:</p>
+<ol>
+<li>Menu → Options → Import Counters</li>
+<li>Select JSON file</li>
+</ol>
 <h3 id="main-screen-home">Main Screen (Home)<a class="headerlink" href="#main-screen-home" title="Permanent link">¶</a></h3>
 <p>The home screen shows all your counters:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>┌─────────────────────────────┐
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>│  Count App          ⋮      │
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>├─────────────────────────────┤
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>│                             │
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>│  🔵 Water Intake            │
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>│     8 glasses               │
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>│     Step Size: +1           │
-</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>│                             │
-</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>│  🔵 Daily Steps             │
-</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>│     5,200 steps             │
-</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>│     Step Size: +100         │
-</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>│                             │
-</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>└─────────────────────────────┘
-</span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a>              ➕
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>┌─────────────────────────────┐
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>│  Count App          ⋮      │
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>├─────────────────────────────┤
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>│                             │
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>│  🔵 Water Intake            │
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>│     8 glasses               │
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>│     Step Size: +1           │
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>│                             │
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>│  🔵 Daily Steps             │
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>│     5,200 steps             │
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>│     Step Size: +100         │
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>│                             │
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>└─────────────────────────────┘
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>              ➕
 </span></code></pre></div>
 <ul>
 <li><strong>App Bar</strong>: Title, options menu, theme toggle</li>
@@ -2081,10 +1949,10 @@
 </ul>
 <h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">¶</a></h2>
 <h3 id="app-wont-start">App Won't Start<a class="headerlink" href="#app-wont-start" title="Permanent link">¶</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>flutter<span class="w"> </span>clean
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>flutter<span class="w"> </span>pub<span class="w"> </span>get
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>dart<span class="w"> </span>run<span class="w"> </span>build_runner<span class="w"> </span>build<span class="w"> </span>--delete-conflicting-outputs
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>flutter<span class="w"> </span>run
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>flutter<span class="w"> </span>clean
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>flutter<span class="w"> </span>pub<span class="w"> </span>get
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>dart<span class="w"> </span>run<span class="w"> </span>build_runner<span class="w"> </span>build<span class="w"> </span>--delete-conflicting-outputs
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>flutter<span class="w"> </span>run
 </span></code></pre></div>
 <h3 id="counters-not-saving">Counters Not Saving<a class="headerlink" href="#counters-not-saving" title="Permanent link">¶</a></h3>
 <p>Check permissions:</p>
