@@ -73,6 +73,7 @@ nav:
           - CounterFactory: api/counter-factory.md
       - Counter Types:
           - TapCounter: api/tap-counter.md
+          - SeriesCounter: api/series-counter.md
       - Providers:
           - CounterProvider: api/counter-provider.md
   - Guides:

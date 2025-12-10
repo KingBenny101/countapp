@@ -35,7 +35,7 @@ class SeriesCounterStatisticsPageState
 
     final now = DateTime.now();
     DateTime cutoffDate;
-    
+
     switch (_selectedRange) {
       case "1W":
         cutoffDate = now.subtract(const Duration(days: 7));
@@ -53,7 +53,7 @@ class SeriesCounterStatisticsPageState
 
     final spots = <FlSpot>[];
     int spotIndex = 0;
-    
+
     for (int i = _counter.updates.length - 1; i >= 0; i--) {
       if (_counter.updates[i].isAfter(cutoffDate)) {
         spots.add(FlSpot(
@@ -63,7 +63,7 @@ class SeriesCounterStatisticsPageState
         spotIndex++;
       }
     }
-    
+
     return spots;
   }
 
@@ -72,7 +72,7 @@ class SeriesCounterStatisticsPageState
 
     final now = DateTime.now();
     DateTime cutoffDate;
-    
+
     switch (_selectedRange) {
       case "1W":
         cutoffDate = now.subtract(const Duration(days: 7));
@@ -94,7 +94,7 @@ class SeriesCounterStatisticsPageState
         filteredDates.add(_counter.updates[i]);
       }
     }
-    
+
     return filteredDates;
   }
 
