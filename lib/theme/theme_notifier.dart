@@ -1,18 +1,21 @@
 import "dart:ui";
 
+import "package:countapp/utils/constants.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:hive_ce/hive.dart";
 
 class ThemeNotifier extends ChangeNotifier {
+  late final Box _settingsBox;
+  late ThemeMode _themeMode;
 
-  ThemeNotifier()
-      : _themeMode = _loadThemeMode();
-  ThemeMode _themeMode;
-  final Box _settingsBox = Hive.box("settings");
+  ThemeNotifier() {
+    _settingsBox = Hive.box(AppConstants.settingsBox);
+    _themeMode = _loadThemeMode();
+  }
 
-  static ThemeMode _loadThemeMode() {
-    final theme = Hive.box("settings").get("themeMode");
+  ThemeMode _loadThemeMode() {
+    final theme = _settingsBox.get(AppConstants.themeModeSetting);
     if (theme == "light") return ThemeMode.light;
     if (theme == "dark") return ThemeMode.dark;
     return PlatformDispatcher.instance.platformBrightness == Brightness.dark
@@ -23,14 +26,16 @@ class ThemeNotifier extends ChangeNotifier {
   ThemeMode get themeMode => _themeMode;
 
   void toggleTheme() {
-    _themeMode = _themeMode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
+    _themeMode =
+        _themeMode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
     _saveThemeMode();
     updateSystemUiOverlay();
     notifyListeners();
   }
 
   void _saveThemeMode() {
-    _settingsBox.put("themeMode", _themeMode == ThemeMode.dark ? "dark" : "light");
+    _settingsBox.put(AppConstants.themeModeSetting,
+        _themeMode == ThemeMode.dark ? "dark" : "light");
   }
 
   void updateSystemUiOverlay() {
@@ -38,9 +43,11 @@ class ThemeNotifier extends ChangeNotifier {
         ? ThemeData.dark().scaffoldBackgroundColor
         : ThemeData.light().scaffoldBackgroundColor;
 
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      systemNavigationBarColor: backgroundColor,
-      systemNavigationBarIconBrightness: Brightness.light,
-    ),);
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        systemNavigationBarColor: backgroundColor,
+        systemNavigationBarIconBrightness: Brightness.light,
+      ),
+    );
   }
 }

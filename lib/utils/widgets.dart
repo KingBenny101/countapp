@@ -38,7 +38,6 @@ Widget buildInfoCard(String infoName, String infoValue) {
   );
 }
 
-
 Widget buildCustomListTile(DateTime date) {
   final formattedDate =
       DateFormat("MMM d, yyyy (EEEE) - h:mm a").format(date.toLocal());
@@ -66,6 +65,22 @@ Widget buildCustomListTile(DateTime date) {
         ),
       ],
     ),
+  );
+}
+
+SnackBar buildAppSnackBar(String message, {bool success = true}) {
+  return SnackBar(
+    content: Text(
+      message,
+      textAlign: TextAlign.center,
+    ),
+    backgroundColor: success ? Colors.green : Colors.red,
+    behavior: SnackBarBehavior.floating,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(10),
+    ),
+    duration: const Duration(seconds: 2),
+    margin: const EdgeInsets.symmetric(horizontal: 96, vertical: 8),
   );
 }
 

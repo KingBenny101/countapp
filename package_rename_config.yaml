@@ -2,10 +2,9 @@ package_rename_config:
   android:
     app_name: Count App
     package_name: com.kingbenny101.countapp
-    lang: java
 
   windows:
     app_name: Count App
     organization: KingBenny101
-    copyright_notice: © 2024 KingBenny101. All rights reserved.
+    copyright_notice: © 2025 KingBenny101. All rights reserved.
     exe_name: countapp
