@@ -51,12 +51,10 @@ Future<void> importJSON(
 
   // Convert each JSON object to BaseCounter using factory
   final List<Map<String, dynamic>> counters = countersData.map((data) {
-    // If it's already a counter object, convert to JSON
-    if (data is BaseCounter) {
-      return data.toJson();
-    }
-    // Otherwise, use factory to parse and re-serialize
-    return CounterFactory.fromJson(data as Map<String, dynamic>).toJson();
+    // Convert dynamic map to proper Map<String, dynamic>
+    final jsonMap = Map<String, dynamic>.from(data as Map);
+    // Use factory to parse and re-serialize
+    return CounterFactory.fromJson(jsonMap).toJson();
   }).toList();
 
   await box.clear();

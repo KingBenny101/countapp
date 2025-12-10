@@ -13,7 +13,8 @@ class CounterProvider with ChangeNotifier {
   Future<void> loadCounters() async {
     final box = await Hive.openBox(AppConstants.countersBox);
     _counters = box.values
-        .map((json) => CounterFactory.fromJson(json as Map<String, dynamic>))
+        .map((json) =>
+            CounterFactory.fromJson(Map<String, dynamic>.from(json as Map)))
         .toList();
     notifyListeners();
   }
