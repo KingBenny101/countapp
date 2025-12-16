@@ -22,6 +22,10 @@ class SeriesCounterStatisticsPageState
   late String _counterName;
   String _selectedRange = "1M"; // Default to 1 month
 
+  // Minimal chart state
+  DateTime? _chartFirstDate;
+  List<DateTime> _chartDates = [];
+
   @override
   void initState() {
     super.initState();
@@ -37,32 +41,42 @@ class SeriesCounterStatisticsPageState
     DateTime cutoffDate;
 
     switch (_selectedRange) {
+      case "1D":
+        cutoffDate = now.subtract(const Duration(days: 1));
+        break;
       case "1W":
         cutoffDate = now.subtract(const Duration(days: 7));
+        break;
       case "1M":
         cutoffDate = now.subtract(const Duration(days: 30));
+        break;
       case "3M":
         cutoffDate = now.subtract(const Duration(days: 90));
+        break;
       case "1Y":
         cutoffDate = now.subtract(const Duration(days: 365));
+        break;
       case "All":
-        cutoffDate = DateTime(1970); // Far past date to include all
+        cutoffDate = DateTime.fromMillisecondsSinceEpoch(0);
+        break;
       default:
         cutoffDate = now.subtract(const Duration(days: 30));
     }
 
+    // Minimal approach: use equal spacing (index-based x) for clarity
     final spots = <FlSpot>[];
-    int spotIndex = 0;
-
-    for (int i = _counter.updates.length - 1; i >= 0; i--) {
-      if (_counter.updates[i].isAfter(cutoffDate)) {
-        spots.add(FlSpot(
-          spotIndex.toDouble(),
-          _counter.seriesValues[i],
-        ));
-        spotIndex++;
+    final filteredDates = <DateTime>[];
+    for (int i = 0; i < _counter.updates.length; i++) {
+      final dt = _counter.updates[i];
+      if (dt.isAfter(cutoffDate)) {
+        spots.add(FlSpot(spots.length.toDouble(), _counter.seriesValues[i].toDouble()));
+        filteredDates.add(dt);
       }
     }
+
+    // Save first date and full date list for label conversion
+    _chartFirstDate = filteredDates.isNotEmpty ? filteredDates.first : null;
+    _chartDates = filteredDates;
 
     return spots;
   }
@@ -74,22 +88,30 @@ class SeriesCounterStatisticsPageState
     DateTime cutoffDate;
 
     switch (_selectedRange) {
+      case "1D":
+        cutoffDate = now.subtract(const Duration(days: 1));
+        break;
       case "1W":
         cutoffDate = now.subtract(const Duration(days: 7));
+        break;
       case "1M":
         cutoffDate = now.subtract(const Duration(days: 30));
+        break;
       case "3M":
         cutoffDate = now.subtract(const Duration(days: 90));
+        break;
       case "1Y":
         cutoffDate = now.subtract(const Duration(days: 365));
+        break;
       case "All":
-        cutoffDate = DateTime(1970);
+        cutoffDate = DateTime.fromMillisecondsSinceEpoch(0);
+        break;
       default:
         cutoffDate = now.subtract(const Duration(days: 30));
     }
 
     final filteredDates = <DateTime>[];
-    for (int i = _counter.updates.length - 1; i >= 0; i--) {
+    for (int i = 0; i < _counter.updates.length; i++) {
       if (_counter.updates[i].isAfter(cutoffDate)) {
         filteredDates.add(_counter.updates[i]);
       }
@@ -114,6 +136,18 @@ class SeriesCounterStatisticsPageState
     }
 
     final lineData = _getLineChartData();
+
+    // compute axis bounds and tick indices for bottom axis
+    final minX = lineData.first.x;
+    final maxX = lineData.length > 1 ? lineData.last.x : lineData.first.x + 1.0;
+    final n = lineData.length;
+    final tickIndices = <int>[];
+    if (n > 0) {
+      tickIndices.add(0);
+      if (n > 2) tickIndices.add(((n - 1) ~/ 2));
+      if (n > 1) tickIndices.add(n - 1);
+    }
+
     final weeklyAvg = _counter.getWeeklyAverage();
     final monthlyAvg = _counter.getMonthlyAverage();
     final weeklyHigh = _counter.getWeeklyHigh();
@@ -122,7 +156,20 @@ class SeriesCounterStatisticsPageState
     final allTimeLow = _counter.getAllTimeLowest();
 
     return Scaffold(
-      appBar: AppBar(title: Text("Statistics for $_counterName")),
+      appBar: AppBar(
+        title: Text("Statistics for $_counterName"),
+        actions: [
+          IconButton(
+            tooltip: 'Last 1 day',
+            icon: const Icon(Icons.access_time),
+            onPressed: () {
+              setState(() {
+                _selectedRange = '1D';
+              });
+            },
+          ),
+        ],
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -133,6 +180,7 @@ class SeriesCounterStatisticsPageState
                 spacing: 8,
                 alignment: WrapAlignment.center,
                 children: [
+                  _buildRangeButton("1D"),
                   _buildRangeButton("1W"),
                   _buildRangeButton("1M"),
                   _buildRangeButton("3M"),
@@ -150,10 +198,38 @@ class SeriesCounterStatisticsPageState
                 ),
                 child: LineChart(
                   LineChartData(
+                    // Use time-based x axis and automatic y bounds with padding
+                    minX: lineData.first.x,
+                    maxX: lineData.length > 1
+                        ? lineData.last.x
+                        : lineData.first.x + 1.0,
+                    minY: (() {
+                      final ys = lineData.map((s) => s.y).toList();
+                      double minY = ys.reduce((a, b) => a < b ? a : b);
+                      double maxY = ys.reduce((a, b) => a > b ? a : b);
+                      final range = maxY - minY;
+                      if (range == 0) {
+                        return minY - 1.0;
+                      }
+                      return minY - range * 0.1;
+                    })(),
+                    maxY: (() {
+                      final ys = lineData.map((s) => s.y).toList();
+                      double minY = ys.reduce((a, b) => a < b ? a : b);
+                      double maxY = ys.reduce((a, b) => a > b ? a : b);
+                      final range = maxY - minY;
+                      if (range == 0) {
+                        return maxY + 1.0;
+                      }
+                      return maxY + range * 0.1;
+                    })(),
                     lineBarsData: [
                       LineChartBarData(
                         spots: lineData,
-                        isCurved: true,
+                        isCurved:
+                            false, // use linear segments to avoid smoothing artifacts
+                        dotData:
+                            FlDotData(show: true), // show points for clarity
                         color: Colors.deepPurple,
                         barWidth: 3,
                         belowBarData: BarAreaData(
@@ -163,19 +239,15 @@ class SeriesCounterStatisticsPageState
                       ),
                     ],
                     titlesData: FlTitlesData(
-                      topTitles: const AxisTitles(
-                        
-                      ),
-                      rightTitles: const AxisTitles(
-                        
-                      ),
+                      topTitles: const AxisTitles(),
+                      rightTitles: const AxisTitles(),
                       leftTitles: AxisTitles(
                         sideTitles: SideTitles(
                           showTitles: true,
                           reservedSize: 45,
                           getTitlesWidget: (value, meta) {
                             return Text(
-                              value.toInt().toString(),
+                              value.toStringAsFixed(2),
                               style: const TextStyle(fontSize: 12),
                             );
                           },
@@ -184,21 +256,47 @@ class SeriesCounterStatisticsPageState
                       bottomTitles: AxisTitles(
                         sideTitles: SideTitles(
                           showTitles: true,
-                          reservedSize: 30,
+                          interval: 1.0,
+                          reservedSize: 60,
                           getTitlesWidget: (value, meta) {
-                            final index = value.toInt();
-                            final filteredDates = _getFilteredDates();
-                            if (index < 0 || index >= filteredDates.length) {
-                              return const Text("");
+                            final idx = value.round();
+                            if (_chartDates.isEmpty) return const SizedBox.shrink();
+                            if (idx < 0 || idx >= _chartDates.length) return const SizedBox.shrink();
+
+                            // only show labels for the selected tick indices
+                            if (!tickIndices.contains(idx)) return const SizedBox.shrink();
+
+                            final dt = _chartDates[idx];
+
+                            if (_selectedRange == "1D") {
+                              final time = DateFormat("HH:mm").format(dt);
+                              final date = DateFormat("dd/MM").format(dt);
+                              return SizedBox(
+                                width: 80,
+                                child: Text(
+                                  "$time\n$date",
+                                  textAlign: TextAlign.center,
+                                  maxLines: 2,
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    color: Theme.of(context).textTheme.bodySmall?.color,
+                                  ),
+                                ),
+                              );
+                            } else {
+                              final date = DateFormat("dd/MM").format(dt);
+                              return SizedBox(
+                                width: 80,
+                                child: Text(
+                                  date,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    color: Theme.of(context).textTheme.bodySmall?.color,
+                                  ),
+                                ),
+                              );
                             }
-                            final date = filteredDates[index];
-                            return RotatedBox(
-                              quarterTurns: 3,
-                              child: Text(
-                                DateFormat("MM/dd").format(date),
-                                style: const TextStyle(fontSize: 10),
-                              ),
-                            );
                           },
                         ),
                       ),
@@ -207,13 +305,46 @@ class SeriesCounterStatisticsPageState
                   ),
                 ),
               ),
+
+
+              // Visible tick labels beneath the chart for clarity
+              if (_chartDates.isNotEmpty && tickIndices.isNotEmpty)
+                SizedBox(
+                  height: 40,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: tickIndices.map((i) {
+                      final dt = _chartDates[i];
+                      final label = _selectedRange == '1D'
+                          ? "${DateFormat('HH:mm').format(dt)}\n${DateFormat('dd/MM').format(dt)}"
+                          : DateFormat('dd/MM').format(dt);
+                      return SizedBox(
+                        width: 80,
+                        child: Text(
+                          label,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: Theme.of(context).textTheme.bodySmall?.color,
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+
               const SizedBox(height: 24),
+
+              const Text(
+                "Statistics",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 16),
               _buildStatCard("Weekly Average", weeklyAvg.toStringAsFixed(2)),
               _buildStatCard("Monthly Average", monthlyAvg.toStringAsFixed(2)),
               _buildStatCard("Weekly High", weeklyHigh.toStringAsFixed(2)),
               _buildStatCard("Weekly Low", weeklyLow.toStringAsFixed(2)),
-              _buildStatCard(
-                  "All Time Highest", allTimeHigh.toStringAsFixed(2)),
+              _buildStatCard("All Time Highest", allTimeHigh.toStringAsFixed(2)),
               _buildStatCard("All Time Lowest", allTimeLow.toStringAsFixed(2)),
               const SizedBox(height: 16),
               ElevatedButton(
@@ -232,6 +363,7 @@ class SeriesCounterStatisticsPageState
                 child: const Text("View All Updates"),
               ),
               const SizedBox(height: 16),
+
             ],
           ),
         ),
@@ -282,3 +414,4 @@ class SeriesCounterStatisticsPageState
     );
   }
 }
+
