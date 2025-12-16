@@ -69,7 +69,8 @@ class SeriesCounterStatisticsPageState
     for (int i = 0; i < _counter.updates.length; i++) {
       final dt = _counter.updates[i];
       if (dt.isAfter(cutoffDate)) {
-        spots.add(FlSpot(spots.length.toDouble(), _counter.seriesValues[i].toDouble()));
+        spots.add(FlSpot(
+            spots.length.toDouble(), _counter.seriesValues[i].toDouble()));
         filteredDates.add(dt);
       }
     }
@@ -191,7 +192,7 @@ class SeriesCounterStatisticsPageState
               const SizedBox(height: 16),
               Container(
                 height: 300,
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 8.0),
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.grey),
                   borderRadius: BorderRadius.circular(8),
@@ -257,14 +258,17 @@ class SeriesCounterStatisticsPageState
                         sideTitles: SideTitles(
                           showTitles: true,
                           interval: 1.0,
-                          reservedSize: 60,
+                          reservedSize: 36,
                           getTitlesWidget: (value, meta) {
                             final idx = value.round();
-                            if (_chartDates.isEmpty) return const SizedBox.shrink();
-                            if (idx < 0 || idx >= _chartDates.length) return const SizedBox.shrink();
+                            if (_chartDates.isEmpty)
+                              return const SizedBox.shrink();
+                            if (idx < 0 || idx >= _chartDates.length)
+                              return const SizedBox.shrink();
 
                             // only show labels for the selected tick indices
-                            if (!tickIndices.contains(idx)) return const SizedBox.shrink();
+                            if (!tickIndices.contains(idx))
+                              return const SizedBox.shrink();
 
                             final dt = _chartDates[idx];
 
@@ -279,7 +283,10 @@ class SeriesCounterStatisticsPageState
                                   maxLines: 2,
                                   style: TextStyle(
                                     fontSize: 10,
-                                    color: Theme.of(context).textTheme.bodySmall?.color,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall
+                                        ?.color,
                                   ),
                                 ),
                               );
@@ -292,7 +299,10 @@ class SeriesCounterStatisticsPageState
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontSize: 10,
-                                    color: Theme.of(context).textTheme.bodySmall?.color,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall
+                                        ?.color,
                                   ),
                                 ),
                               );
@@ -305,46 +315,14 @@ class SeriesCounterStatisticsPageState
                   ),
                 ),
               ),
-
-
-              // Visible tick labels beneath the chart for clarity
-              if (_chartDates.isNotEmpty && tickIndices.isNotEmpty)
-                SizedBox(
-                  height: 40,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: tickIndices.map((i) {
-                      final dt = _chartDates[i];
-                      final label = _selectedRange == '1D'
-                          ? "${DateFormat('HH:mm').format(dt)}\n${DateFormat('dd/MM').format(dt)}"
-                          : DateFormat('dd/MM').format(dt);
-                      return SizedBox(
-                        width: 80,
-                        child: Text(
-                          label,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: Theme.of(context).textTheme.bodySmall?.color,
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ),
-
-              const SizedBox(height: 24),
-
-              const Text(
-                "Statistics",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
+      
               const SizedBox(height: 16),
               _buildStatCard("Weekly Average", weeklyAvg.toStringAsFixed(2)),
               _buildStatCard("Monthly Average", monthlyAvg.toStringAsFixed(2)),
               _buildStatCard("Weekly High", weeklyHigh.toStringAsFixed(2)),
               _buildStatCard("Weekly Low", weeklyLow.toStringAsFixed(2)),
-              _buildStatCard("All Time Highest", allTimeHigh.toStringAsFixed(2)),
+              _buildStatCard(
+                  "All Time Highest", allTimeHigh.toStringAsFixed(2)),
               _buildStatCard("All Time Lowest", allTimeLow.toStringAsFixed(2)),
               const SizedBox(height: 16),
               ElevatedButton(
@@ -363,7 +341,6 @@ class SeriesCounterStatisticsPageState
                 child: const Text("View All Updates"),
               ),
               const SizedBox(height: 16),
-
             ],
           ),
         ),
@@ -414,4 +391,3 @@ class SeriesCounterStatisticsPageState
     );
   }
 }
-
