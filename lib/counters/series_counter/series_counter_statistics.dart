@@ -128,10 +128,6 @@ class SeriesCounterStatisticsPageState
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              const Text(
-                "Value Trend",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
               const SizedBox(height: 16),
               Wrap(
                 spacing: 8,
@@ -212,11 +208,6 @@ class SeriesCounterStatisticsPageState
                 ),
               ),
               const SizedBox(height: 24),
-              const Text(
-                "Statistics",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 16),
               _buildStatCard("Weekly Average", weeklyAvg.toStringAsFixed(2)),
               _buildStatCard("Monthly Average", monthlyAvg.toStringAsFixed(2)),
               _buildStatCard("Weekly High", weeklyHigh.toStringAsFixed(2)),
