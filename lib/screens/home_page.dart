@@ -97,104 +97,174 @@ class HomePageState extends State<HomePage> {
         body: Column(
           children: [
             Expanded(
-              child: ListView.builder(
+              child: ReorderableListView.builder(
+                buildDefaultDragHandles: false,
                 padding: const EdgeInsets.only(bottom: 80),
                 itemCount: counterProvider.counters.length,
+                onReorder: (oldIndex, newIndex) async {
+                  await counterProvider.reorderCounters(oldIndex, newIndex);
+                  // Clear selection after reordering to avoid index mismatches
+                  setState(() {
+                    _isSelecting = false;
+                    _selectedCounters = List<bool>.filled(
+                        counterProvider.counters.length, false);
+                  });
+                },
                 itemBuilder: (context, index) {
                   final counter = counterProvider.counters[index];
-                  return GestureDetector(
-                    onTap: () async {
-                      if (_isSelecting) {
+                  return Container(
+                    key: ValueKey(counter.id),
+                    child: GestureDetector(
+                      onTap: () async {
+                        if (_isSelecting) {
+                          setState(() {
+                            _selectedCounters[index] =
+                                !_selectedCounters[index];
+                          });
+                        } else {
+                          await context
+                              .read<CounterProvider>()
+                              .updateCounter(context, index);
+                        }
+                      },
+                      onLongPress: () {
+                        // Long-press anywhere on the tile selects it
                         setState(() {
-                          _selectedCounters[index] = !_selectedCounters[index];
+                          _selectedCounters[index] = true;
+                          _isSelecting = true;
                         });
-                      } else {
-                        await context
-                            .read<CounterProvider>()
-                            .updateCounter(context, index);
-                      }
-                    },
-                    onLongPress: () {
-                      _selectedCounters[index] = true;
-                      setState(() {
-                        _isSelecting = true;
-                      });
-                    },
-                    child: Card(
-                      elevation: 4,
-                      margin: const EdgeInsets.symmetric(
-                        vertical: 8,
-                        horizontal: 16,
-                      ),
-                      child: ListTile(
-                        contentPadding: const EdgeInsets.all(12),
-                        leading: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 150),
-                              transitionBuilder:
-                                  (Widget child, Animation<double> animation) {
-                                return FadeTransition(
-                                  opacity: animation,
-                                  child: SizeTransition(
-                                    sizeFactor: animation,
-                                    axis: Axis.horizontal,
-                                    child: child,
-                                  ),
-                                );
-                              },
-                              child: _isSelecting
-                                  ? Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Checkbox(
-                                        value: _selectedCounters[index],
-                                        onChanged: (value) {
-                                          setState(() {
-                                            _selectedCounters[index] = value!;
-                                          });
-                                        },
-                                      ),
-                                    )
-                                  : const SizedBox(
-                                      width: 8,
+                      },
+                      child: Card(
+                        elevation: 4,
+                        margin: const EdgeInsets.symmetric(
+                          vertical: 8,
+                          horizontal: 16,
+                        ),
+                        child: ListTile(
+                          contentPadding: const EdgeInsets.all(12),
+                          leading: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              AnimatedSwitcher(
+                                duration: const Duration(milliseconds: 150),
+                                transitionBuilder: (Widget child,
+                                    Animation<double> animation) {
+                                  return FadeTransition(
+                                    opacity: animation,
+                                    child: SizeTransition(
+                                      sizeFactor: animation,
+                                      axis: Axis.horizontal,
+                                      child: child,
                                     ),
-                            ),
-                            const SizedBox(width: 8),
-                            AnimatedContainer(
-                              duration: const Duration(milliseconds: 150),
-                              curve: Curves.easeInOut,
-                              width: _isSelecting ? 40 : 48,
-                              height: _isSelecting ? 40 : 48,
-                              child: counter.buildIcon(),
-                            ),
-                            const SizedBox(width: 8),
-                          ],
-                        ),
-                        title: Text(
-                          counter.name,
-                          style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: textColor),
-                        ),
-                        subtitle: Text(
-                          counter.getSubtitle(),
-                          style:
-                              const TextStyle(fontSize: 14, color: Colors.grey),
-                        ),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              "${counter.value}",
-                              style: TextStyle(
-                                  fontSize: 30,
-                                  fontWeight: FontWeight.bold,
-                                  color: textColor),
-                            ),
-                            const SizedBox(width: 8),
-                          ],
+                                  );
+                                },
+                                child: _isSelecting
+                                    ? Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Checkbox(
+                                          value: _selectedCounters[index],
+                                          onChanged: (value) {
+                                            setState(() {
+                                              _selectedCounters[index] = value!;
+                                            });
+                                          },
+                                        ),
+                                      )
+                                    : const SizedBox(
+                                        width: 8,
+                                      ),
+                              ),
+                              const SizedBox(width: 8),
+                              GestureDetector(
+                                onLongPress: () {
+                                  // Enter selection mode and select this counter
+                                  setState(() {
+                                    _selectedCounters[index] = true;
+                                    _isSelecting = true;
+                                  });
+                                },
+                                child: AnimatedContainer(
+                                  duration: const Duration(milliseconds: 150),
+                                  curve: Curves.easeInOut,
+                                  width: _isSelecting ? 40 : 48,
+                                  height: _isSelecting ? 40 : 48,
+                                  child: counter.buildIcon(),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                            ],
+                          ),
+                          title: Text(
+                            counter.name,
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: textColor),
+                          ),
+                          subtitle: Text(
+                            counter.getSubtitle(),
+                            style: const TextStyle(
+                                fontSize: 14, color: Colors.grey),
+                          ),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              // Keep the value visible but allow it to shrink on small screens
+                              ConstrainedBox(
+                                constraints:
+                                    const BoxConstraints(maxWidth: 120),
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  alignment: Alignment.centerRight,
+                                  child: Text(
+                                    "${counter.value}",
+                                    style: TextStyle(
+                                        fontSize: 30,
+                                        fontWeight: FontWeight.bold,
+                                        color: textColor),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+
+                              // Animated drag handle (matches checkbox animation)
+                              AnimatedSwitcher(
+                                duration: const Duration(milliseconds: 150),
+                                transitionBuilder: (Widget child,
+                                    Animation<double> animation) {
+                                  return FadeTransition(
+                                    opacity: animation,
+                                    child: SizeTransition(
+                                      sizeFactor: animation,
+                                      axis: Axis.horizontal,
+                                      child: child,
+                                    ),
+                                  );
+                                },
+                                child: _isSelecting
+                                    ? Align(
+                                        alignment: Alignment.centerRight,
+                                        child: ReorderableDragStartListener(
+                                          index: index,
+                                          child: SizedBox(
+                                            width: 28,
+                                            height: 28,
+                                            child: Center(
+                                              child: Icon(
+                                                Icons.drag_handle,
+                                                size: 20,
+                                                color: Theme.of(context)
+                                                    .iconTheme
+                                                    .color,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    : const SizedBox(width: 0),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
