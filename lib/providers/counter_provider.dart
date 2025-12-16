@@ -69,4 +69,23 @@ class CounterProvider with ChangeNotifier {
       }
     }
   }
+
+  /// Reorder counters and persist the new order to Hive
+  Future<void> reorderCounters(int oldIndex, int newIndex) async {
+    final box = await _getBox();
+
+    // Adjust newIndex when moving down the list (as per ReorderableListView behaviour)
+    if (newIndex > oldIndex) newIndex -= 1;
+
+    final item = _counters.removeAt(oldIndex);
+    _counters.insert(newIndex, item);
+
+    // Rebuild the box to reflect the new order
+    await box.clear();
+    for (final counter in _counters) {
+      await box.add(counter.toJson());
+    }
+
+    notifyListeners();
+  }
 }

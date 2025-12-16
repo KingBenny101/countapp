@@ -1,6 +1,6 @@
 import "package:countapp/counters/base/base_counter.dart";
-import "package:countapp/counters/tap_counter/tap_counter.dart";
 import "package:countapp/counters/series_counter/series_counter.dart";
+import "package:countapp/counters/tap_counter/tap_counter.dart";
 import "package:flutter/material.dart";
 
 /// Factory for creating counters from JSON with backward compatibility

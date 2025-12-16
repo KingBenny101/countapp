@@ -1,6 +1,5 @@
 import "package:countapp/counters/base/base_counter.dart";
 import "package:countapp/counters/series_counter/series_counter_statistics.dart";
-import "package:countapp/utils/widgets.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:hive_ce/hive.dart";
@@ -18,7 +17,7 @@ class SeriesCounter extends BaseCounter {
     required this.value,
     this.description = "",
     this.lastUpdated,
-    List<DateTime>? updates,
+    super.updates,
     List<double>? seriesValues,
   })  : id = id ?? const Uuid().v4(),
         updates = updates ?? (lastUpdated != null ? [lastUpdated] : []),
@@ -28,7 +27,6 @@ class SeriesCounter extends BaseCounter {
           name: name,
           value: value,
           lastUpdated: lastUpdated,
-          updates: updates,
         );
 
   /// Create SeriesCounter from JSON
@@ -138,10 +136,6 @@ class SeriesCounter extends BaseCounter {
     };
   }
 
-  @override
-  bool validate() {
-    return super.validate();
-  }
 
   /// Show input dialog for entering a new number
   Future<double?> _showInputDialog(BuildContext context) async {
@@ -178,7 +172,7 @@ class SeriesCounter extends BaseCounter {
                   keyboardType:
                       const TextInputType.numberWithOptions(decimal: true),
                   inputFormatters: <TextInputFormatter>[
-                    FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
+                    FilteringTextInputFormatter.allow(RegExp(r"^\d*\.?\d*")),
                   ],
                   autofocus: true,
                   validator: (value) {
@@ -197,7 +191,7 @@ class SeriesCounter extends BaseCounter {
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(null);
+                Navigator.of(context).pop();
               },
               child: const Text("Cancel"),
             ),

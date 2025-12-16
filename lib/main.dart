@@ -1,5 +1,5 @@
-import "package:countapp/counters/tap_counter/tap_counter.dart";
 import "package:countapp/counters/series_counter/series_counter.dart";
+import "package:countapp/counters/tap_counter/tap_counter.dart";
 import "package:countapp/models/counter_model.dart";
 import "package:countapp/providers/counter_provider.dart";
 import "package:countapp/screens/home_page.dart";

@@ -1,6 +1,6 @@
 import "package:countapp/counters/base/counter_factory.dart";
-import "package:countapp/counters/tap_counter/tap_counter_config.dart";
 import "package:countapp/counters/series_counter/series_counter_config.dart";
+import "package:countapp/counters/tap_counter/tap_counter_config.dart";
 import "package:flutter/material.dart";
 
 class CounterTypeSelectionPage extends StatelessWidget {
