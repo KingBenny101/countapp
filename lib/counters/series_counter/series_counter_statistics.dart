@@ -20,7 +20,7 @@ class SeriesCounterStatisticsPageState
   late CounterProvider _counterProvider;
   late SeriesCounter _counter;
   late String _counterName;
-  String _selectedRange = "1M"; // Default to 1 month
+  String _selectedRange = "1W"; // Default to 1 week
 
   // Minimal chart state
   DateTime? _chartFirstDate;
@@ -77,7 +77,8 @@ class SeriesCounterStatisticsPageState
     final spots = <FlSpot>[];
     final filteredDates = <DateTime>[];
     for (int i = 0; i < entries.length; i++) {
-      spots.add(FlSpot(i.toDouble(), entries[i].value));
+      final ms = entries[i].key.millisecondsSinceEpoch.toDouble();
+      spots.add(FlSpot(ms, entries[i].value));
       filteredDates.add(entries[i].key);
     }
 
@@ -143,30 +144,34 @@ class SeriesCounterStatisticsPageState
     }
 
     final lineData = _getLineChartData();
+    final hasData = lineData.isNotEmpty;
 
-    // If the selected range filters out all updates, show a helpful message
-    if (lineData.isEmpty) {
-      return Scaffold(
-        appBar: AppBar(title: Text("Statistics for $_counterName")),
-        body: const Center(
-          child: Text(
-            "No data in the selected time range.",
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 16),
-          ),
-        ),
-      );
-    }
+    // compute axis bounds and tick interval (use real timestamps as x)
+    // We guard calculations when there is no data so we can still render the
+    // rest of the page (stats/cards) and only hide the chart area itself.
 
-    // compute axis bounds and tick indices for bottom axis
-    final minX = lineData.first.x;
-    final maxX = lineData.length > 1 ? lineData.last.x : lineData.first.x + 1.0;
+    double minX = 0.0;
+    double maxX = 1.0;
     final n = lineData.length;
     final tickIndices = <int>[];
-    if (n > 0) {
-      tickIndices.add(0);
-      if (n > 2) tickIndices.add(((n - 1) ~/ 2));
-      if (n > 1) tickIndices.add(n - 1);
+    double interval = 1.0;
+
+    if (hasData) {
+      minX = lineData.first.x;
+      maxX = lineData.length > 1
+          ? lineData.last.x
+          : lineData.first.x + 1000.0; // +1s if single point
+
+      // limit ticks to a maximum of 4 (and at least 2 if there are points)
+      final int tickCount = n <= 4 ? n : 4;
+      final int effectiveTickCount = (tickCount <= 1 && n > 0) ? 2 : tickCount;
+      interval = (maxX - minX) / (effectiveTickCount - 1);
+
+      if (n > 0) {
+        tickIndices.add(0);
+        if (n > 2) tickIndices.add(((n - 1) ~/ 2));
+        if (n > 1) tickIndices.add(n - 1);
+      }
     }
 
     final weeklyAvg = _counter.getWeeklyAverage();
@@ -178,46 +183,47 @@ class SeriesCounterStatisticsPageState
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Statistics for $_counterName"),
-        actions: [
-          IconButton(
-            tooltip: 'Last 1 day',
-            icon: const Icon(Icons.access_time),
-            onPressed: () {
-              setState(() {
-                _selectedRange = '1D';
-              });
-            },
-          ),
-        ],
+        title: Text("Info for $_counterName"),
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Column(
             children: [
-              const SizedBox(height: 16),
-              Wrap(
-                spacing: 8,
-                alignment: WrapAlignment.center,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisSize: MainAxisSize.max,
                 children: [
-                  _buildRangeButton("1D"),
-                  _buildRangeButton("1W"),
-                  _buildRangeButton("1M"),
-                  _buildRangeButton("3M"),
-                  _buildRangeButton("1Y"),
-                  _buildRangeButton("All"),
+                  Text(
+                    'Range:',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  const SizedBox(width: 8),
+                  DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      value: _selectedRange,
+                      items: <String>["1D", "1W", "1M", "3M", "1Y", "All"]
+                          .map((r) => DropdownMenuItem<String>(
+                                value: r,
+                                child: Text(r),
+                              ))
+                          .toList(),
+                      onChanged: (v) {
+                        if (v == null) return;
+                        setState(() {
+                          _selectedRange = v;
+                        });
+                      },
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ),
                 ],
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 8),
               Container(
                 height: 300,
                 padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 8.0),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: LineChart(
+                child: hasData ? LineChart(
                   LineChartData(
                     // Use time-based x axis and automatic y bounds with padding
                     minX: lineData.first.x,
@@ -265,7 +271,7 @@ class SeriesCounterStatisticsPageState
                       leftTitles: AxisTitles(
                         sideTitles: SideTitles(
                           showTitles: true,
-                          reservedSize: 45,
+                          reservedSize: 32,
                           getTitlesWidget: (value, meta) {
                             return Text(
                               value.toStringAsFixed(2),
@@ -277,20 +283,13 @@ class SeriesCounterStatisticsPageState
                       bottomTitles: AxisTitles(
                         sideTitles: SideTitles(
                           showTitles: true,
-                          interval: 1.0,
-                          reservedSize: 36,
+                          interval: interval,
+                          reservedSize: 32,
                           getTitlesWidget: (value, meta) {
-                            final idx = value.round();
-                            if (_chartDates.isEmpty)
-                              return const SizedBox.shrink();
-                            if (idx < 0 || idx >= _chartDates.length)
-                              return const SizedBox.shrink();
-
-                            // only show labels for the selected tick indices
-                            if (!tickIndices.contains(idx))
-                              return const SizedBox.shrink();
-
-                            final dt = _chartDates[idx];
+                            // value is a timestamp (ms since epoch). Format for display.
+                            final millis = value.round();
+                            final dt =
+                                DateTime.fromMillisecondsSinceEpoch(millis);
 
                             if (_selectedRange == "1D") {
                               final time = DateFormat("HH:mm").format(dt);
@@ -333,7 +332,13 @@ class SeriesCounterStatisticsPageState
                     ),
                     borderData: FlBorderData(show: true),
                   ),
-                ),
+                )
+                    : const Center(
+                        child: Text(
+                          "No data in the selected time range.",
+                          style: TextStyle(fontSize: 14),
+                        ),
+                      ),
               ),
               const SizedBox(height: 16),
               _buildStatCard("Weekly Average", weeklyAvg.toStringAsFixed(2)),
@@ -364,22 +369,6 @@ class SeriesCounterStatisticsPageState
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildRangeButton(String range) {
-    final isSelected = _selectedRange == range;
-    return ElevatedButton(
-      onPressed: () {
-        setState(() {
-          _selectedRange = range;
-        });
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: isSelected ? Colors.deepPurple : null,
-        foregroundColor: isSelected ? Colors.white : null,
-      ),
-      child: Text(range),
     );
   }
 
