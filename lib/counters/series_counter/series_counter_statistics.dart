@@ -63,19 +63,25 @@ class SeriesCounterStatisticsPageState
         cutoffDate = now.subtract(const Duration(days: 30));
     }
 
-    // Minimal approach: use equal spacing (index-based x) for clarity
-    final spots = <FlSpot>[];
-    final filteredDates = <DateTime>[];
+    // Collect matching updates (date, value) then sort chronologically (oldest -> newest)
+    final entries = <MapEntry<DateTime, double>>[];
     for (int i = 0; i < _counter.updates.length; i++) {
       final dt = _counter.updates[i];
       if (dt.isAfter(cutoffDate)) {
-        spots.add(FlSpot(
-            spots.length.toDouble(), _counter.seriesValues[i].toDouble()));
-        filteredDates.add(dt);
+        entries.add(MapEntry(dt, _counter.seriesValues[i].toDouble()));
       }
     }
 
-    // Save first date and full date list for label conversion
+    entries.sort((a, b) => a.key.compareTo(b.key));
+
+    final spots = <FlSpot>[];
+    final filteredDates = <DateTime>[];
+    for (int i = 0; i < entries.length; i++) {
+      spots.add(FlSpot(i.toDouble(), entries[i].value));
+      filteredDates.add(entries[i].key);
+    }
+
+    // Save first date and full date list for label conversion (chronological)
     _chartFirstDate = filteredDates.isNotEmpty ? filteredDates.first : null;
     _chartDates = filteredDates;
 
@@ -137,6 +143,20 @@ class SeriesCounterStatisticsPageState
     }
 
     final lineData = _getLineChartData();
+
+    // If the selected range filters out all updates, show a helpful message
+    if (lineData.isEmpty) {
+      return Scaffold(
+        appBar: AppBar(title: Text("Statistics for $_counterName")),
+        body: const Center(
+          child: Text(
+            "No data in the selected time range.",
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 16),
+          ),
+        ),
+      );
+    }
 
     // compute axis bounds and tick indices for bottom axis
     final minX = lineData.first.x;
@@ -315,7 +335,6 @@ class SeriesCounterStatisticsPageState
                   ),
                 ),
               ),
-      
               const SizedBox(height: 16),
               _buildStatCard("Weekly Average", weeklyAvg.toStringAsFixed(2)),
               _buildStatCard("Monthly Average", monthlyAvg.toStringAsFixed(2)),
