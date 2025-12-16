@@ -271,7 +271,7 @@ class SeriesCounterStatisticsPageState
                       leftTitles: AxisTitles(
                         sideTitles: SideTitles(
                           showTitles: true,
-                          reservedSize: 32,
+                          reservedSize: 44,
                           getTitlesWidget: (value, meta) {
                             return Text(
                               value.toStringAsFixed(2),
