@@ -20,7 +20,7 @@ class TapCounter extends BaseCounter {
     required this.isIncrement,
     this.requireConfirmation = true,
     this.lastUpdated,
-    List<DateTime>? updates,
+    super.updates,
   })  : id = id ?? const Uuid().v4(),
         updates = updates ?? (lastUpdated != null ? [lastUpdated] : []),
         super(
@@ -28,7 +28,6 @@ class TapCounter extends BaseCounter {
           name: name,
           value: value,
           lastUpdated: lastUpdated,
-          updates: updates,
         );
 
   /// Create TapCounter from JSON with backward compatibility

@@ -58,7 +58,7 @@ class SeriesCounterStatisticsPageState
       if (_counter.updates[i].isAfter(cutoffDate)) {
         spots.add(FlSpot(
           spotIndex.toDouble(),
-          _counter.seriesValues[i].toDouble(),
+          _counter.seriesValues[i],
         ));
         spotIndex++;
       }
@@ -160,7 +160,6 @@ class SeriesCounterStatisticsPageState
                         isCurved: true,
                         color: Colors.deepPurple,
                         barWidth: 3,
-                        dotData: const FlDotData(show: true),
                         belowBarData: BarAreaData(
                           show: true,
                           color: Colors.deepPurple.withOpacity(0.3),
@@ -169,10 +168,10 @@ class SeriesCounterStatisticsPageState
                     ],
                     titlesData: FlTitlesData(
                       topTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false),
+                        
                       ),
                       rightTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false),
+                        
                       ),
                       leftTitles: AxisTitles(
                         sideTitles: SideTitles(
@@ -209,7 +208,6 @@ class SeriesCounterStatisticsPageState
                       ),
                     ),
                     borderData: FlBorderData(show: true),
-                    gridData: const FlGridData(show: true),
                   ),
                 ),
               ),

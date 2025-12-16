@@ -94,7 +94,6 @@ class ThemeNotifier extends ChangeNotifier {
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(
         seedColor: getThemeSeedColor(),
-        brightness: Brightness.light,
       ),
     );
   }

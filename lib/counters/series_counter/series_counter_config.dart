@@ -68,7 +68,7 @@ class SeriesCounterConfigPageState extends State<SeriesCounterConfigPage> {
                   keyboardType:
                       const TextInputType.numberWithOptions(decimal: true),
                   inputFormatters: <TextInputFormatter>[
-                    FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
+                    FilteringTextInputFormatter.allow(RegExp(r"^\d*\.?\d*")),
                   ],
                   initialValue: _initialValue.toString(),
                   onChanged: (value) {
