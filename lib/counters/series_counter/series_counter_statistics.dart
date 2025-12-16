@@ -223,116 +223,118 @@ class SeriesCounterStatisticsPageState
               Container(
                 height: 300,
                 padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 8.0),
-                child: hasData ? LineChart(
-                  LineChartData(
-                    // Use time-based x axis and automatic y bounds with padding
-                    minX: lineData.first.x,
-                    maxX: lineData.length > 1
-                        ? lineData.last.x
-                        : lineData.first.x + 1.0,
-                    minY: (() {
-                      final ys = lineData.map((s) => s.y).toList();
-                      double minY = ys.reduce((a, b) => a < b ? a : b);
-                      double maxY = ys.reduce((a, b) => a > b ? a : b);
-                      final range = maxY - minY;
-                      if (range == 0) {
-                        return minY - 1.0;
-                      }
-                      return minY - range * 0.1;
-                    })(),
-                    maxY: (() {
-                      final ys = lineData.map((s) => s.y).toList();
-                      double minY = ys.reduce((a, b) => a < b ? a : b);
-                      double maxY = ys.reduce((a, b) => a > b ? a : b);
-                      final range = maxY - minY;
-                      if (range == 0) {
-                        return maxY + 1.0;
-                      }
-                      return maxY + range * 0.1;
-                    })(),
-                    lineBarsData: [
-                      LineChartBarData(
-                        spots: lineData,
-                        isCurved:
-                            false, // use linear segments to avoid smoothing artifacts
-                        dotData:
-                            FlDotData(show: true), // show points for clarity
-                        color: Colors.deepPurple,
-                        barWidth: 3,
-                        belowBarData: BarAreaData(
-                          show: true,
-                          color: Colors.deepPurple.withOpacity(0.3),
-                        ),
-                      ),
-                    ],
-                    titlesData: FlTitlesData(
-                      topTitles: const AxisTitles(),
-                      rightTitles: const AxisTitles(),
-                      leftTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          reservedSize: 44,
-                          getTitlesWidget: (value, meta) {
-                            return Text(
-                              value.toStringAsFixed(2),
-                              style: const TextStyle(fontSize: 12),
-                            );
-                          },
-                        ),
-                      ),
-                      bottomTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          interval: interval,
-                          reservedSize: 32,
-                          getTitlesWidget: (value, meta) {
-                            // value is a timestamp (ms since epoch). Format for display.
-                            final millis = value.round();
-                            final dt =
-                                DateTime.fromMillisecondsSinceEpoch(millis);
-
-                            if (_selectedRange == "1D") {
-                              final time = DateFormat("HH:mm").format(dt);
-                              final date = DateFormat("dd/MM").format(dt);
-                              return SizedBox(
-                                width: 80,
-                                child: Text(
-                                  "$time\n$date",
-                                  textAlign: TextAlign.center,
-                                  maxLines: 2,
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    color: Theme.of(context)
-                                        .textTheme
-                                        .bodySmall
-                                        ?.color,
-                                  ),
-                                ),
-                              );
-                            } else {
-                              final date = DateFormat("dd/MM").format(dt);
-                              return SizedBox(
-                                width: 80,
-                                child: Text(
-                                  date,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    color: Theme.of(context)
-                                        .textTheme
-                                        .bodySmall
-                                        ?.color,
-                                  ),
-                                ),
-                              );
+                child: hasData
+                    ? LineChart(
+                        LineChartData(
+                          // Use time-based x axis and automatic y bounds with padding
+                          minX: lineData.first.x,
+                          maxX: lineData.length > 1
+                              ? lineData.last.x
+                              : lineData.first.x + 1.0,
+                          minY: (() {
+                            final ys = lineData.map((s) => s.y).toList();
+                            double minY = ys.reduce((a, b) => a < b ? a : b);
+                            double maxY = ys.reduce((a, b) => a > b ? a : b);
+                            final range = maxY - minY;
+                            if (range == 0) {
+                              return minY - 1.0;
                             }
-                          },
+                            return minY - range * 0.1;
+                          })(),
+                          maxY: (() {
+                            final ys = lineData.map((s) => s.y).toList();
+                            double minY = ys.reduce((a, b) => a < b ? a : b);
+                            double maxY = ys.reduce((a, b) => a > b ? a : b);
+                            final range = maxY - minY;
+                            if (range == 0) {
+                              return maxY + 1.0;
+                            }
+                            return maxY + range * 0.1;
+                          })(),
+                          lineBarsData: [
+                            LineChartBarData(
+                              spots: lineData,
+                              isCurved:
+                                  false, // use linear segments to avoid smoothing artifacts
+                              dotData: FlDotData(
+                                  show: true), // show points for clarity
+                              color: Colors.deepPurple,
+                              barWidth: 3,
+                              belowBarData: BarAreaData(
+                                show: true,
+                                color: Colors.deepPurple.withOpacity(0.3),
+                              ),
+                            ),
+                          ],
+                          titlesData: FlTitlesData(
+                            topTitles: const AxisTitles(),
+                            rightTitles: const AxisTitles(),
+                            leftTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                showTitles: true,
+                                reservedSize: 44,
+                                getTitlesWidget: (value, meta) {
+                                  return Text(
+                                    value.toStringAsFixed(2),
+                                    style: const TextStyle(fontSize: 12),
+                                  );
+                                },
+                              ),
+                            ),
+                            bottomTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                showTitles: true,
+                                interval: interval,
+                                reservedSize: 32,
+                                getTitlesWidget: (value, meta) {
+                                  // value is a timestamp (ms since epoch). Format for display.
+                                  final millis = value.round();
+                                  final dt =
+                                      DateTime.fromMillisecondsSinceEpoch(
+                                          millis);
+
+                                  if (_selectedRange == "1D") {
+                                    final time = DateFormat("HH:mm").format(dt);
+                                    final date = DateFormat("dd/MM").format(dt);
+                                    return SizedBox(
+                                      width: 80,
+                                      child: Text(
+                                        "$time\n$date",
+                                        textAlign: TextAlign.center,
+                                        maxLines: 2,
+                                        style: TextStyle(
+                                          fontSize: 10,
+                                          color: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall
+                                              ?.color,
+                                        ),
+                                      ),
+                                    );
+                                  } else {
+                                    final date = DateFormat("dd/MM").format(dt);
+                                    return SizedBox(
+                                      width: 80,
+                                      child: Text(
+                                        date,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 10,
+                                          color: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall
+                                              ?.color,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                },
+                              ),
+                            ),
+                          ),
+                          borderData: FlBorderData(show: true),
                         ),
-                      ),
-                    ),
-                    borderData: FlBorderData(show: true),
-                  ),
-                )
+                      )
                     : const Center(
                         child: Text(
                           "No data in the selected time range.",
