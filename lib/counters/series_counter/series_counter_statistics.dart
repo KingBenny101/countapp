@@ -20,7 +20,11 @@ class SeriesCounterStatisticsPageState
   late CounterProvider _counterProvider;
   late SeriesCounter _counter;
   late String _counterName;
-  String _selectedRange = "1M"; // Default to 1 month
+  String _selectedRange = "1W"; // Default to 1 week
+
+  // Minimal chart state
+  DateTime? _chartFirstDate;
+  List<DateTime> _chartDates = [];
 
   @override
   void initState() {
@@ -37,32 +41,50 @@ class SeriesCounterStatisticsPageState
     DateTime cutoffDate;
 
     switch (_selectedRange) {
+      case "1D":
+        cutoffDate = now.subtract(const Duration(days: 1));
+        break;
       case "1W":
         cutoffDate = now.subtract(const Duration(days: 7));
+        break;
       case "1M":
         cutoffDate = now.subtract(const Duration(days: 30));
+        break;
       case "3M":
         cutoffDate = now.subtract(const Duration(days: 90));
+        break;
       case "1Y":
         cutoffDate = now.subtract(const Duration(days: 365));
+        break;
       case "All":
-        cutoffDate = DateTime(1970); // Far past date to include all
+        cutoffDate = DateTime.fromMillisecondsSinceEpoch(0);
+        break;
       default:
         cutoffDate = now.subtract(const Duration(days: 30));
     }
 
-    final spots = <FlSpot>[];
-    int spotIndex = 0;
-
-    for (int i = _counter.updates.length - 1; i >= 0; i--) {
-      if (_counter.updates[i].isAfter(cutoffDate)) {
-        spots.add(FlSpot(
-          spotIndex.toDouble(),
-          _counter.seriesValues[i],
-        ));
-        spotIndex++;
+    // Collect matching updates (date, value) then sort chronologically (oldest -> newest)
+    final entries = <MapEntry<DateTime, double>>[];
+    for (int i = 0; i < _counter.updates.length; i++) {
+      final dt = _counter.updates[i];
+      if (dt.isAfter(cutoffDate)) {
+        entries.add(MapEntry(dt, _counter.seriesValues[i].toDouble()));
       }
     }
+
+    entries.sort((a, b) => a.key.compareTo(b.key));
+
+    final spots = <FlSpot>[];
+    final filteredDates = <DateTime>[];
+    for (int i = 0; i < entries.length; i++) {
+      final ms = entries[i].key.millisecondsSinceEpoch.toDouble();
+      spots.add(FlSpot(ms, entries[i].value));
+      filteredDates.add(entries[i].key);
+    }
+
+    // Save first date and full date list for label conversion (chronological)
+    _chartFirstDate = filteredDates.isNotEmpty ? filteredDates.first : null;
+    _chartDates = filteredDates;
 
     return spots;
   }
@@ -74,22 +96,30 @@ class SeriesCounterStatisticsPageState
     DateTime cutoffDate;
 
     switch (_selectedRange) {
+      case "1D":
+        cutoffDate = now.subtract(const Duration(days: 1));
+        break;
       case "1W":
         cutoffDate = now.subtract(const Duration(days: 7));
+        break;
       case "1M":
         cutoffDate = now.subtract(const Duration(days: 30));
+        break;
       case "3M":
         cutoffDate = now.subtract(const Duration(days: 90));
+        break;
       case "1Y":
         cutoffDate = now.subtract(const Duration(days: 365));
+        break;
       case "All":
-        cutoffDate = DateTime(1970);
+        cutoffDate = DateTime.fromMillisecondsSinceEpoch(0);
+        break;
       default:
         cutoffDate = now.subtract(const Duration(days: 30));
     }
 
     final filteredDates = <DateTime>[];
-    for (int i = _counter.updates.length - 1; i >= 0; i--) {
+    for (int i = 0; i < _counter.updates.length; i++) {
       if (_counter.updates[i].isAfter(cutoffDate)) {
         filteredDates.add(_counter.updates[i]);
       }
@@ -114,6 +144,36 @@ class SeriesCounterStatisticsPageState
     }
 
     final lineData = _getLineChartData();
+    final hasData = lineData.isNotEmpty;
+
+    // compute axis bounds and tick interval (use real timestamps as x)
+    // We guard calculations when there is no data so we can still render the
+    // rest of the page (stats/cards) and only hide the chart area itself.
+
+    double minX = 0.0;
+    double maxX = 1.0;
+    final n = lineData.length;
+    final tickIndices = <int>[];
+    double interval = 1.0;
+
+    if (hasData) {
+      minX = lineData.first.x;
+      maxX = lineData.length > 1
+          ? lineData.last.x
+          : lineData.first.x + 1000.0; // +1s if single point
+
+      // limit ticks to a maximum of 4 (and at least 2 if there are points)
+      final int tickCount = n <= 4 ? n : 4;
+      final int effectiveTickCount = (tickCount <= 1 && n > 0) ? 2 : tickCount;
+      interval = (maxX - minX) / (effectiveTickCount - 1);
+
+      if (n > 0) {
+        tickIndices.add(0);
+        if (n > 2) tickIndices.add(((n - 1) ~/ 2));
+        if (n > 1) tickIndices.add(n - 1);
+      }
+    }
+
     final weeklyAvg = _counter.getWeeklyAverage();
     final monthlyAvg = _counter.getMonthlyAverage();
     final weeklyHigh = _counter.getWeeklyHigh();
@@ -122,92 +182,167 @@ class SeriesCounterStatisticsPageState
     final allTimeLow = _counter.getAllTimeLowest();
 
     return Scaffold(
-      appBar: AppBar(title: Text("Statistics for $_counterName")),
+      appBar: AppBar(
+        title: Text("Info for $_counterName"),
+      ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Column(
             children: [
-              const SizedBox(height: 16),
-              Wrap(
-                spacing: 8,
-                alignment: WrapAlignment.center,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisSize: MainAxisSize.max,
                 children: [
-                  _buildRangeButton("1W"),
-                  _buildRangeButton("1M"),
-                  _buildRangeButton("3M"),
-                  _buildRangeButton("1Y"),
-                  _buildRangeButton("All"),
+                  Text(
+                    'Range:',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  const SizedBox(width: 8),
+                  DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      value: _selectedRange,
+                      items: <String>["1D", "1W", "1M", "3M", "1Y", "All"]
+                          .map((r) => DropdownMenuItem<String>(
+                                value: r,
+                                child: Text(r),
+                              ))
+                          .toList(),
+                      onChanged: (v) {
+                        if (v == null) return;
+                        setState(() {
+                          _selectedRange = v;
+                        });
+                      },
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ),
                 ],
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 8),
               Container(
                 height: 300,
-                padding: const EdgeInsets.all(16.0),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: LineChart(
-                  LineChartData(
-                    lineBarsData: [
-                      LineChartBarData(
-                        spots: lineData,
-                        isCurved: true,
-                        color: Colors.deepPurple,
-                        barWidth: 3,
-                        belowBarData: BarAreaData(
-                          show: true,
-                          color: Colors.deepPurple.withOpacity(0.3),
-                        ),
-                      ),
-                    ],
-                    titlesData: FlTitlesData(
-                      topTitles: const AxisTitles(
-                        
-                      ),
-                      rightTitles: const AxisTitles(
-                        
-                      ),
-                      leftTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          reservedSize: 45,
-                          getTitlesWidget: (value, meta) {
-                            return Text(
-                              value.toInt().toString(),
-                              style: const TextStyle(fontSize: 12),
-                            );
-                          },
-                        ),
-                      ),
-                      bottomTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          reservedSize: 30,
-                          getTitlesWidget: (value, meta) {
-                            final index = value.toInt();
-                            final filteredDates = _getFilteredDates();
-                            if (index < 0 || index >= filteredDates.length) {
-                              return const Text("");
+                padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 8.0),
+                child: hasData
+                    ? LineChart(
+                        LineChartData(
+                          // Use time-based x axis and automatic y bounds with padding
+                          minX: lineData.first.x,
+                          maxX: lineData.length > 1
+                              ? lineData.last.x
+                              : lineData.first.x + 1.0,
+                          minY: (() {
+                            final ys = lineData.map((s) => s.y).toList();
+                            double minY = ys.reduce((a, b) => a < b ? a : b);
+                            double maxY = ys.reduce((a, b) => a > b ? a : b);
+                            final range = maxY - minY;
+                            if (range == 0) {
+                              return minY - 1.0;
                             }
-                            final date = filteredDates[index];
-                            return RotatedBox(
-                              quarterTurns: 3,
-                              child: Text(
-                                DateFormat("MM/dd").format(date),
-                                style: const TextStyle(fontSize: 10),
+                            return minY - range * 0.1;
+                          })(),
+                          maxY: (() {
+                            final ys = lineData.map((s) => s.y).toList();
+                            double minY = ys.reduce((a, b) => a < b ? a : b);
+                            double maxY = ys.reduce((a, b) => a > b ? a : b);
+                            final range = maxY - minY;
+                            if (range == 0) {
+                              return maxY + 1.0;
+                            }
+                            return maxY + range * 0.1;
+                          })(),
+                          lineBarsData: [
+                            LineChartBarData(
+                              spots: lineData,
+                              isCurved:
+                                  false, // use linear segments to avoid smoothing artifacts
+                              dotData: FlDotData(
+                                  show: true), // show points for clarity
+                              color: Colors.deepPurple,
+                              barWidth: 3,
+                              belowBarData: BarAreaData(
+                                show: true,
+                                color: Colors.deepPurple.withOpacity(0.3),
                               ),
-                            );
-                          },
+                            ),
+                          ],
+                          titlesData: FlTitlesData(
+                            topTitles: const AxisTitles(),
+                            rightTitles: const AxisTitles(),
+                            leftTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                showTitles: true,
+                                reservedSize: 44,
+                                getTitlesWidget: (value, meta) {
+                                  return Text(
+                                    value.toStringAsFixed(2),
+                                    style: const TextStyle(fontSize: 12),
+                                  );
+                                },
+                              ),
+                            ),
+                            bottomTitles: AxisTitles(
+                              sideTitles: SideTitles(
+                                showTitles: true,
+                                interval: interval,
+                                reservedSize: 32,
+                                getTitlesWidget: (value, meta) {
+                                  // value is a timestamp (ms since epoch). Format for display.
+                                  final millis = value.round();
+                                  final dt =
+                                      DateTime.fromMillisecondsSinceEpoch(
+                                          millis);
+
+                                  if (_selectedRange == "1D") {
+                                    final time = DateFormat("HH:mm").format(dt);
+                                    final date = DateFormat("dd/MM").format(dt);
+                                    return SizedBox(
+                                      width: 80,
+                                      child: Text(
+                                        "$time\n$date",
+                                        textAlign: TextAlign.center,
+                                        maxLines: 2,
+                                        style: TextStyle(
+                                          fontSize: 10,
+                                          color: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall
+                                              ?.color,
+                                        ),
+                                      ),
+                                    );
+                                  } else {
+                                    final date = DateFormat("dd/MM").format(dt);
+                                    return SizedBox(
+                                      width: 80,
+                                      child: Text(
+                                        date,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 10,
+                                          color: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall
+                                              ?.color,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                },
+                              ),
+                            ),
+                          ),
+                          borderData: FlBorderData(show: true),
+                        ),
+                      )
+                    : const Center(
+                        child: Text(
+                          "No data in the selected time range.",
+                          style: TextStyle(fontSize: 14),
                         ),
                       ),
-                    ),
-                    borderData: FlBorderData(show: true),
-                  ),
-                ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 16),
               _buildStatCard("Weekly Average", weeklyAvg.toStringAsFixed(2)),
               _buildStatCard("Monthly Average", monthlyAvg.toStringAsFixed(2)),
               _buildStatCard("Weekly High", weeklyHigh.toStringAsFixed(2)),
@@ -236,22 +371,6 @@ class SeriesCounterStatisticsPageState
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildRangeButton(String range) {
-    final isSelected = _selectedRange == range;
-    return ElevatedButton(
-      onPressed: () {
-        setState(() {
-          _selectedRange = range;
-        });
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: isSelected ? Colors.deepPurple : null,
-        foregroundColor: isSelected ? Colors.white : null,
-      ),
-      child: Text(range),
     );
   }
 
