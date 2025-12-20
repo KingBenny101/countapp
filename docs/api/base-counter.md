@@ -2,6 +2,40 @@
 
 `BaseCounter` is the abstract base class that all counter types must extend. It defines the contract for counter behavior and provides common functionality.
 
+---
+
+## Quick Reference
+
+### Required Abstract Methods
+
+| Method | Returns | Purpose |
+|--------|---------|---------|
+| `onInteraction(BuildContext)` | `Future<bool>` | Handle user interaction and update counter |
+| `buildIcon()` | `Widget` | Display icon in counter list |
+| `getSubtitle()` | `String` | Show configuration details below name |
+| `getColor()` | `Color` | Theme color for this counter type |
+| `toJson()` | `Map<String, dynamic>` | Serialize counter to JSON |
+| `counterType` (getter) | `String` | Unique type identifier |
+
+### Core Properties
+
+| Property | Type | Mutable | Description |
+|----------|------|---------|-------------|
+| `id` | `String` | No | Unique UUID identifier |
+| `name` | `String` | Yes | Display name |
+| `value` | `int` | Yes | Current count value |
+| `lastUpdated` | `DateTime?` | Yes | Most recent update timestamp |
+| `updates` | `List<DateTime>` | Yes | Complete update history |
+
+### Optional Override Methods
+
+| Method | Default | Purpose |
+|--------|---------|---------|
+| `validate()` | Checks name not empty | Validate counter configuration |
+| `getStatisticsPage(int)` | Returns `null` | Custom statistics page |
+
+---
+
 ## Class Definition
 
 ```dart

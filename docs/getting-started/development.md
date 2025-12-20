@@ -2,13 +2,47 @@
 
 This page describes how to set up a local development environment using the `dev` branch.
 
-> Note: The Releases page contains pre-built APKs and platform binaries for users. The development guide below is for contributors or for building locally.
+!!! note
+    The Releases page contains pre-built APKs and platform binaries for users. The development guide below is for contributors or for building locally.
+
+---
+
+## Architecture Overview
+
+Count App follows a layered architecture with clear separation of concerns:
+
+```mermaid
+graph TD
+    A[UI Layer - Flutter Widgets] --> B[Provider Layer - State Management]
+    B --> C[Counter Models - BaseCounter]
+    C --> D[Hive Storage - Local Persistence]
+    B --> E[Counter Factory - Dynamic Creation]
+    C --> F[JSON Serialization]
+    
+    style A fill:#e3f2fd
+    style B fill:#fff3e0
+    style C fill:#f3e5f5
+    style D fill:#e8f5e9
+    style E fill:#fce4ec
+    style F fill:#fff9c4
+```
+
+**Key Components:**
+- **UI Layer**: Flutter widgets and pages
+- **Provider**: `CounterProvider` for state management
+- **Models**: `BaseCounter` abstract class with concrete implementations (`TapCounter`, `SeriesCounter`)
+- **Storage**: Hive for local persistence
+- **Factory**: Dynamic counter creation from JSON
+
+---
 
 ## Prerequisites
 
 - Flutter SDK (stable channel recommended): https://docs.flutter.dev/get-started/install
 - Dart SDK (bundled with Flutter)
 - Git
+
+---
 
 ## 1. Clone the `dev` branch
 
@@ -21,13 +55,13 @@ cd countapp
 
 Keeping on `dev` lets you work on the latest in-progress features and tests.
 
-## 3. Install dependencies
+## 2. Install dependencies
 
 ```bash
 flutter pub get
 ```
 
-## 4. Initial setup — generate environment (run once)
+## 3. Initial setup — generate environment (run once)
 
 Before running the app for the first time, run the environment generator which sets up icons and other assets. This only needs to be run once after cloning or when those resources change.
 
@@ -35,7 +69,7 @@ Before running the app for the first time, run the environment generator which s
 dart run tool/build.dart generate
 ```
 
-## 5. Generate code (Hive adapters)
+## 4. Generate code (Hive adapters)
 
 ```bash
 dart run build_runner build --delete-conflicting-outputs
