@@ -66,12 +66,11 @@ nav:
   - Getting Started:
       - Install: getting-started/installation.md
       - Development setup: getting-started/development.md
-      - Building: getting-started/building.md
-      - Configuration: getting-started/configuration.md
   - API Reference:
       - Base Classes:
           - BaseCounter: api/base-counter.md
           - CounterFactory: api/counter-factory.md
+          - Configuration: api/configuration.md
       - Counter Types:
           - TapCounter: api/tap-counter.md
           - SeriesCounter: api/series-counter.md

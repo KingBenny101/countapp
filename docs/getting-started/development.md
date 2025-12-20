@@ -51,7 +51,68 @@ flutter run -d <your-android-device-id>
 
 ## 6. Build release artifacts
 
-Refer to the [Building](building.md) doc for platform-specific release steps.
+Count App provides a helper build script and standard Flutter build commands to produce release artifacts for each platform.
+
+### Build script
+
+The project includes `tool/build.dart` which wraps common tasks:
+
+```bash
+# Generate environment (icons, package config)
+dart run tool/build.dart generate
+
+# Clean build artifacts
+dart run tool/build.dart clean
+
+# Build for Android
+dart run tool/build.dart build_android
+
+# Build for Windows
+dart run tool/build.dart build_windows
+
+# Build for Linux
+dart run tool/build.dart build_linux
+
+# Build all (current platform + Android)
+dart run tool/build.dart all
+```
+
+### Platform-specific alternatives
+
+Android:
+
+```bash
+flutter build apk --release
+```
+
+Windows:
+
+```bash
+flutter build windows --release
+```
+
+Linux:
+
+```bash
+flutter build linux --release
+```
+
+### Output
+
+- `release/countapp-{version}.apk` (Android)
+- `release/windows/countapp/` (Windows executable + deps)
+- `release/linux/countapp/` (Linux executable + deps)
+
+### Version management
+
+Set `version` in `pubspec.yaml`:
+
+```yaml
+version: 1.4.0 # MAJOR.MINOR.PATCH
+```
+
+The build script extracts the version and names output files accordingly.
+
 
 ## Troubleshooting
 
