@@ -2,7 +2,6 @@ import "package:intl/intl.dart";
 
 /// Result of time window analysis
 class TimeWindowResult {
-
   const TimeWindowResult({
     required this.count,
     required this.windowStart,
@@ -21,6 +20,8 @@ class TimeWindowResult {
 
 /// Generic statistics utilities for date/time data analysis
 class DateStatistics {
+  DateStatistics._();
+
   /// Group DateTime list by date, returning a map of date strings to update counts
   static Map<String, int> groupUpdatesByDay(List<DateTime> updates) {
     final Map<String, int> updatesPerDay = {};

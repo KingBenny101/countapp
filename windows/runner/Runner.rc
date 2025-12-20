@@ -93,7 +93,7 @@ BEGIN
             VALUE "FileDescription", "Count App" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "Count App" "\0"
-            VALUE "LegalCopyright", "© 2024 KingBenny101. All rights reserved." "\0"
+            VALUE "LegalCopyright", "© 2025 KingBenny101. All rights reserved." "\0"
             VALUE "OriginalFilename", "countapp.exe" "\0"
             VALUE "ProductName", "Count App" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"

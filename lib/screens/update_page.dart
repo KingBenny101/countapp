@@ -58,7 +58,8 @@ class _UpdatePageState extends State<UpdatePage> {
 
     if (currentVersion < latestVersion) {
       setState(() {
-        _updateText = "A newer version $latestVersion is available. Always export your counters before updating!";
+        _updateText =
+            "A newer version $latestVersion is available. Always export your counters before updating!";
         _updateAvailable = true;
       });
       _isLoading = false;
@@ -76,7 +77,7 @@ class _UpdatePageState extends State<UpdatePage> {
         "https://api.github.com/repos/KingBenny101/countapp/releases/latest");
     final response = await http.get(url);
     if (response.statusCode == 200) {
-      final data = json.decode(response.body);
+      final data = json.decode(response.body) as Map<String, dynamic>;
       final downloadUrl = Uri.parse(data["html_url"] as String);
       await launchUrl(downloadUrl);
     } else {
