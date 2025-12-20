@@ -22,25 +22,31 @@ Alternative (ADB):
 adb install -r path/to/countapp.apk
 ```
 
-### Windows (binary / installer)
+### Windows (ZIP)
 
-1. Download the Windows binary (`.exe`) or `.zip` from Releases.
-2. If a `.exe` installer is provided: run it and follow the prompts.
-3. If a `.zip` is provided: extract and run the included executable.
+1. Download the Windows `.zip` file from the Releases page (contains the binary executable).
+2. Extract the zip and run the executable (double-click or via command line). Example (PowerShell):
 
-### Linux (binary)
-
-1. Download the Linux binary (usually an AppImage or tarball) from Releases.
-2. Make it executable and run (example for AppImage):
-
-```bash
-chmod +x CountApp-*.AppImage
-./CountApp-*.AppImage
+```powershell
+Expand-Archive -Path CountApp-*.zip -DestinationPath .\countapp
+cd .\countapp
+.\CountApp.exe
 ```
 
-3. If a tarball is provided, extract and run the included binary.
+(If you prefer command-line tools on WSL or Git Bash, use `unzip` and run the executable similarly.)
 
-> Note: Releases provide the APK and platform binaries for Android, Windows, and Linux. If you need to build locally, follow the [Development setup](development.md) guide.
+### Linux (tar.gz)
+
+1. Download the Linux `tar.gz` file from the Releases page.
+2. Extract the tarball and run the included binary. Example:
+
+```bash
+tar -xzf CountApp-*.tar.gz
+cd countapp
+./countapp
+```
+
+> Note: Releases provide the APK (Android), a ZIP for Windows, and a tar.gz for Linux. If you need to build locally, follow the [Development setup](development.md) guide.
 
 ---
 
