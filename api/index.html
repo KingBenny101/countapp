@@ -9,29 +9,27 @@
         <meta name="author" content="KingBenny101">
       
       
-        <link rel="canonical" href="https://kingbenny101.github.io/countapp/getting-started/installation/">
+        <link rel="canonical" href="https://kingbenny101.github.io/countapp/api/">
       
       
-      
-        <link rel="next" href="../development/">
       
       
         
       
       
-      <link rel="icon" href="../../assets/images/favicon.png">
+      <link rel="icon" href="../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
     
     
       
-        <title>Installation - Count App Documentation</title>
+        <title>API Reference - Count App Documentation</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -50,13 +48,13 @@
       
     
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
     
     
-  <link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="../../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
+  <link href="../assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
             html.glightbox-open { overflow: initial; height: 100%; }
             .gslide-title { margin-top: 0px; user-select: text; }
             .gslide-desc { color: #666; user-select: text; }
@@ -85,7 +83,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#install-get-the-app" class="md-skip">
+        <a href="#api-reference" class="md-skip">
           Skip to content
         </a>
       
@@ -99,7 +97,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="Count App Documentation" class="md-header__button md-logo" aria-label="Count App Documentation" data-md-component="logo">
+    <a href=".." title="Count App Documentation" class="md-header__button md-logo" aria-label="Count App Documentation" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
@@ -119,7 +117,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Installation
+              API Reference
             
           </span>
         </div>
@@ -230,13 +228,11 @@
   
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="./" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../getting-started/installation/" class="md-tabs__link">
           
   
   
@@ -263,7 +259,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../api/base-counter/" class="md-tabs__link">
+        <a href="base-counter/" class="md-tabs__link">
           
   
   
@@ -286,7 +282,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../guides/using-the-app/" class="md-tabs__link">
+        <a href="../guides/using-the-app/" class="md-tabs__link">
           
   
   
@@ -320,7 +316,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="Count App Documentation" class="md-nav__button md-logo" aria-label="Count App Documentation" data-md-component="logo">
+    <a href=".." title="Count App Documentation" class="md-nav__button md-logo" aria-label="Count App Documentation" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
@@ -347,31 +343,26 @@
       
   
   
-    
   
   
-  
     
     
     
     
-      
-        
-        
       
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1">
         
           
-          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="">
+          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
             
   
   
@@ -389,7 +380,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_1">
             <span class="md-nav__icon md-icon"></span>
             
@@ -404,37 +395,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Installation
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../getting-started/installation/" class="md-nav__link">
         
   
   
@@ -450,76 +414,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#android-apk" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Android (APK)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#windows-zip" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Windows (ZIP)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#linux-targz" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Linux (tar.gz)
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Linux (tar.gz)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#want-to-build-from-source" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Want to build from source?
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -532,7 +426,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../development/" class="md-nav__link">
+      <a href="../getting-started/development/" class="md-nav__link">
         
   
   
@@ -671,7 +565,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/base-counter/" class="md-nav__link">
+      <a href="base-counter/" class="md-nav__link">
         
   
   
@@ -699,7 +593,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/counter-factory/" class="md-nav__link">
+      <a href="counter-factory/" class="md-nav__link">
         
   
   
@@ -727,7 +621,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/configuration/" class="md-nav__link">
+      <a href="configuration/" class="md-nav__link">
         
   
   
@@ -815,7 +709,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/tap-counter/" class="md-nav__link">
+      <a href="tap-counter/" class="md-nav__link">
         
   
   
@@ -843,7 +737,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/series-counter/" class="md-nav__link">
+      <a href="series-counter/" class="md-nav__link">
         
   
   
@@ -931,7 +825,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api/counter-provider/" class="md-nav__link">
+      <a href="counter-provider/" class="md-nav__link">
         
   
   
@@ -1026,7 +920,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guides/using-the-app/" class="md-nav__link">
+      <a href="../guides/using-the-app/" class="md-nav__link">
         
   
   
@@ -1054,7 +948,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guides/counters/" class="md-nav__link">
+      <a href="../guides/counters/" class="md-nav__link">
         
   
   
@@ -1082,7 +976,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../guides/adding-counter-types/" class="md-nav__link">
+      <a href="../guides/adding-counter-types/" class="md-nav__link">
         
   
   
@@ -1130,64 +1024,6 @@
     
   
   
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#android-apk" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Android (APK)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#windows-zip" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Windows (ZIP)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#linux-targz" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Linux (tar.gz)
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Linux (tar.gz)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#want-to-build-from-source" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Want to build from source?
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
 </nav>
                   </div>
                 </div>
@@ -1206,42 +1042,18 @@
   
 
 
-<h1 id="install-get-the-app">Install — Get the app<a class="headerlink" href="#install-get-the-app" title="Permanent link">¶</a></h1>
-<p>Download the ready-to-run installers and packages from the official Releases page and install on your device.</p>
-<h2 id="android-apk">Android (APK)<a class="headerlink" href="#android-apk" title="Permanent link">¶</a></h2>
-<ol>
-<li>Download the latest <code>.apk</code> from the <a href="https://github.com/KingBenny101/countapp/releases">Releases page</a>.</li>
-<li>On your device, allow installation from unknown sources (Settings → Security) if required.</li>
-<li>Open the downloaded file and follow the prompts to install, or transfer the APK to your device and install with a file manager.</li>
-</ol>
-<p>Alternative (ADB):</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>adb<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>countapp-1.4.2.apk
-</code></pre></div>
-<h2 id="windows-zip">Windows (ZIP)<a class="headerlink" href="#windows-zip" title="Permanent link">¶</a></h2>
-<ol>
-<li>Download the Windows <code>.zip</code> file from the <a href="https://github.com/KingBenny101/countapp/releases">Releases page</a> (contains the binary executable).</li>
-<li>Extract the zip and run the executable (double-click or via command line). Example (PowerShell):</li>
-</ol>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nb">Expand-Archive</span> <span class="n">-Path</span> <span class="n">countapp</span><span class="p">-</span><span class="n">1</span><span class="p">.</span><span class="n">4</span><span class="p">.</span><span class="n">2-windows</span><span class="p">.</span><span class="n">zip</span> <span class="n">-DestinationPath</span> <span class="p">.\</span><span class="n">countapp</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="nb">cd </span><span class="p">.\</span><span class="n">countapp</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="p">.\</span><span class="n">countapp</span><span class="p">.</span><span class="n">exe</span>
-</code></pre></div>
-<p>(If you prefer command-line tools on WSL or Git Bash, use <code>unzip</code> and run the executable similarly.)</p>
-<h2 id="linux-targz">Linux (tar.gz)<a class="headerlink" href="#linux-targz" title="Permanent link">¶</a></h2>
-<ol>
-<li>Download the Linux <code>tar.gz</code> file from the <a href="https://github.com/KingBenny101/countapp/releases">Releases page</a>.</li>
-<li>Extract the tarball and run the included binary. Example:</li>
-</ol>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>tar<span class="w"> </span>-xzf<span class="w"> </span>countapp-1.4.2-linux.tar.gz
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nb">cd</span><span class="w"> </span>countapp
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>./countapp
-</code></pre></div>
-<blockquote>
-<p>Note: Releases provide the APK (Android), a ZIP for Windows, and a tar.gz for Linux. If you need to build locally, follow the <a href="../development/">Development setup</a> guide.</p>
-</blockquote>
-<hr>
-<h3 id="want-to-build-from-source">Want to build from source?<a class="headerlink" href="#want-to-build-from-source" title="Permanent link">¶</a></h3>
-<p>If you prefer building the app yourself (e.g., to modify features), follow the <a href="../development/">Development setup</a> guide which explains how to use the <code>dev</code> branch and build locally.</p>
+<h1 id="api-reference">API Reference<a class="headerlink" href="#api-reference" title="Permanent link">¶</a></h1>
+<p>A concise reference for the public APIs used in Count App.</p>
+<p>Included pages:</p>
+<ul>
+<li><a href="base-counter/">BaseCounter</a></li>
+<li><a href="counter-factory/">CounterFactory</a></li>
+<li><a href="tap-counter/">TapCounter</a></li>
+<li><a href="series-counter/">SeriesCounter</a></li>
+<li><a href="counter-provider/">CounterProvider</a></li>
+<li><a href="configuration/">Configuration</a></li>
+</ul>
+<p>Use these pages when extending the app or integrating with its internals.</p>
 
 
 
@@ -1317,10 +1129,10 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tabs", "navigation.sections", "navigation.top", "toc.follow", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.tabs", "navigation.sections", "navigation.top", "toc.follow", "search.suggest", "search.highlight", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
       
     
   

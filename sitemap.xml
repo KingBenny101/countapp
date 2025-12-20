@@ -2,42 +2,54 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://kingbenny101.github.io/countapp/</loc>
-         <lastmod>2025-12-10</lastmod>
+         <lastmod>2025-12-20</lastmod>
+    </url>
+    <url>
+         <loc>https://kingbenny101.github.io/countapp/api/</loc>
+         <lastmod>2025-12-20</lastmod>
     </url>
     <url>
          <loc>https://kingbenny101.github.io/countapp/api/base-counter/</loc>
-         <lastmod>2025-12-10</lastmod>
+         <lastmod>2025-12-20</lastmod>
+    </url>
+    <url>
+         <loc>https://kingbenny101.github.io/countapp/api/configuration/</loc>
+         <lastmod>2025-12-20</lastmod>
     </url>
     <url>
          <loc>https://kingbenny101.github.io/countapp/api/counter-factory/</loc>
-         <lastmod>2025-12-10</lastmod>
+         <lastmod>2025-12-20</lastmod>
     </url>
     <url>
          <loc>https://kingbenny101.github.io/countapp/api/counter-provider/</loc>
-         <lastmod>2025-12-10</lastmod>
+         <lastmod>2025-12-20</lastmod>
     </url>
     <url>
          <loc>https://kingbenny101.github.io/countapp/api/series-counter/</loc>
-         <lastmod>2025-12-10</lastmod>
+         <lastmod>2025-12-20</lastmod>
     </url>
     <url>
          <loc>https://kingbenny101.github.io/countapp/api/tap-counter/</loc>
-         <lastmod>2025-12-10</lastmod>
+         <lastmod>2025-12-20</lastmod>
     </url>
     <url>
-         <loc>https://kingbenny101.github.io/countapp/getting-started/building/</loc>
-         <lastmod>2025-12-10</lastmod>
-    </url>
-    <url>
-         <loc>https://kingbenny101.github.io/countapp/getting-started/configuration/</loc>
-         <lastmod>2025-12-10</lastmod>
+         <loc>https://kingbenny101.github.io/countapp/getting-started/development/</loc>
+         <lastmod>2025-12-20</lastmod>
     </url>
     <url>
          <loc>https://kingbenny101.github.io/countapp/getting-started/installation/</loc>
-         <lastmod>2025-12-10</lastmod>
+         <lastmod>2025-12-20</lastmod>
     </url>
     <url>
          <loc>https://kingbenny101.github.io/countapp/guides/adding-counter-types/</loc>
-         <lastmod>2025-12-10</lastmod>
+         <lastmod>2025-12-20</lastmod>
+    </url>
+    <url>
+         <loc>https://kingbenny101.github.io/countapp/guides/counters/</loc>
+         <lastmod>2025-12-20</lastmod>
+    </url>
+    <url>
+         <loc>https://kingbenny101.github.io/countapp/guides/using-the-app/</loc>
+         <lastmod>2025-12-20</lastmod>
     </url>
 </urlset>
