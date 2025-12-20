@@ -1,78 +1,47 @@
-# Setup
+# Install — Get the app
 
-Get Count App running on your local machine.
+Download the ready-to-run installers and packages from the official Releases page and install on your device.
 
-## Prerequisites
+## Android (APK)
 
-- [Flutter SDK 3.3.3+](https://docs.flutter.dev/get-started/install)
-- Git
+1. Download the latest `.apk` from the [Releases page](https://github.com/KingBenny101/countapp/releases).
+2. On your device, allow installation from unknown sources (Settings → Security) if required.
+3. Open the downloaded file and follow the prompts to install, or transfer the APK to your device and install with a file manager.
 
-## Installation Steps
-
-### 1. Clone Repository
+Alternative (ADB):
 
 ```bash
-git clone https://github.com/KingBenny101/countapp.git
+adb install -r countapp-1.4.2.apk
+```
+
+## Windows (ZIP)
+
+1. Download the Windows `.zip` file from the [Releases page](https://github.com/KingBenny101/countapp/releases) (contains the binary executable).
+2. Extract the zip and run the executable (double-click or via command line). Example (PowerShell):
+
+```powershell
+Expand-Archive -Path countapp-1.4.2-windows.zip -DestinationPath .\countapp
+cd .\countapp
+.\countapp.exe
+```
+
+(If you prefer command-line tools on WSL or Git Bash, use `unzip` and run the executable similarly.)
+
+## Linux (tar.gz)
+
+1. Download the Linux `tar.gz` file from the [Releases page](https://github.com/KingBenny101/countapp/releases).
+2. Extract the tarball and run the included binary. Example:
+
+```bash
+tar -xzf countapp-1.4.2-linux.tar.gz
 cd countapp
+./countapp
 ```
 
-### 2. Install Dependencies
+> Note: Releases provide the APK (Android), a ZIP for Windows, and a tar.gz for Linux. If you need to build locally, follow the [Development setup](development.md) guide.
 
-```bash
-flutter pub get
-```
+---
 
-### 3. Generate Code
+### Want to build from source?
 
-Required for Hive adapters:
-
-```bash
-dart run build_runner build --delete-conflicting-outputs
-```
-
-### 4. Run the App
-
-```bash
-flutter run
-```
-
-## Troubleshooting
-
-### Common Issues
-
-#### `build_runner` fails
-
-```bash
-flutter clean
-flutter pub get
-dart run build_runner clean
-dart run build_runner build --delete-conflicting-outputs
-```
-
-#### Android licenses not accepted
-
-```bash
-flutter doctor --android-licenses
-```
-
-#### Hive errors
-
-Delete Hive boxes and regenerate:
-
-```bash
-flutter clean
-dart run build_runner build --delete-conflicting-outputs
-```
-
-### Getting Help
-
-If issues persist:
-
-1. Run `flutter doctor -v` for detailed diagnostics
-2. Check [GitHub Issues](https://github.com/KingBenny101/countapp/issues)
-3. Open a new issue with error details
-
-## Next Steps
-
-- [Building](building.md) - Create release builds
-- [Configuration](configuration.md) - Customize app settings
+If you prefer building the app yourself (e.g., to modify features), follow the [Development setup](development.md) guide which explains how to use the `dev` branch and build locally.

@@ -5,6 +5,8 @@ import "package:flutter/material.dart";
 
 /// Factory for creating counters from JSON with backward compatibility
 class CounterFactory {
+  CounterFactory._();
+
   /// Registry of counter type constructors
   static final Map<String, BaseCounter Function(Map<String, dynamic>)>
       _registry = {

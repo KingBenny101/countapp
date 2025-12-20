@@ -1,3 +1,5 @@
+// ignore_for_file: overridden_fields
+
 import "package:countapp/counters/base/base_counter.dart";
 import "package:countapp/counters/tap_counter/tap_counter_statistics.dart";
 import "package:countapp/utils/statistics.dart";

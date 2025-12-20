@@ -23,8 +23,6 @@ class SeriesCounterStatisticsPageState
   String _selectedRange = "1W"; // Default to 1 week
 
   // Minimal chart state
-  DateTime? _chartFirstDate;
-  List<DateTime> _chartDates = [];
 
   @override
   void initState() {
@@ -43,22 +41,16 @@ class SeriesCounterStatisticsPageState
     switch (_selectedRange) {
       case "1D":
         cutoffDate = now.subtract(const Duration(days: 1));
-        break;
       case "1W":
         cutoffDate = now.subtract(const Duration(days: 7));
-        break;
       case "1M":
         cutoffDate = now.subtract(const Duration(days: 30));
-        break;
       case "3M":
         cutoffDate = now.subtract(const Duration(days: 90));
-        break;
       case "1Y":
         cutoffDate = now.subtract(const Duration(days: 365));
-        break;
       case "All":
         cutoffDate = DateTime.fromMillisecondsSinceEpoch(0);
-        break;
       default:
         cutoffDate = now.subtract(const Duration(days: 30));
     }
@@ -68,7 +60,7 @@ class SeriesCounterStatisticsPageState
     for (int i = 0; i < _counter.updates.length; i++) {
       final dt = _counter.updates[i];
       if (dt.isAfter(cutoffDate)) {
-        entries.add(MapEntry(dt, _counter.seriesValues[i].toDouble()));
+        entries.add(MapEntry(dt, _counter.seriesValues[i]));
       }
     }
 
@@ -82,50 +74,7 @@ class SeriesCounterStatisticsPageState
       filteredDates.add(entries[i].key);
     }
 
-    // Save first date and full date list for label conversion (chronological)
-    _chartFirstDate = filteredDates.isNotEmpty ? filteredDates.first : null;
-    _chartDates = filteredDates;
-
     return spots;
-  }
-
-  List<DateTime> _getFilteredDates() {
-    if (_counter.updates.isEmpty) return [];
-
-    final now = DateTime.now();
-    DateTime cutoffDate;
-
-    switch (_selectedRange) {
-      case "1D":
-        cutoffDate = now.subtract(const Duration(days: 1));
-        break;
-      case "1W":
-        cutoffDate = now.subtract(const Duration(days: 7));
-        break;
-      case "1M":
-        cutoffDate = now.subtract(const Duration(days: 30));
-        break;
-      case "3M":
-        cutoffDate = now.subtract(const Duration(days: 90));
-        break;
-      case "1Y":
-        cutoffDate = now.subtract(const Duration(days: 365));
-        break;
-      case "All":
-        cutoffDate = DateTime.fromMillisecondsSinceEpoch(0);
-        break;
-      default:
-        cutoffDate = now.subtract(const Duration(days: 30));
-    }
-
-    final filteredDates = <DateTime>[];
-    for (int i = 0; i < _counter.updates.length; i++) {
-      if (_counter.updates[i].isAfter(cutoffDate)) {
-        filteredDates.add(_counter.updates[i]);
-      }
-    }
-
-    return filteredDates;
   }
 
   @override
@@ -169,7 +118,7 @@ class SeriesCounterStatisticsPageState
 
       if (n > 0) {
         tickIndices.add(0);
-        if (n > 2) tickIndices.add(((n - 1) ~/ 2));
+        if (n > 2) tickIndices.add((n - 1) ~/ 2);
         if (n > 1) tickIndices.add(n - 1);
       }
     }
@@ -192,10 +141,9 @@ class SeriesCounterStatisticsPageState
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
-                mainAxisSize: MainAxisSize.max,
                 children: [
                   Text(
-                    'Range:',
+                    "Range:",
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   const SizedBox(width: 8),
@@ -233,8 +181,10 @@ class SeriesCounterStatisticsPageState
                               : lineData.first.x + 1.0,
                           minY: (() {
                             final ys = lineData.map((s) => s.y).toList();
-                            double minY = ys.reduce((a, b) => a < b ? a : b);
-                            double maxY = ys.reduce((a, b) => a > b ? a : b);
+                            final double minY =
+                                ys.reduce((a, b) => a < b ? a : b);
+                            final double maxY =
+                                ys.reduce((a, b) => a > b ? a : b);
                             final range = maxY - minY;
                             if (range == 0) {
                               return minY - 1.0;
@@ -243,8 +193,10 @@ class SeriesCounterStatisticsPageState
                           })(),
                           maxY: (() {
                             final ys = lineData.map((s) => s.y).toList();
-                            double minY = ys.reduce((a, b) => a < b ? a : b);
-                            double maxY = ys.reduce((a, b) => a > b ? a : b);
+                            final double minY =
+                                ys.reduce((a, b) => a < b ? a : b);
+                            final double maxY =
+                                ys.reduce((a, b) => a > b ? a : b);
                             final range = maxY - minY;
                             if (range == 0) {
                               return maxY + 1.0;
@@ -254,15 +206,11 @@ class SeriesCounterStatisticsPageState
                           lineBarsData: [
                             LineChartBarData(
                               spots: lineData,
-                              isCurved:
-                                  false, // use linear segments to avoid smoothing artifacts
-                              dotData: FlDotData(
-                                  show: true), // show points for clarity
                               color: Colors.deepPurple,
                               barWidth: 3,
                               belowBarData: BarAreaData(
                                 show: true,
-                                color: Colors.deepPurple.withOpacity(0.3),
+                                color: const Color.fromRGBO(103, 58, 183, 0.3),
                               ),
                             ),
                           ],
