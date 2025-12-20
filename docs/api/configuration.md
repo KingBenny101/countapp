@@ -1,5 +1,7 @@
 # Configuration
 
+Application configuration and constants used across Count App.
+
 ## Application Configuration
 
 ### Constants
@@ -23,22 +25,20 @@ class AppConstants {
 
 ### Modifying Defaults
 
-To change default values, edit `lib/utils/constants.dart`:
+To change default values, edit `lib/utils/constants.dart` and rebuild the app.
+
+Examples:
 
 ```dart
 class AppConstants {
-  // Change default step size
-  static const int defaultStepSize = 5;  // Changed from 1
-
-  // Change default initial value
-  static const int defaultInitialValue = 100;  // Changed from 0
+  static const int defaultStepSize = 5;  // Changed
+  static const int defaultInitialValue = 100;  // Changed
 }
 ```
 
-After modifying constants, rebuild the app for changes to take effect.
+After modifying constants, run a release or debug build to apply the changes.
 
-## Next Steps
+## See also
 
-- [Building](building.md) - Create release builds
-- [API Reference](../api/base-counter.md) - Explore the API
-- [Adding Counter Types](../guides/adding-counter-types.md) - Extend the app
+- [BaseCounter API](base-counter.md)
+- [Configuration alternatives](../getting-started/development.md) - building and release notes

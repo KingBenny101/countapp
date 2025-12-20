@@ -497,13 +497,13 @@ class HomePageState extends State<HomePage> {
                       horizontal: 10,
                     ),
                     child: Text(
-                      "Info",
+                      "About",
                       style: TextStyle(fontSize: 18, color: textColor),
                     ),
                   ),
                   onTap: () async {
                     FocusScope.of(context).unfocus();
-                    await Navigator.pushNamed(context, "/info");
+                    await Navigator.pushNamed(context, "/about");
                   },
                   splashColor: Colors.transparent,
                 ),

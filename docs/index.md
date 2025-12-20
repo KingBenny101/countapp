@@ -1,22 +1,21 @@
-# Count App Documentation
+# Count App
 
-A Flutter counter app with extensible architecture, statistics, and cross-platform support.
+Count App helps you track counts and numeric series quickly and reliably on Android, Windows, and Linux.
 
-## Features
+## Key features
 
-- Multiple counter types with extensible architecture
-- Statistics and charts
-- Local storage with Hive CE
-- Dark/light themes
-- JSON import/export
-- Cross-platform (Android, Windows, Linux)
+- Simple tap-based counters for quick counting
+- Series counters for tracking numeric values over time
+- View statistics and export/import your data (JSON)
+- Dark & light themes and cross-platform support
 
-## Quick Links
+## Quick links
 
-- [Setup](getting-started/installation.md) - Clone and run the app
-- [Building](getting-started/building.md) - Create release builds
-- [API Reference](api/base-counter.md) - API documentation
-- [Adding Counter Types](guides/adding-counter-types.md) - Extend the app
+- [Install (Get the app)](getting-started/installation.md)
+- [Development setup (dev branch)](getting-started/development.md)
+- [Using the app (guide)](guides/using-the-app.md)
+- [Counters and options](guides/counters.md)
+- [API Reference](api/)
 
 ## Support
 

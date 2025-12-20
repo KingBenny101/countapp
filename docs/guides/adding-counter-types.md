@@ -13,6 +13,15 @@ Adding a new counter type involves:
 5. Registering the counter type in the factory
 6. Generating code and testing
 
+## Built-in counters
+
+Count App ships with a set of ready-to-use counter types. The most common are:
+
+- **Tap Counter** — quick increment/decrement counter with configurable step size and confirmation option.
+- **Series Counter** — record numeric values (e.g., measurements) with timestamps and view charts/statistics.
+
+These are examples you can follow when creating new types.
+
 ## Prerequisites
 
 Before you begin:
