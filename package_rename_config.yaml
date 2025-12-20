@@ -8,3 +8,8 @@ package_rename_config:
     organization: KingBenny101
     copyright_notice: © 2025 KingBenny101. All rights reserved.
     exe_name: countapp
+
+  linux:
+    app_name: Count App
+    package_name: com.kingbenny101.countapp
+    exe_name: countapp

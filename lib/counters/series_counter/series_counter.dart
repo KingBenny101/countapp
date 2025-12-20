@@ -1,3 +1,5 @@
+// ignore_for_file: overridden_fields
+
 import "package:countapp/counters/base/base_counter.dart";
 import "package:countapp/counters/series_counter/series_counter_statistics.dart";
 import "package:flutter/material.dart";
@@ -135,7 +137,6 @@ class SeriesCounter extends BaseCounter {
       "seriesValues": seriesValues,
     };
   }
-
 
   /// Show input dialog for entering a new number
   Future<double?> _showInputDialog(BuildContext context) async {

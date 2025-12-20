@@ -1,10 +1,13 @@
 import "package:countapp/counters/tap_counter/tap_counter.dart";
 import "package:countapp/models/counter_model.dart";
 import "package:countapp/utils/constants.dart";
+import "package:flutter/foundation.dart";
 import "package:hive_ce/hive.dart";
 
 /// Utility to migrate old Counter data to new TapCounter format
 class CounterMigration {
+  CounterMigration._();
+
   /// Check if migration is needed and perform it
   static Future<void> migrateIfNeeded() async {
     try {
@@ -17,14 +20,14 @@ class CounterMigration {
         return;
       }
 
-      print("Found ${oldBox.length} counters to migrate...");
+      debugPrint("Found ${oldBox.length} counters to migrate...");
 
       // Open new box
       final newBox = await Hive.openBox(AppConstants.countersBox);
 
       if (newBox.isNotEmpty) {
         // Migration already done
-        print("Migration already completed.");
+        debugPrint("Migration already completed.");
         await oldBox.close();
         return;
       }
@@ -43,13 +46,13 @@ class CounterMigration {
         await newBox.add(tapCounter.toJson());
       }
 
-      print("Successfully migrated ${oldBox.length} counters!");
+      debugPrint("Successfully migrated ${oldBox.length} counters!");
 
       // Clear old box after successful migration
       await oldBox.clear();
       await oldBox.close();
     } catch (e) {
-      print("Migration error: $e");
+      debugPrint("Migration error: $e");
       // Don't rethrow - allow app to continue
     }
   }

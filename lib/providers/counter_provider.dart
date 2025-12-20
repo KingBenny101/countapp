@@ -75,10 +75,10 @@ class CounterProvider with ChangeNotifier {
     final box = await _getBox();
 
     // Adjust newIndex when moving down the list (as per ReorderableListView behaviour)
-    if (newIndex > oldIndex) newIndex -= 1;
+    final int targetIndex = (newIndex > oldIndex) ? newIndex - 1 : newIndex;
 
     final item = _counters.removeAt(oldIndex);
-    _counters.insert(newIndex, item);
+    _counters.insert(targetIndex, item);
 
     // Rebuild the box to reflect the new order
     await box.clear();
