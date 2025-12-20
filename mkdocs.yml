@@ -27,10 +27,14 @@ theme:
     - navigation.tabs
     - navigation.sections
     - navigation.top
+    - navigation.footer
     - toc.follow
+    - toc.integrate
     - search.suggest
     - search.highlight
+    - search.share
     - content.code.copy
+    - content.code.annotate
   icon:
     repo: fontawesome/brands/github
 
@@ -41,11 +45,15 @@ plugins:
 markdown_extensions:
   - admonition
   - attr_list
+  - md_in_html
   - tables
   - toc:
       permalink: true
+      permalink_title: Anchor link to this section
   - pymdownx.highlight:
       anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
   - pymdownx.superfences:
       custom_fences:
         - name: mermaid
@@ -55,6 +63,11 @@ markdown_extensions:
       alternate_style: true
   - pymdownx.tasklist:
       custom_checkbox: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.details
+  - pymdownx.keys
 
 extra:
   social:
@@ -62,6 +75,7 @@ extra:
       link: https://github.com/KingBenny101
 
 nav:
+  - Home: index.md
   - Getting Started:
       - Installation: getting-started/installation.md
       - Development: getting-started/development.md
