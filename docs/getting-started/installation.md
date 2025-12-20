@@ -8,6 +8,32 @@ Visit the Count App Releases page: [Count App Releases](https://github.com/KingB
 
 Choose the asset for your platform and follow the simple steps below.
 
+**Current release assets (example):**
+
+- Linux: `countapp-1.4.2-linux.tar.gz` — 15.9 MB — SHA256: `7a45d927d7746702cb17b1fa8cccb8b80c9465c615549b7b437ca991ada0328d` (uploaded 4 days ago)
+- Windows: `countapp-1.4.2-windows.zip` — 12.1 MB — SHA256: `e8cdf62344adf6f55ad3b77e12131e25d77d563256db8e88555db6f39f3db305` (uploaded 4 days ago)
+- Android: `countapp-1.4.2.apk` — 51.7 MB — SHA256: `4dbb6edb1cf385c6ef0752885577b14c4c3b05e8a4e1731ea04d09bb5d003f9e` (uploaded 4 days ago)
+
+**Verify the checksum** (recommended):
+
+- Linux / macOS:
+
+```bash
+sha256sum <filename>
+# or
+shasum -a 256 <filename>
+```
+
+- Windows (PowerShell):
+
+```powershell
+Get-FileHash <filename> -Algorithm SHA256
+```
+
+Compare the computed digest to the SHA256 value listed above to ensure the download is intact and authentic.
+
+(Always check the Releases page for the latest filenames and digests if a newer release is available.)
+
 ### Android (APK)
 
 1. Download the latest `.apk` from the [Releases page](https://github.com/KingBenny101/countapp/releases).
