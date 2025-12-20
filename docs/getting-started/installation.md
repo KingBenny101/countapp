@@ -1,78 +1,49 @@
-# Setup
+# Install — Get the app
 
-Get Count App running on your local machine.
+Download the ready-to-run installers and packages from the official Releases page and install on your device.
 
-## Prerequisites
+## Releases
 
-- [Flutter SDK 3.3.3+](https://docs.flutter.dev/get-started/install)
-- Git
+Visit the Count App Releases page:
 
-## Installation Steps
+- https://github.com/KingBenny101/countapp/releases
 
-### 1. Clone Repository
+Choose the asset for your platform and follow the simple steps below.
 
-```bash
-git clone https://github.com/KingBenny101/countapp.git
-cd countapp
-```
+### Android (APK)
 
-### 2. Install Dependencies
+1. Download the latest `.apk` from the Releases page.
+2. On your device, allow installation from unknown sources (Settings → Security) if required.
+3. Open the downloaded file and follow the prompts to install, or transfer the APK to your device and install with a file manager.
 
-```bash
-flutter pub get
-```
-
-### 3. Generate Code
-
-Required for Hive adapters:
+Alternative (ADB):
 
 ```bash
-dart run build_runner build --delete-conflicting-outputs
+adb install -r path/to/countapp.apk
 ```
 
-### 4. Run the App
+### Windows (binary / installer)
+
+1. Download the Windows binary (`.exe`) or `.zip` from Releases.
+2. If a `.exe` installer is provided: run it and follow the prompts.
+3. If a `.zip` is provided: extract and run the included executable.
+
+### Linux (binary)
+
+1. Download the Linux binary (usually an AppImage or tarball) from Releases.
+2. Make it executable and run (example for AppImage):
 
 ```bash
-flutter run
+chmod +x CountApp-*.AppImage
+./CountApp-*.AppImage
 ```
 
-## Troubleshooting
+3. If a tarball is provided, extract and run the included binary.
 
-### Common Issues
+> Note: Releases provide the APK and platform binaries for Android, Windows, and Linux. If you need to build locally, follow the [Development setup](development.md) guide.
 
-#### `build_runner` fails
+---
 
-```bash
-flutter clean
-flutter pub get
-dart run build_runner clean
-dart run build_runner build --delete-conflicting-outputs
-```
+### Want to build from source?
 
-#### Android licenses not accepted
-
-```bash
-flutter doctor --android-licenses
-```
-
-#### Hive errors
-
-Delete Hive boxes and regenerate:
-
-```bash
-flutter clean
-dart run build_runner build --delete-conflicting-outputs
-```
-
-### Getting Help
-
-If issues persist:
-
-1. Run `flutter doctor -v` for detailed diagnostics
-2. Check [GitHub Issues](https://github.com/KingBenny101/countapp/issues)
-3. Open a new issue with error details
-
-## Next Steps
-
-- [Building](building.md) - Create release builds
-- [Configuration](configuration.md) - Customize app settings
+If you prefer building the app yourself (e.g., to modify features), follow the [Development setup](development.md) guide which explains how to use the `dev` branch and build locally.

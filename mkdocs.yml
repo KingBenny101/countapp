@@ -64,7 +64,8 @@ extra:
 nav:
   - Home: index.md
   - Getting Started:
-      - Setup: getting-started/installation.md
+      - Install: getting-started/installation.md
+      - Development setup: getting-started/development.md
       - Building: getting-started/building.md
       - Configuration: getting-started/configuration.md
   - API Reference:
@@ -77,6 +78,8 @@ nav:
       - Providers:
           - CounterProvider: api/counter-provider.md
   - Guides:
+      - Using the app: guides/using-the-app.md
+      - Counters: guides/counters.md
       - Adding New Counter Types: guides/adding-counter-types.md
 
 copyright: Copyright &copy; 2025 KingBenny101
