@@ -48,6 +48,7 @@ dart run build_runner build --delete-conflicting-outputs
 ```bash
 flutter run
 ```
+
 ## 6. Build release artifacts
 
 Count App provides a helper build script and standard Flutter build commands to produce release artifacts for each platform.
@@ -75,6 +76,7 @@ dart run tool/build.dart build_linux
 # Build 'all' (current platform + Android)
 dart run tool/build.dart all
 ```
+
 ### Output
 
 - `release/countapp-{version}.apk` (Android)

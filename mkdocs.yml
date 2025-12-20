@@ -62,12 +62,11 @@ extra:
       link: https://github.com/KingBenny101
 
 nav:
-  - Home: index.md
   - Getting Started:
-      - Install: getting-started/installation.md
-      - Development setup: getting-started/development.md
+      - Installation: getting-started/installation.md
+      - Development: getting-started/development.md
   - API Reference:
-      - Base Classes:
+      - Classes:
           - BaseCounter: api/base-counter.md
           - CounterFactory: api/counter-factory.md
           - Configuration: api/configuration.md
