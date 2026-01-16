@@ -4,6 +4,7 @@ import "package:countapp/utils/constants.dart";
 import "package:countapp/utils/widgets.dart";
 import "package:flutter/material.dart";
 import "package:hive_ce/hive.dart";
+import "package:countapp/services/leaderboard_service.dart";
 
 class CounterProvider with ChangeNotifier {
   List<BaseCounter> _counters = [];
@@ -61,6 +62,29 @@ class CounterProvider with ChangeNotifier {
       final box = await _getBox();
       await box.putAt(index, counter.toJson());
       notifyListeners();
+
+      // Auto-post to leaderboards if enabled
+      final settingsBox = Hive.box(AppConstants.settingsBox);
+      final autoPost = settingsBox.get(AppConstants.leaderboardAutoPostSetting,
+          defaultValue: true) as bool;
+
+      if (autoPost) {
+        final lbs = LeaderboardService.getAll()
+            .where((l) => l.attachedCounterId == counter.id)
+            .toList();
+        for (final lb in lbs) {
+          // Fire and forget; don't block the UI — log result for debugging
+          LeaderboardService.postUpdate(lb: lb, counter: counter).then((ok) {
+            if (!ok) {
+              print(
+                  'Auto-post to leaderboard ${lb.code} failed for counter ${counter.id}');
+            } else {
+              print(
+                  'Auto-post to leaderboard ${lb.code} succeeded for counter ${counter.id}');
+            }
+          });
+        }
+      }
 
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

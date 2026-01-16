@@ -6,6 +6,7 @@ import "package:countapp/screens/about_page.dart";
 import "package:countapp/screens/home_page.dart";
 import "package:countapp/screens/options_page.dart";
 import "package:countapp/screens/update_page.dart";
+import "package:countapp/models/leaderboard.dart";
 import "package:countapp/theme/theme_notifier.dart";
 import "package:countapp/utils/constants.dart";
 import "package:countapp/utils/migration.dart";
@@ -25,6 +26,13 @@ void main() async {
   // Register new adapters
   Hive.registerAdapter(TapCounterAdapter());
   Hive.registerAdapter(SeriesCounterAdapter());
+
+  // Register leaderboard adapters
+  Hive.registerAdapter(LeaderboardEntryAdapter());
+  Hive.registerAdapter(LeaderboardAdapter());
+
+  // Leaderboards storage (open after registering adapters)
+  await Hive.openBox(AppConstants.leaderboardsBox);
 
   // Perform migration if needed
   await CounterMigration.migrateIfNeeded();
