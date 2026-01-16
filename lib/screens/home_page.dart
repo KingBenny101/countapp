@@ -6,6 +6,7 @@ import "package:file_picker/file_picker.dart";
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
 import "package:provider/provider.dart";
+import "package:countapp/screens/leaderboards_page.dart";
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -310,6 +311,25 @@ class HomePageState extends State<HomePage> {
                       ],
                     ),
                   ),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.leaderboard),
+                  title: Container(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 10,
+                      horizontal: 10,
+                    ),
+                    child: Text("Leaderboards",
+                        style: TextStyle(fontSize: 18, color: textColor)),
+                  ),
+                  onTap: () async {
+                    FocusScope.of(context).unfocus();
+                    await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const LeaderboardsPage()));
+                  },
+                  splashColor: Colors.transparent,
                 ),
                 ListTile(
                   leading: const Icon(Icons.update),
