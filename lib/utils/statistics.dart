@@ -99,9 +99,15 @@ class DateStatistics {
     Map<String, int> updatesPerDay,
     int totalDays,
   ) {
-    if (totalDays == 0) return 0.0;
+    // Guard against invalid totalDays
+    if (totalDays <= 0) return 0.0;
+
     final daysWithNoUpdates = totalDays - updatesPerDay.length;
-    return (daysWithNoUpdates / totalDays) * 100;
+
+    // Clamp to [0, totalDays] to avoid negative percentages or values > 100%
+    final clampedDaysWithNoUpdates = daysWithNoUpdates.clamp(0, totalDays);
+
+    return (clampedDaysWithNoUpdates / totalDays) * 100;
   }
 
   /// Find the most active time window of specified size (in minutes)
