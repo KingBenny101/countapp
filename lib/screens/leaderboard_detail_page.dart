@@ -38,7 +38,7 @@ class _LeaderboardDetailPageState extends State<LeaderboardDetailPage> {
       });
     } catch (e) {
       // If watch not supported, ignore; UI can be refreshed manually
-      print('Leaderboard watch not available: $e');
+      print("Leaderboard watch not available: $e");
     }
   }
 
@@ -46,6 +46,28 @@ class _LeaderboardDetailPageState extends State<LeaderboardDetailPage> {
   void dispose() {
     _watchSub?.cancel();
     super.dispose();
+  }
+
+  // Return a background color for top ranks (1=gold, 2=silver, 3=bronze) and
+  // the default primary color for the rest. These colors are slightly muted
+  // for better appearance and contrast.
+  Color _rankColor(int index, BuildContext context) {
+    switch (index) {
+      case 0:
+        return const Color(0xFFDAA520); // Goldenrod (muted gold)
+      case 1:
+        return const Color(0xFFB0BEC5); // Blue-grey (muted silver)
+      case 2:
+        return const Color(0xFFB87333); // Copper (warmer bronze)
+      default:
+        return Theme.of(context).primaryColor;
+    }
+  }
+
+  // Pick a text color that contrasts with the rank background.
+  Color _rankTextColor(int index) {
+    // Use black for lighter gold/silver, white for darker bronze and default.
+    return (index == 0 || index == 1) ? Colors.black : Colors.white;
   }
 
   Future<void> _load() async {
@@ -74,7 +96,7 @@ class _LeaderboardDetailPageState extends State<LeaderboardDetailPage> {
               await _load();
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  buildAppSnackBar('Leaderboard refreshed'),
+                  buildAppSnackBar("Leaderboard refreshed"),
                 );
               }
             },
@@ -86,16 +108,16 @@ class _LeaderboardDetailPageState extends State<LeaderboardDetailPage> {
                 context: context,
                 builder: (context) {
                   return AlertDialog(
-                    title: const Text('Delete Leaderboard'),
+                    title: const Text("Delete Leaderboard"),
                     content: const Text(
-                        'Are you sure you want to delete this leaderboard locally?'),
+                        "Are you sure you want to delete this leaderboard locally?"),
                     actions: [
                       TextButton(
                           onPressed: () => Navigator.of(context).pop(false),
-                          child: const Text('Cancel')),
+                          child: const Text("Cancel")),
                       TextButton(
                           onPressed: () => Navigator.of(context).pop(true),
-                          child: const Text('Delete')),
+                          child: const Text("Delete")),
                     ],
                   );
                 },
@@ -105,7 +127,7 @@ class _LeaderboardDetailPageState extends State<LeaderboardDetailPage> {
                 LeaderboardService.deleteLeaderboard(widget.code);
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    buildAppSnackBar('Leaderboard deleted'),
+                    buildAppSnackBar("Leaderboard deleted"),
                   );
                   Navigator.of(context).pop();
                 }
@@ -123,7 +145,7 @@ class _LeaderboardDetailPageState extends State<LeaderboardDetailPage> {
                   itemCount: _board!.leaderboard.length,
                   itemBuilder: (context, index) {
                     final e = _board!.leaderboard[index];
-                    final dateStr = DateFormat('yyyy-MM-dd HH:mm')
+                    final dateStr = DateFormat("yyyy-MM-dd HH:mm")
                         .format(e.timestamp.toLocal());
                     return Card(
                       elevation: 2,
@@ -132,17 +154,19 @@ class _LeaderboardDetailPageState extends State<LeaderboardDetailPage> {
                       child: ListTile(
                         contentPadding: const EdgeInsets.all(12),
                         leading: CircleAvatar(
-                          backgroundColor: Theme.of(context).primaryColor,
-                          child: Text('${index + 1}',
-                              style: const TextStyle(color: Colors.white)),
+                          backgroundColor: _rankColor(index, context),
+                          child: Text("${index + 1}",
+                              style: TextStyle(
+                                  color: _rankTextColor(index),
+                                  fontWeight: FontWeight.bold)),
                         ),
                         title: Text(e.userName,
                             style:
                                 const TextStyle(fontWeight: FontWeight.bold)),
                         subtitle: Text(dateStr),
-                        trailing: Text('${e.counterValue}',
+                        trailing: Text("${e.counterValue}",
                             style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16)),
+                                fontWeight: FontWeight.bold, fontSize: 30)),
                       ),
                     );
                   },

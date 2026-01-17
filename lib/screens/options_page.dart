@@ -1,9 +1,9 @@
 import "package:countapp/theme/theme_notifier.dart";
-import "package:countapp/utils/widgets.dart";
 import "package:countapp/utils/constants.dart";
+import "package:countapp/utils/widgets.dart";
 import "package:flutter/material.dart";
-import "package:provider/provider.dart";
 import "package:hive_ce/hive.dart";
+import "package:provider/provider.dart";
 
 class OptionsPage extends StatefulWidget {
   const OptionsPage({super.key});
