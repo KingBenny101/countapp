@@ -159,7 +159,9 @@ class DateStatistics {
     );
   }
 
-  /// Calculate total days between first and last update
+  /// Calculate total days between first and last update (inclusive).
+  /// This counts calendar days (based on date only) to avoid losing days
+  /// when updates cross midnight but are less than 24 hours apart.
   static int calculateTotalDays(List<DateTime> updates) {
     if (updates.isEmpty) return 0;
 
@@ -167,6 +169,12 @@ class DateStatistics {
     final firstUpdate = sortedUpdates.first;
     final lastUpdate = sortedUpdates.last;
 
-    return lastUpdate.difference(firstUpdate).inDays + 1;
+    // Normalize to dates only (midnight) so the difference is in calendar days
+    final firstDateOnly =
+        DateTime(firstUpdate.year, firstUpdate.month, firstUpdate.day);
+    final lastDateOnly =
+        DateTime(lastUpdate.year, lastUpdate.month, lastUpdate.day);
+
+    return lastDateOnly.difference(firstDateOnly).inDays + 1;
   }
 }

@@ -31,7 +31,7 @@ class _LeaderboardsPageState extends State<LeaderboardsPage> {
         setState(() {});
       });
     } catch (e) {
-      print('Hive watch not available for leaderboards: $e');
+      print("Hive watch not available for leaderboards: $e");
     }
   }
 
@@ -152,7 +152,7 @@ class _LeaderboardsPageState extends State<LeaderboardsPage> {
                     validator: (value) {
                       if (value == null || value.isEmpty) return "Required";
                       final v = value.toUpperCase().trim();
-                      if (!RegExp(r'^[A-Z0-9]{6}$').hasMatch(v))
+                      if (!RegExp(r"^[A-Z0-9]{6}$").hasMatch(v))
                         return "Code must be 6 uppercase letters or digits";
                       return null;
                     },

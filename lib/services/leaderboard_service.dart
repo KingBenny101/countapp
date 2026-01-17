@@ -44,11 +44,11 @@ class LeaderboardService {
       "code": code,
       "user_name": userName,
       "counter_type": _mapCounterType(counter.counterType),
-      "counter_value": (counter.value).toInt(),
+      "counter_value": counter.value.toInt(),
     };
 
     final resp = await _postFollow(Uri.parse(_apiUrl),
-        {'Content-Type': 'application/json'}, jsonEncode(payload));
+        {"Content-Type": "application/json"}, jsonEncode(payload));
 
     if (resp.statusCode == 200) {
       final map = jsonDecode(resp.body) as Map<String, dynamic>;
@@ -89,10 +89,10 @@ class LeaderboardService {
 
     // Ensure order list contains this code (append if new)
     final order =
-        (box.get('__order__') as List<dynamic>?)?.cast<String>() ?? [];
+        (box.get("__order__") as List<dynamic>?)?.cast<String>() ?? [];
     if (!order.contains(lb.code)) {
       order.add(lb.code);
-      await box.put('__order__', order);
+      await box.put("__order__", order);
     }
   }
 
@@ -100,16 +100,16 @@ class LeaderboardService {
     final box = _box();
     await box.delete(code);
     final order =
-        (box.get('__order__') as List<dynamic>?)?.cast<String>() ?? [];
+        (box.get("__order__") as List<dynamic>?)?.cast<String>() ?? [];
     if (order.contains(code)) {
       order.remove(code);
-      await box.put('__order__', order);
+      await box.put("__order__", order);
     }
   }
 
   static List<Leaderboard> getAll() {
     final box = _box();
-    final order = (box.get('__order__') as List<dynamic>?)?.cast<String>();
+    final order = (box.get("__order__") as List<dynamic>?)?.cast<String>();
 
     // If no explicit order saved, return natural values order (filtering non-leaderboard entries)
     if (order == null) return box.values.whereType<Leaderboard>().toList();
@@ -144,7 +144,7 @@ class LeaderboardService {
 
     final box = _box();
     final newOrder = items.map((e) => e.code).toList();
-    await box.put('__order__', newOrder);
+    await box.put("__order__", newOrder);
   }
 
   /// Internal helper to follow redirects for POST requests.
@@ -156,10 +156,10 @@ class LeaderboardService {
     Uri current = uri;
 
     while (resp.statusCode >= 300 && resp.statusCode < 400 && redirects < 5) {
-      final loc = resp.headers['location'];
+      final loc = resp.headers["location"];
       if (loc == null) break;
       final next = current.resolve(loc);
-      print('Following redirect ${resp.statusCode} -> $next');
+      print("Following redirect ${resp.statusCode} -> $next");
 
       if (resp.statusCode == 307 || resp.statusCode == 308) {
         // Repeat POST to new location
@@ -180,7 +180,7 @@ class LeaderboardService {
     final payload = {"code": code};
 
     final resp = await _postFollow(Uri.parse(_apiUrl),
-        {'Content-Type': 'application/json'}, jsonEncode(payload));
+        {"Content-Type": "application/json"}, jsonEncode(payload));
 
     if (resp.statusCode == 200) {
       final map = jsonDecode(resp.body) as Map<String, dynamic>;
@@ -213,11 +213,11 @@ class LeaderboardService {
       "code": lb.code,
       "user_name": lb.joinedUserName!,
       "counter_type": _mapCounterType(counter.counterType),
-      "counter_value": (counter.value).toInt(),
+      "counter_value": counter.value.toInt(),
     };
 
     final resp = await _postFollow(Uri.parse(_apiUrl),
-        {'Content-Type': 'application/json'}, jsonEncode(payload));
+        {"Content-Type": "application/json"}, jsonEncode(payload));
 
     if (resp.statusCode == 200) {
       final map = jsonDecode(resp.body) as Map<String, dynamic>;
