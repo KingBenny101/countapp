@@ -1,4 +1,5 @@
 import "package:countapp/providers/counter_provider.dart";
+import "package:countapp/screens/leaderboards_page.dart";
 import "package:countapp/screens/selection_page.dart";
 import "package:countapp/utils/files.dart";
 import "package:countapp/utils/widgets.dart";
@@ -6,7 +7,6 @@ import "package:file_picker/file_picker.dart";
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
 import "package:provider/provider.dart";
-import "package:countapp/screens/leaderboards_page.dart";
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

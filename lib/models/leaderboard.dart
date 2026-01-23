@@ -8,10 +8,6 @@ class LeaderboardEntry {
     required this.timestamp,
   });
 
-  String userName;
-  int counterValue;
-  DateTime timestamp;
-
   factory LeaderboardEntry.fromJson(Map<String, dynamic> json) {
     return LeaderboardEntry(
       userName: json["user_name"] as String,
@@ -19,6 +15,10 @@ class LeaderboardEntry {
       timestamp: DateTime.parse(json["timestamp"] as String),
     );
   }
+
+  String userName;
+  int counterValue;
+  DateTime timestamp;
 
   Map<String, dynamic> toJson() => {
         "user_name": userName,
@@ -37,17 +37,6 @@ class Leaderboard {
     this.joinedUserName,
   });
 
-  String code;
-  String leaderboardName;
-  String counterType;
-  List<LeaderboardEntry> leaderboard;
-
-  /// Local counter id that this leaderboard is attached to
-  String? attachedCounterId;
-
-  /// The user name that this local device joined the leaderboard with
-  String? joinedUserName;
-
   factory Leaderboard.fromApiJson(Map<String, dynamic> json) {
     final data = json;
     return Leaderboard(
@@ -62,6 +51,17 @@ class Leaderboard {
           [],
     );
   }
+
+  String code;
+  String leaderboardName;
+  String counterType;
+  List<LeaderboardEntry> leaderboard;
+
+  /// Local counter id that this leaderboard is attached to
+  String? attachedCounterId;
+
+  /// The user name that this local device joined the leaderboard with
+  String? joinedUserName;
 
   Map<String, dynamic> toJson() => {
         "code": code,
@@ -133,10 +133,13 @@ class LeaderboardAdapter extends TypeAdapter<Leaderboard> {
     writer.writeString(obj.leaderboardName);
     writer.writeString(obj.counterType);
     writer.writeBool(obj.attachedCounterId != null);
-    if (obj.attachedCounterId != null)
+    if (obj.attachedCounterId != null) {
       writer.writeString(obj.attachedCounterId!);
+    }
     writer.writeBool(obj.joinedUserName != null);
-    if (obj.joinedUserName != null) writer.writeString(obj.joinedUserName!);
+    if (obj.joinedUserName != null) {
+      writer.writeString(obj.joinedUserName!);
+    }
     writer.writeInt(obj.leaderboard.length);
     final entryAdapter = LeaderboardEntryAdapter();
     for (final e in obj.leaderboard) {
