@@ -103,7 +103,10 @@ class _LeaderboardsPageState extends State<LeaderboardsPage> {
                                 LeaderboardDetailPage(code: lb.code),
                           ),
                         );
-                        setState(() {});
+                        // Rebuild after returning to ensure any changes are reflected
+                        if (context.mounted) {
+                          setState(() {});
+                        }
                       },
                     ),
                   ),
@@ -184,7 +187,15 @@ class _LeaderboardsPageState extends State<LeaderboardsPage> {
                                 child: Text(c.name),
                               ))
                           .toList(),
-                      onChanged: isLoading ? null : (v) => selected = v,
+                      onChanged: isLoading
+                          ? null
+                          : (v) {
+                              selected = v;
+                            },
+                      validator: (value) {
+                        if (value == null) return "Must select a counter";
+                        return null;
+                      },
                       decoration:
                           const InputDecoration(labelText: "Attach Counter"),
                     ),

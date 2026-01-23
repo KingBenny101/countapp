@@ -85,7 +85,17 @@ class SeriesCounterStatisticsPageState
 
     setState(() => _syncingLeaderboard = true);
 
-    // Refresh the counter instance to ensure we sync the latest value
+    // Validate index bounds and refresh the counter instance
+    if (widget.index < 0 || widget.index >= _counterProvider.counters.length) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          buildAppSnackBar("Counter no longer exists", success: false),
+        );
+      }
+      setState(() => _syncingLeaderboard = false);
+      return;
+    }
+
     _counter = _counterProvider.counters[widget.index] as SeriesCounter;
 
     final attached = LeaderboardService.getAll()
