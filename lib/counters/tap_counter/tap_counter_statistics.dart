@@ -15,6 +15,13 @@ class ChartData {
   final double y;
 }
 
+class _DayPoint {
+  _DayPoint({required this.x, required this.label, required this.value});
+  final int x;
+  final String label;
+  final double value;
+}
+
 class TapCounterStatisticsPage extends StatefulWidget {
   const TapCounterStatisticsPage({super.key, required this.index});
   final int index;
@@ -35,6 +42,9 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
   late List<MapEntry<int, int>> _daysPerUpdateCount;
   late int _indexOfEndDate;
   bool _syncingLeaderboard = false;
+  int _visibleCount = 14;
+  int _windowStart = 0;
+  double _panAccumulator = 0;
 
   @override
   void initState() {
@@ -44,7 +54,6 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
     _counterName = _counter.name;
     _updatesData = _counter.updates;
 
-    // Use counter's methods to generate statistics
     _statsWidget = _counter.generateStatisticsWidgets();
 
     _updatesPerDay = Map<String, int>.fromEntries(
@@ -58,17 +67,40 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
     _indexOfEndDate = _updatesPerDay.length - 1;
     _daysPerUpdateCount = _counter.getDaysPerUpdateCount().entries.toList()
       ..sort((a, b) => a.key.compareTo(b.key));
+
+    final totalPoints = _updatesPerDay.length;
+    _visibleCount = totalPoints < 14 ? totalPoints : 14;
+    _windowStart =
+        totalPoints > _visibleCount ? totalPoints - _visibleCount : 0;
   }
 
   List<ChartData> _getHistogramData() {
-    final List<ChartData> histogramData = [];
-    for (int i = 0; i < _daysPerUpdateCount.length; i++) {
-      histogramData.add(
-        ChartData(_daysPerUpdateCount[i].key.toString(),
-            _daysPerUpdateCount[i].value.toDouble()),
+    return _daysPerUpdateCount
+        .map((entry) => ChartData(entry.key.toString(), entry.value.toDouble()))
+        .toList();
+  }
+
+  List<_DayPoint> _buildLinePoints() {
+    final formatter = DateFormat("MMM dd");
+    return List<_DayPoint>.generate(_updatesPerDay.length, (index) {
+      final entry = _updatesPerDay[index];
+      final date = DateTime.parse(entry.key);
+      return _DayPoint(
+        x: index,
+        label: formatter.format(date),
+        value: entry.value.toDouble(),
       );
-    }
-    return histogramData;
+    });
+  }
+
+  LineSeries<_DayPoint, String> _buildLineSeries(List<_DayPoint> points) {
+    return LineSeries<_DayPoint, String>(
+      dataSource: points,
+      xValueMapper: (point, _) => point.label,
+      yValueMapper: (point, _) => point.value,
+      markerSettings: const MarkerSettings(isVisible: true),
+      color: Theme.of(context).colorScheme.primary,
+    );
   }
 
   Future<void> _syncAttachedLeaderboards() async {
@@ -76,7 +108,6 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
 
     setState(() => _syncingLeaderboard = true);
 
-    // Validate index bounds and refresh the counter instance
     if (widget.index < 0 || widget.index >= _counterProvider.counters.length) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -192,6 +223,118 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
                 ),
               ),
             ),
+            Container(
+              height: 300,
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: 8.0),
+                    child: Text(
+                      "Updates per Day",
+                      style:
+                          TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                    ),
+                  ),
+                  Expanded(
+                    child: Builder(builder: (context) {
+                      final points = _buildLinePoints();
+                      final totalPoints = points.length;
+
+                      _visibleCount = totalPoints == 0
+                          ? 0
+                          : _visibleCount.clamp(1, totalPoints);
+                      _windowStart = totalPoints == 0
+                          ? 0
+                          : _windowStart.clamp(
+                              0,
+                              (totalPoints - _visibleCount)
+                                  .clamp(0, totalPoints));
+
+                      final windowEnd = totalPoints == 0
+                          ? 0
+                          : (_windowStart + _visibleCount)
+                              .clamp(0, totalPoints);
+                      final windowPoints = totalPoints == 0
+                          ? <_DayPoint>[]
+                          : points.sublist(_windowStart, windowEnd);
+
+                      return GestureDetector(
+                        onHorizontalDragUpdate: (details) {
+                          if (totalPoints == 0) return;
+                          _panAccumulator += details.delta.dx;
+                          const threshold = 18.0;
+                          if (_panAccumulator.abs() >= threshold) {
+                            final step = _panAccumulator > 0 ? -1 : 1;
+                            _panAccumulator = 0;
+                            setState(() {
+                              _windowStart = (_windowStart + step).clamp(
+                                  0,
+                                  (totalPoints - _visibleCount)
+                                      .clamp(0, totalPoints));
+                            });
+                          }
+                        },
+                        onScaleUpdate: (details) {
+                          if (totalPoints == 0) return;
+                          final newCount = (14 / details.scale)
+                              .round()
+                              .clamp(5, totalPoints);
+                          final windowEndCurrent = _windowStart + _visibleCount;
+                          setState(() {
+                            _visibleCount = newCount;
+                            final newStart = (windowEndCurrent - _visibleCount)
+                                .clamp(
+                                    0,
+                                    (totalPoints - _visibleCount)
+                                        .clamp(0, totalPoints));
+                            _windowStart = newStart;
+                          });
+                        },
+                        child: SfCartesianChart(
+                          primaryXAxis: const CategoryAxis(
+                            labelRotation: -65,
+                            majorGridLines: MajorGridLines(width: 0),
+                            labelIntersectAction:
+                                AxisLabelIntersectAction.rotate45,
+                          ),
+                          primaryYAxis: const NumericAxis(
+                            minimum: 0,
+                            majorGridLines: MajorGridLines(width: 0.5),
+                            axisLine: AxisLine(width: 0),
+                            edgeLabelPlacement: EdgeLabelPlacement.shift,
+                          ),
+                          series: <CartesianSeries<_DayPoint, String>>[
+                            _buildLineSeries(windowPoints),
+                          ],
+                        ),
+                      );
+                    }),
+                  ),
+                ],
+              ),
+            ),
+                        const SizedBox(height: 16),
+            Center(
+              child: SfCircularChart(
+                  title: const ChartTitle(
+                    text: "Updates Pie",
+                    textStyle:
+                        TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                  ),
+                  legend: const Legend(isVisible: true),
+                  series: <CircularSeries>[
+                    PieSeries<ChartData, String>(
+                        explode: true,
+                        dataSource: chartData,
+                        xValueMapper: (ChartData data, _) => data.x,
+                        yValueMapper: (ChartData data, _) => data.y,
+                        dataLabelMapper: (ChartData data, _) =>
+                            data.y.toInt().toString(),
+                        dataLabelSettings:
+                            const DataLabelSettings(isVisible: true)),
+                  ]),
+            ),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -236,27 +379,7 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
                 ],
               ],
             ),
-            const SizedBox(height: 16),
-            Center(
-              child: SfCircularChart(
-                  title: const ChartTitle(
-                    text: "Updates Pie",
-                    textStyle:
-                        TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  legend: const Legend(isVisible: true),
-                  series: <CircularSeries>[
-                    PieSeries<ChartData, String>(
-                        explode: true,
-                        dataSource: chartData,
-                        xValueMapper: (ChartData data, _) => data.x,
-                        yValueMapper: (ChartData data, _) => data.y,
-                        dataLabelMapper: (ChartData data, _) =>
-                            data.y.toInt().toString(),
-                        dataLabelSettings:
-                            const DataLabelSettings(isVisible: true)),
-                  ]),
-            ),
+
           ],
         ),
       ),
