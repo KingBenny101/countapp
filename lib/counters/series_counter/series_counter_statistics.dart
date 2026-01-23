@@ -3,10 +3,16 @@ import "package:countapp/counters/series_counter/series_counter_updates.dart";
 import "package:countapp/providers/counter_provider.dart";
 import "package:countapp/services/leaderboard_service.dart";
 import "package:countapp/utils/widgets.dart";
-import "package:fl_chart/fl_chart.dart";
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
 import "package:provider/provider.dart";
+import "package:syncfusion_flutter_charts/charts.dart";
+
+class _SeriesDataPoint {
+  _SeriesDataPoint(this.date, this.value);
+  final DateTime date;
+  final double value;
+}
 
 class SeriesCounterStatisticsPage extends StatefulWidget {
   const SeriesCounterStatisticsPage({super.key, required this.index});
@@ -35,7 +41,7 @@ class SeriesCounterStatisticsPageState
     _counterName = _counter.name;
   }
 
-  List<FlSpot> _getLineChartData() {
+  List<_SeriesDataPoint> _getLineChartData() {
     if (_counter.seriesValues.isEmpty) return [];
 
     final now = DateTime.now();
@@ -59,25 +65,16 @@ class SeriesCounterStatisticsPageState
     }
 
     // Collect matching updates (date, value) then sort chronologically (oldest -> newest)
-    final entries = <MapEntry<DateTime, double>>[];
+    final entries = <_SeriesDataPoint>[];
     for (int i = 0; i < _counter.updates.length; i++) {
       final dt = _counter.updates[i];
       if (dt.isAfter(cutoffDate)) {
-        entries.add(MapEntry(dt, _counter.seriesValues[i]));
+        entries.add(_SeriesDataPoint(dt, _counter.seriesValues[i]));
       }
     }
 
-    entries.sort((a, b) => a.key.compareTo(b.key));
-
-    final spots = <FlSpot>[];
-    final filteredDates = <DateTime>[];
-    for (int i = 0; i < entries.length; i++) {
-      final ms = entries[i].key.millisecondsSinceEpoch.toDouble();
-      spots.add(FlSpot(ms, entries[i].value));
-      filteredDates.add(entries[i].key);
-    }
-
-    return spots;
+    entries.sort((a, b) => a.date.compareTo(b.date));
+    return entries;
   }
 
   Future<void> _syncAttachedLeaderboards() async {
@@ -151,34 +148,6 @@ class SeriesCounterStatisticsPageState
     final bool hasAttachedLeaderboard = LeaderboardService.getAll()
         .any((lb) => lb.attachedCounterId == _counter.id);
 
-    // compute axis bounds and tick interval (use real timestamps as x)
-    // We guard calculations when there is no data so we can still render the
-    // rest of the page (stats/cards) and only hide the chart area itself.
-
-    double minX = 0.0;
-    double maxX = 1.0;
-    final n = lineData.length;
-    final tickIndices = <int>[];
-    double interval = 1.0;
-
-    if (hasData) {
-      minX = lineData.first.x;
-      maxX = lineData.length > 1
-          ? lineData.last.x
-          : lineData.first.x + 1000.0; // +1s if single point
-
-      // limit ticks to a maximum of 4 (and at least 2 if there are points)
-      final int tickCount = n <= 4 ? n : 4;
-      final int effectiveTickCount = (tickCount <= 1 && n > 0) ? 2 : tickCount;
-      interval = (maxX - minX) / (effectiveTickCount - 1);
-
-      if (n > 0) {
-        tickIndices.add(0);
-        if (n > 2) tickIndices.add((n - 1) ~/ 2);
-        if (n > 1) tickIndices.add(n - 1);
-      }
-    }
-
     final weeklyAvg = _counter.getWeeklyAverage();
     final monthlyAvg = _counter.getMonthlyAverage();
     final weeklyHigh = _counter.getWeeklyHigh();
@@ -228,116 +197,51 @@ class SeriesCounterStatisticsPageState
                 height: 300,
                 padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 8.0),
                 child: hasData
-                    ? LineChart(
-                        LineChartData(
-                          // Use time-based x axis and automatic y bounds with padding
-                          minX: lineData.first.x,
-                          maxX: lineData.length > 1
-                              ? lineData.last.x
-                              : lineData.first.x + 1.0,
-                          minY: (() {
-                            final ys = lineData.map((s) => s.y).toList();
-                            final double minY =
-                                ys.reduce((a, b) => a < b ? a : b);
-                            final double maxY =
-                                ys.reduce((a, b) => a > b ? a : b);
-                            final range = maxY - minY;
-                            if (range == 0) {
-                              return minY - 1.0;
-                            }
-                            return minY - range * 0.1;
-                          })(),
-                          maxY: (() {
-                            final ys = lineData.map((s) => s.y).toList();
-                            final double minY =
-                                ys.reduce((a, b) => a < b ? a : b);
-                            final double maxY =
-                                ys.reduce((a, b) => a > b ? a : b);
-                            final range = maxY - minY;
-                            if (range == 0) {
-                              return maxY + 1.0;
-                            }
-                            return maxY + range * 0.1;
-                          })(),
-                          lineBarsData: [
-                            LineChartBarData(
-                              spots: lineData,
-                              color: Colors.deepPurple,
-                              barWidth: 3,
-                              belowBarData: BarAreaData(
-                                show: true,
-                                color: const Color.fromRGBO(103, 58, 183, 0.3),
-                              ),
+                    ? SfCartesianChart(
+                        primaryXAxis: DateTimeAxis(
+                          labelRotation: -65,
+                          dateFormat: _selectedRange == "1D"
+                              ? DateFormat("HH:mm")
+                              : (_selectedRange == "1W" ||
+                                      _selectedRange == "1M")
+                                  ? DateFormat("MMM d")
+                                  : DateFormat("dd/MM/yy"),
+                          majorGridLines: const MajorGridLines(width: 0.5),
+                          edgeLabelPlacement: EdgeLabelPlacement.shift,
+                          labelIntersectAction:
+                              AxisLabelIntersectAction.rotate45,
+                        ),
+                        primaryYAxis: NumericAxis(
+                          majorGridLines: const MajorGridLines(width: 0.5),
+                          axisLine: const AxisLine(width: 0),
+                          edgeLabelPlacement: EdgeLabelPlacement.shift,
+                          numberFormat: NumberFormat("#0.00"),
+                        ),
+                        series: <CartesianSeries<_SeriesDataPoint, DateTime>>[
+                          AreaSeries<_SeriesDataPoint, DateTime>(
+                            dataSource: lineData,
+                            xValueMapper: (point, _) => point.date,
+                            yValueMapper: (point, _) => point.value,
+                            color: Colors.deepPurple,
+                            borderColor: Colors.deepPurple,
+                            borderWidth: 3,
+                            animationDuration: 0,
+                            gradient: const LinearGradient(
+                              colors: [
+                                Color.fromRGBO(103, 58, 183, 0.3),
+                                Color.fromRGBO(103, 58, 183, 0.1),
+                              ],
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
                             ),
-                          ],
-                          titlesData: FlTitlesData(
-                            topTitles: const AxisTitles(),
-                            rightTitles: const AxisTitles(),
-                            leftTitles: AxisTitles(
-                              sideTitles: SideTitles(
-                                showTitles: true,
-                                reservedSize: 44,
-                                getTitlesWidget: (value, meta) {
-                                  return Text(
-                                    value.toStringAsFixed(2),
-                                    style: const TextStyle(fontSize: 12),
-                                  );
-                                },
-                              ),
-                            ),
-                            bottomTitles: AxisTitles(
-                              sideTitles: SideTitles(
-                                showTitles: true,
-                                interval: interval,
-                                reservedSize: 32,
-                                getTitlesWidget: (value, meta) {
-                                  // value is a timestamp (ms since epoch). Format for display.
-                                  final millis = value.round();
-                                  final dt =
-                                      DateTime.fromMillisecondsSinceEpoch(
-                                          millis);
-
-                                  if (_selectedRange == "1D") {
-                                    final time = DateFormat("HH:mm").format(dt);
-                                    final date = DateFormat("dd/MM").format(dt);
-                                    return SizedBox(
-                                      width: 80,
-                                      child: Text(
-                                        "$time\n$date",
-                                        textAlign: TextAlign.center,
-                                        maxLines: 2,
-                                        style: TextStyle(
-                                          fontSize: 10,
-                                          color: Theme.of(context)
-                                              .textTheme
-                                              .bodySmall
-                                              ?.color,
-                                        ),
-                                      ),
-                                    );
-                                  } else {
-                                    final date = DateFormat("dd/MM").format(dt);
-                                    return SizedBox(
-                                      width: 80,
-                                      child: Text(
-                                        date,
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontSize: 10,
-                                          color: Theme.of(context)
-                                              .textTheme
-                                              .bodySmall
-                                              ?.color,
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                },
-                              ),
+                            markerSettings: const MarkerSettings(
+                              isVisible: true,
+                              shape: DataMarkerType.circle,
+                              height: 6,
+                              width: 6,
                             ),
                           ),
-                          borderData: FlBorderData(show: true),
-                        ),
+                        ],
                       )
                     : const Center(
                         child: Text(
