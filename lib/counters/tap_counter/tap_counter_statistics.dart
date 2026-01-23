@@ -76,7 +76,17 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
 
     setState(() => _syncingLeaderboard = true);
 
-    // Refresh the counter instance in case it has changed while this page is open
+    // Validate index bounds and refresh the counter instance
+    if (widget.index < 0 || widget.index >= _counterProvider.counters.length) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          buildAppSnackBar("Counter no longer exists", success: false),
+        );
+      }
+      setState(() => _syncingLeaderboard = false);
+      return;
+    }
+
     _counter = _counterProvider.counters[widget.index] as TapCounter;
 
     final attached = LeaderboardService.getAll()

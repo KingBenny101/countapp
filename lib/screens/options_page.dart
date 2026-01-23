@@ -59,7 +59,7 @@ class _OptionsPageState extends State<OptionsPage> {
                     horizontal: 20.0,
                   ),
                   title: const Text(
-                    "Auto POST on update",
+                    "Auto-sync Leaderboard",
                     style: TextStyle(fontSize: 18),
                   ),
                   trailing: Switch(

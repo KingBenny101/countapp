@@ -35,6 +35,11 @@ class CounterProvider with ChangeNotifier {
 
   Future<void> removeCounter(int index) async {
     final box = await _getBox();
+    final counter = _counters[index];
+
+    // Detach all leaderboards from this counter
+    await _detachLeaderboards(counter.id);
+
     await box.deleteAt(index);
     _counters.removeAt(index);
     notifyListeners();
@@ -47,6 +52,10 @@ class CounterProvider with ChangeNotifier {
     final sortedIndices = indices.toList()..sort((a, b) => b.compareTo(a));
 
     for (final index in sortedIndices) {
+      final counter = _counters[index];
+      // Detach all leaderboards from this counter
+      await _detachLeaderboards(counter.id);
+
       await box.deleteAt(index);
       _counters.removeAt(index);
     }
@@ -73,16 +82,23 @@ class CounterProvider with ChangeNotifier {
             .where((l) => l.attachedCounterId == counter.id)
             .toList();
         for (final lb in lbs) {
-          // Fire and forget; don't block the UI — log result for debugging
-          LeaderboardService.postUpdate(lb: lb, counter: counter).then((ok) {
-            if (!ok) {
-              debugPrint(
-                  "Auto-post to leaderboard ${lb.code} failed for counter ${counter.id}");
-            } else {
-              debugPrint(
-                  "Auto-post to leaderboard ${lb.code} succeeded for counter ${counter.id}");
-            }
-          });
+          // Fetch fresh counter from storage to avoid stale reference
+          final freshBox = await _getBox();
+          final freshJson = freshBox.getAt(index) as Map<String, dynamic>?;
+          if (freshJson != null) {
+            final freshCounter = CounterFactory.fromJson(freshJson);
+            // Fire and forget; don't block the UI — log result for debugging
+            LeaderboardService.postUpdate(lb: lb, counter: freshCounter)
+                .then((ok) {
+              if (!ok) {
+                debugPrint(
+                    "Auto-post to leaderboard ${lb.code} failed for counter ${freshCounter.id}");
+              } else {
+                debugPrint(
+                    "Auto-post to leaderboard ${lb.code} succeeded for counter ${freshCounter.id}");
+              }
+            });
+          }
         }
       }
 
@@ -111,5 +127,17 @@ class CounterProvider with ChangeNotifier {
     }
 
     notifyListeners();
+  }
+
+  /// Detach all leaderboards from a counter when it is deleted
+  Future<void> _detachLeaderboards(String counterId) async {
+    final attachedLbs = LeaderboardService.getAll()
+        .where((lb) => lb.attachedCounterId == counterId)
+        .toList();
+
+    for (final lb in attachedLbs) {
+      lb.attachedCounterId = null;
+      await LeaderboardService.updateLeaderboardMetadata(lb);
+    }
   }
 }

@@ -137,6 +137,11 @@ class LeaderboardService {
     return _box().get(code) as Leaderboard?;
   }
 
+  /// Update leaderboard metadata only (used for detaching counters)
+  static Future<void> updateLeaderboardMetadata(Leaderboard lb) async {
+    await _save(lb);
+  }
+
   /// Reorder leaderboards and persist the new order to Hive
   static Future<void> reorderLeaderboards(int oldIndex, int newIndex) async {
     // Adjust newIndex when moving down the list (as per ReorderableListView behaviour)
@@ -196,8 +201,8 @@ class LeaderboardService {
 
         // Merge back any local metadata so we do not lose attachment info on refresh
         if (existing != null) {
-          lb.attachedCounterId ??= existing.attachedCounterId;
-          lb.joinedUserName ??= existing.joinedUserName;
+          lb.attachedCounterId = existing.attachedCounterId;
+          lb.joinedUserName = existing.joinedUserName;
         }
 
         await _save(lb);
@@ -241,10 +246,13 @@ class LeaderboardService {
       if (map["success"] == true && map["data"] != null) {
         final updated = Leaderboard.fromApiJson(
             Map<String, dynamic>.from(map["data"] as Map));
-        // Merge leaderboard entries and metadata
+        // Merge leaderboard entries and all metadata (preserve attachedCounterId)
         lb.leaderboardName = updated.leaderboardName;
         lb.counterType = updated.counterType;
         lb.leaderboard = updated.leaderboard;
+        // Ensure attachedCounterId and joinedUserName are preserved
+        lb.attachedCounterId = lb.attachedCounterId ?? lb.attachedCounterId;
+        lb.joinedUserName = lb.joinedUserName ?? lb.joinedUserName;
         await _save(lb);
         debugPrint("postUpdate succeeded for leaderboard ${lb.code}");
         return true;
