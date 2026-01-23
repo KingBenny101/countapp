@@ -1,12 +1,12 @@
 import "dart:async";
 
-import "package:countapp/services/leaderboard_service.dart";
 import "package:countapp/models/leaderboard.dart";
+import "package:countapp/services/leaderboard_service.dart";
 import "package:countapp/utils/constants.dart";
+import "package:countapp/utils/widgets.dart";
 import "package:flutter/material.dart";
 import "package:hive_ce/hive.dart";
 import "package:intl/intl.dart";
-import "package:countapp/utils/widgets.dart";
 
 class LeaderboardDetailPage extends StatefulWidget {
   const LeaderboardDetailPage({super.key, required this.code});
@@ -38,7 +38,7 @@ class _LeaderboardDetailPageState extends State<LeaderboardDetailPage> {
       });
     } catch (e) {
       // If watch not supported, ignore; UI can be refreshed manually
-      print("Leaderboard watch not available: $e");
+      debugPrint("Leaderboard watch not available: $e");
     }
   }
 
@@ -124,7 +124,7 @@ class _LeaderboardDetailPageState extends State<LeaderboardDetailPage> {
               );
 
               if (confirm == true) {
-                LeaderboardService.deleteLeaderboard(widget.code);
+                await LeaderboardService.deleteLeaderboard(widget.code);
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     buildAppSnackBar("Leaderboard deleted"),

@@ -1,6 +1,8 @@
 import "package:countapp/counters/tap_counter/tap_counter.dart";
 import "package:countapp/counters/tap_counter/tap_counter_updates.dart";
 import "package:countapp/providers/counter_provider.dart";
+import "package:countapp/services/leaderboard_service.dart";
+import "package:countapp/utils/widgets.dart";
 import "package:fl_chart/fl_chart.dart";
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
@@ -32,6 +34,7 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
   late List<MapEntry<String, int>> _updatesPerDay;
   late List<MapEntry<int, int>> _daysPerUpdateCount;
   late int _indexOfEndDate;
+  bool _syncingLeaderboard = false;
 
   @override
   void initState() {
@@ -68,6 +71,47 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
     return histogramData;
   }
 
+  Future<void> _syncAttachedLeaderboards() async {
+    if (_syncingLeaderboard) return;
+
+    setState(() => _syncingLeaderboard = true);
+
+    // Refresh the counter instance in case it has changed while this page is open
+    _counter = _counterProvider.counters[widget.index] as TapCounter;
+
+    final attached = LeaderboardService.getAll()
+        .where((lb) => lb.attachedCounterId == _counter.id)
+        .toList();
+
+    if (attached.isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          buildAppSnackBar("No leaderboard attached to this counter",
+              success: false),
+        );
+      }
+      setState(() => _syncingLeaderboard = false);
+      return;
+    }
+
+    bool allOk = true;
+    for (final lb in attached) {
+      final ok = await LeaderboardService.postUpdate(lb: lb, counter: _counter);
+      allOk = allOk && ok;
+    }
+
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        buildAppSnackBar(
+            allOk ? "Synced to leaderboard" : "Some leaderboard syncs failed",
+            success: allOk),
+      );
+      setState(() => _syncingLeaderboard = false);
+    } else {
+      _syncingLeaderboard = false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final int startIndex =
@@ -77,6 +121,8 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
 
     final plotData = _updatesPerDay.sublist(startIndex, endIndex);
     final chartData = _getHistogramData();
+    final bool hasAttachedLeaderboard = LeaderboardService.getAll()
+        .any((lb) => lb.attachedCounterId == _counter.id);
 
     return Scaffold(
       appBar: AppBar(title: Text("Info for $_counterName")),
@@ -142,19 +188,43 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
                 children: _statsWidget,
               ),
             ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => TapCounterUpdatesPage(
-                      name: _counterName,
-                      data: _updatesData,
-                    ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => TapCounterUpdatesPage(
+                          name: _counterName,
+                          data: _updatesData,
+                        ),
+                      ),
+                    );
+                  },
+                  child: const Text("View All Updates"),
+                ),
+                if (hasAttachedLeaderboard) ...[
+                  const SizedBox(width: 12),
+                  ElevatedButton.icon(
+                    onPressed:
+                        _syncingLeaderboard ? null : _syncAttachedLeaderboards,
+                    icon: _syncingLeaderboard
+                        ? const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : const Icon(Icons.sync),
+                    label: Text(_syncingLeaderboard
+                        ? "Syncing..."
+                        : "Sync Leaderboard"),
                   ),
-                );
-              },
-              child: const Text("View All Updates"),
+                ],
+              ],
             ),
             const SizedBox(height: 16),
             Center(

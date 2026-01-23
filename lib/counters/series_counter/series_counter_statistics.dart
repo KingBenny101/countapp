@@ -1,6 +1,8 @@
 import "package:countapp/counters/series_counter/series_counter.dart";
 import "package:countapp/counters/series_counter/series_counter_updates.dart";
 import "package:countapp/providers/counter_provider.dart";
+import "package:countapp/services/leaderboard_service.dart";
+import "package:countapp/utils/widgets.dart";
 import "package:fl_chart/fl_chart.dart";
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
@@ -21,6 +23,7 @@ class SeriesCounterStatisticsPageState
   late SeriesCounter _counter;
   late String _counterName;
   String _selectedRange = "1W"; // Default to 1 week
+  bool _syncingLeaderboard = false;
 
   // Minimal chart state
 
@@ -77,6 +80,47 @@ class SeriesCounterStatisticsPageState
     return spots;
   }
 
+  Future<void> _syncAttachedLeaderboards() async {
+    if (_syncingLeaderboard) return;
+
+    setState(() => _syncingLeaderboard = true);
+
+    // Refresh the counter instance to ensure we sync the latest value
+    _counter = _counterProvider.counters[widget.index] as SeriesCounter;
+
+    final attached = LeaderboardService.getAll()
+        .where((lb) => lb.attachedCounterId == _counter.id)
+        .toList();
+
+    if (attached.isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          buildAppSnackBar("No leaderboard attached to this counter",
+              success: false),
+        );
+      }
+      setState(() => _syncingLeaderboard = false);
+      return;
+    }
+
+    bool allOk = true;
+    for (final lb in attached) {
+      final ok = await LeaderboardService.postUpdate(lb: lb, counter: _counter);
+      allOk = allOk && ok;
+    }
+
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        buildAppSnackBar(
+            allOk ? "Synced to leaderboard" : "Some leaderboard syncs failed",
+            success: allOk),
+      );
+      setState(() => _syncingLeaderboard = false);
+    } else {
+      _syncingLeaderboard = false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_counter.seriesValues.isEmpty) {
@@ -94,6 +138,8 @@ class SeriesCounterStatisticsPageState
 
     final lineData = _getLineChartData();
     final hasData = lineData.isNotEmpty;
+    final bool hasAttachedLeaderboard = LeaderboardService.getAll()
+        .any((lb) => lb.attachedCounterId == _counter.id);
 
     // compute axis bounds and tick interval (use real timestamps as x)
     // We guard calculations when there is no data so we can still render the
@@ -299,20 +345,45 @@ class SeriesCounterStatisticsPageState
                   "All Time Highest", allTimeHigh.toStringAsFixed(2)),
               _buildStatCard("All Time Lowest", allTimeLow.toStringAsFixed(2)),
               const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => SeriesCounterUpdatesPage(
-                        name: _counterName,
-                        updates: _counter.updates,
-                        values: _counter.seriesValues,
-                      ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SeriesCounterUpdatesPage(
+                            name: _counterName,
+                            updates: _counter.updates,
+                            values: _counter.seriesValues,
+                          ),
+                        ),
+                      );
+                    },
+                    child: const Text("View All Updates"),
+                  ),
+                  if (hasAttachedLeaderboard) ...[
+                    const SizedBox(width: 12),
+                    ElevatedButton.icon(
+                      onPressed: _syncingLeaderboard
+                          ? null
+                          : _syncAttachedLeaderboards,
+                      icon: _syncingLeaderboard
+                          ? const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : const Icon(Icons.sync),
+                      label: Text(_syncingLeaderboard
+                          ? "Syncing..."
+                          : "Sync Leaderboard"),
                     ),
-                  );
-                },
-                child: const Text("View All Updates"),
+                  ],
+                ],
               ),
               const SizedBox(height: 16),
             ],

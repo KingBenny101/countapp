@@ -2,14 +2,13 @@ import "dart:async";
 
 import "package:countapp/counters/base/base_counter.dart";
 import "package:countapp/providers/counter_provider.dart";
+import "package:countapp/screens/leaderboard_detail_page.dart";
 import "package:countapp/services/leaderboard_service.dart";
 import "package:countapp/utils/constants.dart";
 import "package:countapp/utils/widgets.dart";
 import "package:flutter/material.dart";
 import "package:hive_ce/hive.dart";
 import "package:provider/provider.dart";
-
-import "leaderboard_detail_page.dart";
 
 class LeaderboardsPage extends StatefulWidget {
   const LeaderboardsPage({super.key});
@@ -31,7 +30,7 @@ class _LeaderboardsPageState extends State<LeaderboardsPage> {
         setState(() {});
       });
     } catch (e) {
-      print("Hive watch not available for leaderboards: $e");
+      debugPrint("Hive watch not available for leaderboards: $e");
     }
   }
 
@@ -150,10 +149,13 @@ class _LeaderboardsPageState extends State<LeaderboardsPage> {
                         labelText: "Code (6 chars, A-Z0-9)"),
                     textCapitalization: TextCapitalization.characters,
                     validator: (value) {
-                      if (value == null || value.isEmpty) return "Required";
+                      if (value == null || value.isEmpty) {
+                        return "Required";
+                      }
                       final v = value.toUpperCase().trim();
-                      if (!RegExp(r"^[A-Z0-9]{6}$").hasMatch(v))
+                      if (!RegExp(r"^[A-Z0-9]{6}$").hasMatch(v)) {
                         return "Code must be 6 uppercase letters or digits";
+                      }
                       return null;
                     },
                     enabled: !isLoading,
@@ -163,7 +165,9 @@ class _LeaderboardsPageState extends State<LeaderboardsPage> {
                     controller: userController,
                     decoration: const InputDecoration(labelText: "Your name"),
                     validator: (value) {
-                      if (value == null || value.isEmpty) return "Required";
+                      if (value == null || value.isEmpty) {
+                        return "Required";
+                      }
                       return null;
                     },
                     enabled: !isLoading,
@@ -173,7 +177,7 @@ class _LeaderboardsPageState extends State<LeaderboardsPage> {
                     const Text("No counters available. Create a counter first.")
                   else
                     DropdownButtonFormField<BaseCounter>(
-                      value: selected,
+                      initialValue: selected,
                       items: counterProvider.counters
                           .map((c) => DropdownMenuItem<BaseCounter>(
                                 value: c,
@@ -240,7 +244,8 @@ class _LeaderboardsPageState extends State<LeaderboardsPage> {
                           final msg = resultMap["message"] as String? ??
                               "Failed to create/join leaderboard";
                           // Debug print for server message
-                          print("Leaderboard add failed for code $code: $msg");
+                          debugPrint(
+                              "Leaderboard add failed for code $code: $msg");
                           if (parentContext.mounted) {
                             Navigator.of(parentContext).pop(false);
                             ScaffoldMessenger.of(parentContext).showSnackBar(

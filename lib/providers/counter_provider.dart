@@ -1,10 +1,10 @@
 import "package:countapp/counters/base/base_counter.dart";
 import "package:countapp/counters/base/counter_factory.dart";
+import "package:countapp/services/leaderboard_service.dart";
 import "package:countapp/utils/constants.dart";
 import "package:countapp/utils/widgets.dart";
 import "package:flutter/material.dart";
 import "package:hive_ce/hive.dart";
-import "package:countapp/services/leaderboard_service.dart";
 
 class CounterProvider with ChangeNotifier {
   List<BaseCounter> _counters = [];
@@ -76,11 +76,11 @@ class CounterProvider with ChangeNotifier {
           // Fire and forget; don't block the UI — log result for debugging
           LeaderboardService.postUpdate(lb: lb, counter: counter).then((ok) {
             if (!ok) {
-              print(
-                  'Auto-post to leaderboard ${lb.code} failed for counter ${counter.id}');
+              debugPrint(
+                  "Auto-post to leaderboard ${lb.code} failed for counter ${counter.id}");
             } else {
-              print(
-                  'Auto-post to leaderboard ${lb.code} succeeded for counter ${counter.id}');
+              debugPrint(
+                  "Auto-post to leaderboard ${lb.code} succeeded for counter ${counter.id}");
             }
           });
         }
