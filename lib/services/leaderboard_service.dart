@@ -1,11 +1,12 @@
 import "dart:convert";
 
+import "package:connectivity_plus/connectivity_plus.dart";
 import "package:countapp/counters/base/base_counter.dart";
 import "package:countapp/models/leaderboard.dart";
 import "package:countapp/utils/constants.dart";
+import "package:flutter/foundation.dart";
 import "package:hive_ce/hive.dart";
 import "package:http/http.dart" as http;
-import "package:connectivity_plus/connectivity_plus.dart";
 
 class LeaderboardService {
   LeaderboardService._();
@@ -31,8 +32,11 @@ class LeaderboardService {
   }) async {
     // Check internet connectivity before attempting network call
     final conn = await Connectivity().checkConnectivity();
-    if (conn == ConnectivityResult.none) {
-      print("addLeaderboard aborted: no internet");
+    // conn can be a single ConnectivityResult or a list; ignore type warning
+    // ignore: unrelated_type_equality_checks
+    final bool offline = conn == ConnectivityResult.none;
+    if (offline) {
+      debugPrint("addLeaderboard aborted: no internet");
       return {
         "success": false,
         "leaderboard": null,
@@ -60,12 +64,12 @@ class LeaderboardService {
             Map<String, dynamic>.from(map["data"] as Map));
         if (attachedCounterId != null) lb.attachedCounterId = attachedCounterId;
         lb.joinedUserName = userName;
-        _save(lb);
+        await _save(lb);
         return {"success": true, "leaderboard": lb, "message": message};
       }
 
       // Debug print server failure
-      print(
+      debugPrint(
           "addLeaderboard failed for code $code: ${message ?? 'Server returned failure'}");
       return {
         "success": false,
@@ -74,7 +78,7 @@ class LeaderboardService {
       };
     }
 
-    print(
+    debugPrint(
         "addLeaderboard HTTP error for code $code: ${resp.statusCode} - ${resp.body}");
     return {
       "success": false,
@@ -83,7 +87,7 @@ class LeaderboardService {
     };
   }
 
-  static void _save(Leaderboard lb) async {
+  static Future<void> _save(Leaderboard lb) async {
     final box = _box();
     await box.put(lb.code, lb);
 
@@ -96,7 +100,7 @@ class LeaderboardService {
     }
   }
 
-  static void deleteLeaderboard(String code) async {
+  static Future<void> deleteLeaderboard(String code) async {
     final box = _box();
     await box.delete(code);
     final order =
@@ -159,7 +163,7 @@ class LeaderboardService {
       final loc = resp.headers["location"];
       if (loc == null) break;
       final next = current.resolve(loc);
-      print("Following redirect ${resp.statusCode} -> $next");
+      debugPrint("Following redirect ${resp.statusCode} -> $next");
 
       if (resp.statusCode == 307 || resp.statusCode == 308) {
         // Repeat POST to new location
@@ -177,6 +181,8 @@ class LeaderboardService {
   }
 
   static Future<Leaderboard?> fetchLeaderboard(String code) async {
+    // Preserve any locally stored attachment or user metadata when refreshing
+    final existing = getByCode(code);
     final payload = {"code": code};
 
     final resp = await _postFollow(Uri.parse(_apiUrl),
@@ -187,12 +193,19 @@ class LeaderboardService {
       if (map["success"] == true && map["data"] != null) {
         final lb = Leaderboard.fromApiJson(
             Map<String, dynamic>.from(map["data"] as Map));
-        _save(lb);
+
+        // Merge back any local metadata so we do not lose attachment info on refresh
+        if (existing != null) {
+          lb.attachedCounterId ??= existing.attachedCounterId;
+          lb.joinedUserName ??= existing.joinedUserName;
+        }
+
+        await _save(lb);
         return lb;
       }
     }
 
-    return null;
+    return existing;
   }
 
   /// Post an update for an existing leaderboard (used when a local counter updates)
@@ -204,8 +217,11 @@ class LeaderboardService {
 
     // Check internet connectivity
     final conn = await Connectivity().checkConnectivity();
-    if (conn == ConnectivityResult.none) {
-      print("postUpdate aborted: no internet for leaderboard ${lb.code}");
+    // conn can be a single ConnectivityResult or a list; ignore type warning
+    // ignore: unrelated_type_equality_checks
+    final bool offline = conn == ConnectivityResult.none;
+    if (offline) {
+      debugPrint("postUpdate aborted: no internet for leaderboard ${lb.code}");
       return false;
     }
 
@@ -229,17 +245,17 @@ class LeaderboardService {
         lb.leaderboardName = updated.leaderboardName;
         lb.counterType = updated.counterType;
         lb.leaderboard = updated.leaderboard;
-        _save(lb);
-        print("postUpdate succeeded for leaderboard ${lb.code}");
+        await _save(lb);
+        debugPrint("postUpdate succeeded for leaderboard ${lb.code}");
         return true;
       }
 
-      print(
+      debugPrint(
           "postUpdate failed for leaderboard ${lb.code}: ${message ?? 'Server returned failure'}");
       return false;
     }
 
-    print(
+    debugPrint(
         "postUpdate HTTP error for leaderboard ${lb.code}: ${resp.statusCode} - ${resp.body}");
     return false;
   }
