@@ -42,9 +42,7 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
   late List<MapEntry<int, int>> _daysPerUpdateCount;
   late int _indexOfEndDate;
   bool _syncingLeaderboard = false;
-  int _visibleCount = 14;
-  int _windowStart = 0;
-  double _panAccumulator = 0;
+  // Using Syncfusion's built-in zoom/pan; no manual windowing needed.
 
   @override
   void initState() {
@@ -68,10 +66,7 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
     _daysPerUpdateCount = _counter.getDaysPerUpdateCount().entries.toList()
       ..sort((a, b) => a.key.compareTo(b.key));
 
-    final totalPoints = _updatesPerDay.length;
-    _visibleCount = totalPoints < 14 ? totalPoints : 14;
-    _windowStart =
-        totalPoints > _visibleCount ? totalPoints - _visibleCount : 0;
+    // No manual window size; chart displays all points with zoom enabled.
   }
 
   List<ChartData> _getHistogramData() {
@@ -228,93 +223,48 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.only(bottom: 8.0),
-                    child: Text(
-                      "Updates per Day",
-                      style:
-                          TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                    ),
-                  ),
                   Expanded(
                     child: Builder(builder: (context) {
                       final points = _buildLinePoints();
                       final totalPoints = points.length;
-
-                      _visibleCount = totalPoints == 0
-                          ? 0
-                          : _visibleCount.clamp(1, totalPoints);
-                      _windowStart = totalPoints == 0
-                          ? 0
-                          : _windowStart.clamp(
-                              0,
-                              (totalPoints - _visibleCount)
-                                  .clamp(0, totalPoints));
-
-                      final windowEnd = totalPoints == 0
-                          ? 0
-                          : (_windowStart + _visibleCount)
-                              .clamp(0, totalPoints);
-                      final windowPoints = totalPoints == 0
-                          ? <_DayPoint>[]
-                          : points.sublist(_windowStart, windowEnd);
-
-                      return GestureDetector(
-                        onHorizontalDragUpdate: (details) {
-                          if (totalPoints == 0) return;
-                          _panAccumulator += details.delta.dx;
-                          const threshold = 18.0;
-                          if (_panAccumulator.abs() >= threshold) {
-                            final step = _panAccumulator > 0 ? -1 : 1;
-                            _panAccumulator = 0;
-                            setState(() {
-                              _windowStart = (_windowStart + step).clamp(
-                                  0,
-                                  (totalPoints - _visibleCount)
-                                      .clamp(0, totalPoints));
-                            });
-                          }
-                        },
-                        onScaleUpdate: (details) {
-                          if (totalPoints == 0) return;
-                          final newCount = (14 / details.scale)
-                              .round()
-                              .clamp(5, totalPoints);
-                          final windowEndCurrent = _windowStart + _visibleCount;
-                          setState(() {
-                            _visibleCount = newCount;
-                            final newStart = (windowEndCurrent - _visibleCount)
-                                .clamp(
-                                    0,
-                                    (totalPoints - _visibleCount)
-                                        .clamp(0, totalPoints));
-                            _windowStart = newStart;
-                          });
-                        },
-                        child: SfCartesianChart(
-                          primaryXAxis: const CategoryAxis(
-                            labelRotation: -65,
-                            majorGridLines: MajorGridLines(width: 0),
-                            labelIntersectAction:
-                                AxisLabelIntersectAction.rotate45,
-                          ),
-                          primaryYAxis: const NumericAxis(
-                            minimum: 0,
-                            majorGridLines: MajorGridLines(width: 0.5),
-                            axisLine: AxisLine(width: 0),
-                            edgeLabelPlacement: EdgeLabelPlacement.shift,
-                          ),
-                          series: <CartesianSeries<_DayPoint, String>>[
-                            _buildLineSeries(windowPoints),
-                          ],
+                      final minIndex = totalPoints > 14 ? totalPoints - 14 : 0;
+                      final maxIndex = totalPoints > 0 ? totalPoints - 1 : 0;
+                      return SfCartesianChart(
+                        title: const ChartTitle(
+                          text: "Updates per Day",
+                          textStyle: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w500),
                         ),
+                        primaryXAxis: CategoryAxis(
+                          labelRotation: -65,
+                          majorGridLines: const MajorGridLines(width: 0),
+                          labelIntersectAction:
+                              AxisLabelIntersectAction.rotate45,
+                          initialVisibleMinimum: minIndex.toDouble(),
+                          initialVisibleMaximum: maxIndex.toDouble(),
+                        ),
+                        primaryYAxis: const NumericAxis(
+                          minimum: 0,
+                          majorGridLines: MajorGridLines(width: 0.5),
+                          axisLine: AxisLine(width: 0),
+                          edgeLabelPlacement: EdgeLabelPlacement.shift,
+                        ),
+                        zoomPanBehavior: ZoomPanBehavior(
+                          enablePinching: true,
+                          enablePanning: true,
+                          enableDoubleTapZooming: true,
+                          zoomMode: ZoomMode.x,
+                        ),
+                        series: <CartesianSeries<_DayPoint, String>>[
+                          _buildLineSeries(points),
+                        ],
                       );
                     }),
                   ),
                 ],
               ),
             ),
-                        const SizedBox(height: 16),
+            const SizedBox(height: 16),
             Center(
               child: SfCircularChart(
                   title: const ChartTitle(
@@ -379,7 +329,7 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
                 ],
               ],
             ),
-
+            const SizedBox(height: 24),
           ],
         ),
       ),
