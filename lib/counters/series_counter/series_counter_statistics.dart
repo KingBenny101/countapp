@@ -25,6 +25,12 @@ class SeriesCounterStatisticsPage extends StatefulWidget {
 
 class SeriesCounterStatisticsPageState
     extends State<SeriesCounterStatisticsPage> {
+  static const double _sectionSpacing = 32.0;
+  static const TextStyle _sectionTitleStyle = TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.bold,
+  );
+
   late CounterProvider _counterProvider;
   late SeriesCounter _counter;
   late String _counterName;
@@ -160,148 +166,171 @@ class SeriesCounterStatisticsPageState
         title: Text("Info for $_counterName"),
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Text(
-                    "Range:",
-                    style: Theme.of(context).textTheme.bodyMedium,
+        padding: const EdgeInsets.fromLTRB(8.0, 8.0, 16.0, 8.0),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.only(left: 8.0),
+                  child: Text(
+                    "History Profile",
+                    style: _sectionTitleStyle,
                   ),
-                  const SizedBox(width: 8),
-                  DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      value: _selectedRange,
-                      items: <String>["1D", "1W", "1M", "3M", "1Y", "All"]
-                          .map((r) => DropdownMenuItem<String>(
-                                value: r,
-                                child: Text(r),
-                              ))
-                          .toList(),
-                      onChanged: (v) {
-                        if (v == null) return;
-                        setState(() {
-                          _selectedRange = v;
-                        });
-                      },
-                      style: Theme.of(context).textTheme.bodySmall,
+                ),
+                Row(
+                  children: [
+                    Text(
+                      "Range:",
+                      style: Theme.of(context).textTheme.bodyMedium,
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Container(
-                height: 300,
-                padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 8.0),
-                child: hasData
-                    ? SfCartesianChart(
-                        primaryXAxis: DateTimeAxis(
-                          labelRotation: -65,
-                          dateFormat: _selectedRange == "1D"
-                              ? DateFormat("HH:mm")
-                              : (_selectedRange == "1W" ||
-                                      _selectedRange == "1M")
-                                  ? DateFormat("MMM d")
-                                  : DateFormat("dd/MM/yy"),
-                          majorGridLines: const MajorGridLines(width: 0.5),
-                          edgeLabelPlacement: EdgeLabelPlacement.shift,
-                          labelIntersectAction:
-                              AxisLabelIntersectAction.rotate45,
-                        ),
-                        primaryYAxis: NumericAxis(
-                          majorGridLines: const MajorGridLines(width: 0.5),
-                          axisLine: const AxisLine(width: 0),
-                          edgeLabelPlacement: EdgeLabelPlacement.shift,
-                          numberFormat: NumberFormat("#0.00"),
-                        ),
-                        series: <CartesianSeries<_SeriesDataPoint, DateTime>>[
-                          AreaSeries<_SeriesDataPoint, DateTime>(
-                            dataSource: lineData,
-                            xValueMapper: (point, _) => point.date,
-                            yValueMapper: (point, _) => point.value,
-                            color: Colors.deepPurple,
-                            borderColor: Colors.deepPurple,
-                            borderWidth: 3,
-                            animationDuration: 0,
-                            gradient: const LinearGradient(
-                              colors: [
-                                Color.fromRGBO(103, 58, 183, 0.3),
-                                Color.fromRGBO(103, 58, 183, 0.1),
-                              ],
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                            ),
-                            markerSettings: const MarkerSettings(
-                              isVisible: true,
-                              shape: DataMarkerType.circle,
-                              height: 6,
-                              width: 6,
-                            ),
-                          ),
-                        ],
-                      )
-                    : const Center(
-                        child: Text(
-                          "No data in the selected time range.",
-                          style: TextStyle(fontSize: 14),
-                        ),
+                    const SizedBox(width: 8),
+                    DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: _selectedRange,
+                        items: <String>["1D", "1W", "1M", "3M", "1Y", "All"]
+                            .map((r) => DropdownMenuItem<String>(
+                                  value: r,
+                                  child: Text(r),
+                                ))
+                            .toList(),
+                        onChanged: (v) {
+                          if (v == null) return;
+                          setState(() {
+                            _selectedRange = v;
+                          });
+                        },
+                        style: Theme.of(context).textTheme.bodySmall,
                       ),
-              ),
-              const SizedBox(height: 16),
-              _buildStatCard("Weekly Average", weeklyAvg.toStringAsFixed(2)),
-              _buildStatCard("Monthly Average", monthlyAvg.toStringAsFixed(2)),
-              _buildStatCard("Weekly High", weeklyHigh.toStringAsFixed(2)),
-              _buildStatCard("Weekly Low", weeklyLow.toStringAsFixed(2)),
-              _buildStatCard(
-                  "All Time Highest", allTimeHigh.toStringAsFixed(2)),
-              _buildStatCard("All Time Lowest", allTimeLow.toStringAsFixed(2)),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => SeriesCounterUpdatesPage(
-                            name: _counterName,
-                            updates: _counter.updates,
-                            values: _counter.seriesValues,
-                          ),
-                        ),
-                      );
-                    },
-                    child: const Text("View All Updates"),
-                  ),
-                  if (hasAttachedLeaderboard) ...[
-                    const SizedBox(width: 12),
-                    ElevatedButton.icon(
-                      onPressed: _syncingLeaderboard
-                          ? null
-                          : _syncAttachedLeaderboards,
-                      icon: _syncingLeaderboard
-                          ? const SizedBox(
-                              width: 16,
-                              height: 16,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                              ),
-                            )
-                          : const Icon(Icons.sync),
-                      label: Text(_syncingLeaderboard
-                          ? "Syncing..."
-                          : "Sync Leaderboard"),
                     ),
                   ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            SizedBox(
+              height: 350,
+              child: hasData
+                  ? SfCartesianChart(
+                      primaryXAxis: DateTimeAxis(
+                        labelRotation: -65,
+                        dateFormat: _selectedRange == "1D"
+                            ? DateFormat("HH:mm")
+                            : (_selectedRange == "1W" || _selectedRange == "1M")
+                                ? DateFormat("MMM d")
+                                : DateFormat("dd/MM/yy"),
+                        majorGridLines: const MajorGridLines(width: 0.5),
+                        edgeLabelPlacement: EdgeLabelPlacement.shift,
+                        labelIntersectAction: AxisLabelIntersectAction.rotate45,
+                      ),
+                      primaryYAxis: const NumericAxis(
+                        majorGridLines: MajorGridLines(width: 0.5),
+                        axisLine: AxisLine(width: 0),
+                        edgeLabelPlacement: EdgeLabelPlacement.shift,
+                      ),
+                      trackballBehavior: TrackballBehavior(
+                        enable: true,
+                        activationMode: ActivationMode.singleTap,
+                        tooltipSettings: const InteractiveTooltip(
+                          enable: true,
+                          format: "point.x : point.y",
+                        ),
+                        lineType: TrackballLineType.vertical,
+                      ),
+                      zoomPanBehavior: ZoomPanBehavior(
+                        enablePinching: true,
+                        enablePanning: true,
+                        enableDoubleTapZooming: true,
+                        zoomMode: ZoomMode.x,
+                      ),
+                      series: <CartesianSeries<_SeriesDataPoint, DateTime>>[
+                        AreaSeries<_SeriesDataPoint, DateTime>(
+                          dataSource: lineData,
+                          xValueMapper: (point, _) => point.date,
+                          yValueMapper: (point, _) => point.value,
+                          color: Colors.deepPurple,
+                          borderColor: Colors.deepPurple,
+                          borderWidth: 3,
+                          animationDuration: 1000,
+                          gradient: LinearGradient(
+                            colors: [
+                              Colors.deepPurple.withValues(alpha: 0.3),
+                              Colors.deepPurple.withValues(alpha: 0.0),
+                            ],
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                          ),
+                          markerSettings: const MarkerSettings(
+                            isVisible: true,
+                            shape: DataMarkerType.circle,
+                            height: 4,
+                            width: 4,
+                          ),
+                        ),
+                      ],
+                    )
+                  : const Center(
+                      child: Text(
+                        "No data in the selected time range.",
+                        style: TextStyle(fontSize: 14),
+                      ),
+                    ),
+            ),
+            const SizedBox(height: _sectionSpacing),
+            const Text(
+              "Key Statistics",
+              style: _sectionTitleStyle,
+            ),
+            const SizedBox(height: 16),
+            _buildStatCard("Weekly Average", weeklyAvg.toStringAsFixed(2)),
+            _buildStatCard("Monthly Average", monthlyAvg.toStringAsFixed(2)),
+            _buildStatCard("Weekly High", weeklyHigh.toStringAsFixed(2)),
+            _buildStatCard("Weekly Low", weeklyLow.toStringAsFixed(2)),
+            _buildStatCard("All Time Highest", allTimeHigh.toStringAsFixed(2)),
+            _buildStatCard("All Time Lowest", allTimeLow.toStringAsFixed(2)),
+            const SizedBox(height: _sectionSpacing),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SeriesCounterUpdatesPage(
+                          name: _counterName,
+                          updates: _counter.updates,
+                          values: _counter.seriesValues,
+                        ),
+                      ),
+                    );
+                  },
+                  child: const Text("View All Updates"),
+                ),
+                if (hasAttachedLeaderboard) ...[
+                  const SizedBox(width: 12),
+                  ElevatedButton.icon(
+                    onPressed:
+                        _syncingLeaderboard ? null : _syncAttachedLeaderboards,
+                    icon: _syncingLeaderboard
+                        ? const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : const Icon(Icons.sync),
+                    label: Text(_syncingLeaderboard
+                        ? "Syncing..."
+                        : "Sync Leaderboard"),
+                  ),
                 ],
-              ),
-              const SizedBox(height: 24),
-            ],
-          ),
+              ],
+            ),
+            const SizedBox(height: 24),
+          ],
         ),
       ),
     );
