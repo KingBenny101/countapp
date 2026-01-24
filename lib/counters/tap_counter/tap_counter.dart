@@ -301,6 +301,87 @@ class TapCounter extends BaseCounter {
     return DateStatistics.countDaysByUpdateFrequency(updatesPerDay);
   }
 
+  /// Generate weekly heatmap data (7 days x 24 hours)
+  /// Returns a 2D list where [dayOfWeek][hour] contains average updates
+  /// averaged over the total number of that specific weekday in the counter's history.
+  List<List<double>> generateWeeklyHeatmapData() {
+    if (updates.isEmpty) {
+      return List.generate(7, (_) => List.generate(24, (_) => 0.0));
+    }
+
+    final totals = List<List<int>>.generate(
+      7,
+      (_) => List<int>.generate(24, (_) => 0),
+    );
+
+    // Track first and last update to find the range
+    DateTime firstUpdate = updates.last;
+    DateTime lastUpdate = DateTime.now();
+
+    for (final update in updates) {
+      final dayOfWeek = update.weekday % 7; // 0 = Sunday, 6 = Saturday
+      final hour = update.hour;
+      totals[dayOfWeek][hour]++;
+      if (update.isBefore(firstUpdate)) firstUpdate = update;
+    }
+
+    // Calculate how many of each weekday occur in the span [firstUpdate, lastUpdate]
+    final weekdayOccurrences = List<int>.filled(7, 0);
+    DateTime currentDay =
+        DateTime(firstUpdate.year, firstUpdate.month, firstUpdate.day);
+    final DateTime endDay =
+        DateTime(lastUpdate.year, lastUpdate.month, lastUpdate.day);
+
+    while (!currentDay.isAfter(endDay)) {
+      weekdayOccurrences[currentDay.weekday % 7]++;
+      currentDay = currentDay.add(const Duration(days: 1));
+    }
+
+    return List<List<double>>.generate(7, (day) {
+      final denom = weekdayOccurrences[day];
+      return List<double>.generate(24, (hour) {
+        if (denom == 0) return 0.0;
+        return totals[day][hour] / denom;
+      });
+    });
+  }
+
+  /// Generate monthly heatmap data (12 months x 31 days)
+  /// Returns a 2D list where [month][day] contains average updates
+  /// averaged over distinct years that include that calendar day.
+  List<List<double>> generateMonthlyHeatmapData() {
+    if (updates.isEmpty) {
+      return List.generate(12, (_) => List.generate(31, (_) => 0.0));
+    }
+
+    final totals = List<List<int>>.generate(
+      12,
+      (_) => List<int>.generate(31, (_) => 0),
+    );
+
+    // Track distinct years per month/day slot to compute averages correctly
+    final yearBuckets = List<List<Set<int>>>.generate(
+      12,
+      (_) => List<Set<int>>.generate(31, (_) => <int>{}),
+    );
+
+    for (final update in updates) {
+      final month = update.month - 1; // 0-based
+      final day = update.day - 1; // 0-based
+      if (day >= 31) continue; // guard against months shorter than 31 days
+      totals[month][day]++;
+      yearBuckets[month][day].add(update.year);
+    }
+
+    return List<List<double>>.generate(12, (month) {
+      return List<double>.generate(31, (day) {
+        final denom = yearBuckets[month][day].length;
+        if (denom == 0) return 0.0;
+        return totals[month][day] / denom;
+      });
+    });
+  }
+
   @override
   Widget? getStatisticsPage(int index) {
     return TapCounterStatisticsPage(index: index);
