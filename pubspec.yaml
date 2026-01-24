@@ -1,7 +1,7 @@
 name: countapp
 description: 'A simple application to help users keep track of their counts effortlessly.'
 publish_to: 'none'
-version: 1.5.3
+version: 1.5.4
 
 environment:
   sdk: '>=3.3.3 <4.0.0'
@@ -22,6 +22,7 @@ dependencies:
   provider: ^6.1.2
   pub_semver: ^2.1.5
   syncfusion_flutter_charts: ^31.1.17
+  syncfusion_flutter_datagrid: ^31.2.18
   url_launcher: ^6.3.1
   uuid: ^4.5.1
   yaml: ^3.1.3
