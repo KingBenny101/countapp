@@ -12,9 +12,9 @@ class TimeWindowResult {
   final DateTime windowEnd;
 
   String toFormattedString() {
-    final DateFormat dateFormat = DateFormat("yyyy-MM-dd");
-    final DateFormat timeFormat = DateFormat("HH:mm");
-    return "$count|${dateFormat.format(windowStart)}|${timeFormat.format(windowStart)}-${timeFormat.format(windowEnd)}";
+    final DateFormat dateFormat = DateFormat("MMM d, yyyy");
+    final DateFormat timeFormat = DateFormat("h:mm a");
+    return "$count|${dateFormat.format(windowStart)}|${timeFormat.format(windowStart)} - ${timeFormat.format(windowEnd)}";
   }
 }
 

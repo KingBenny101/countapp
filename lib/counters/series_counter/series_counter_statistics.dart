@@ -166,18 +166,15 @@ class SeriesCounterStatisticsPageState
         title: Text("Info for $_counterName"),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(8.0, 8.0, 16.0, 8.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Padding(
-                  padding: EdgeInsets.only(left: 8.0),
-                  child: Text(
-                    "History Profile",
-                    style: _sectionTitleStyle,
-                  ),
+                const Text(
+                  "History Profile",
+                  style: _sectionTitleStyle,
                 ),
                 Row(
                   children: [
@@ -338,7 +335,7 @@ class SeriesCounterStatisticsPageState
 
   Widget _buildStatCard(String label, String value) {
     return Card(
-      elevation: 2,
+      elevation: 4,
       margin: const EdgeInsets.symmetric(vertical: 8.0),
       child: Padding(
         padding: const EdgeInsets.all(16.0),

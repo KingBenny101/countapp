@@ -92,45 +92,70 @@ Widget buildSummaryCard({
   required String date,
   required String timeRange,
 }) {
-  return Card(
-    margin: const EdgeInsets.symmetric(vertical: 4.0),
-    elevation: 4,
-    child: Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  color: Colors.grey,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
+  return Builder(builder: (context) {
+    return Card(
+      margin: EdgeInsets.zero,
+      elevation: 4,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    title,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-              ),
-              Text(
-                count,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+                Icon(
+                  Icons.trending_up,
+                  size: 16,
+                  color: Theme.of(context)
+                      .colorScheme
+                      .primary
+                      .withValues(alpha: 0.5),
                 ),
+              ],
+            ),
+            const Spacer(),
+            Text(
+              count,
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                height: 1.0,
               ),
-              Text(
-                "$date • $timeRange",
-                style: const TextStyle(
-                  color: Colors.grey,
-                  fontSize: 10,
-                ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              date,
+              style: const TextStyle(
+                fontSize: 12,
+                color: Colors.grey,
               ),
-            ],
-          ),
-        ],
+              overflow: TextOverflow.ellipsis,
+            ),
+            Text(
+              timeRange,
+              style: const TextStyle(
+                fontSize: 12,
+                color: Colors.grey,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
       ),
-    ),
-  );
+    );
+  });
 }
 
 class ThemeSelector extends StatelessWidget {

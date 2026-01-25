@@ -255,23 +255,27 @@ class TapCounter extends BaseCounter {
         "Days with No Updates",
         "${percentNoUpdates.toStringAsFixed(2)}%",
       ),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      const Padding(
+        padding: EdgeInsets.only(top: 16.0, bottom: 8.0),
+        child: Text(
+          "Peak Activity Windows",
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
+        ),
+      ),
+      GridView.count(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        crossAxisCount: 2,
+        childAspectRatio: 1.5,
+        mainAxisSpacing: 16,
+        crossAxisSpacing: 16,
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
         children: [
           _buildTimeWindowCard("1h Max", window60),
           _buildTimeWindowCard("3h Max", window180),
-        ],
-      ),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
           _buildTimeWindowCard("6h Max", window360),
           _buildTimeWindowCard("12h Max", window720),
-        ],
-      ),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
           _buildTimeWindowCard("18h Max", window1080),
           _buildTimeWindowCard("24h Max", window1440),
         ],
