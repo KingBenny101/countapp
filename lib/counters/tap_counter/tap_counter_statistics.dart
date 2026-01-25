@@ -612,6 +612,8 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
           height: 650, // 24 rows * 26px + header
           child: SfDataGrid(
             source: heatmapSource,
+            verticalScrollPhysics: const NeverScrollableScrollPhysics(),
+            horizontalScrollPhysics: const NeverScrollableScrollPhysics(),
             headerRowHeight: 30,
             rowHeight: 25,
             gridLinesVisibility: GridLinesVisibility.none,
@@ -695,6 +697,8 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
           height: 840, // 31 rows * row height + header
           child: SfDataGrid(
             source: heatmapSource,
+            verticalScrollPhysics: const NeverScrollableScrollPhysics(),
+            horizontalScrollPhysics: const NeverScrollableScrollPhysics(),
             headerRowHeight: 30,
             rowHeight: 25,
             gridLinesVisibility: GridLinesVisibility.none,
