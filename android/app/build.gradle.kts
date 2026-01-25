@@ -9,8 +9,13 @@ plugins {
 }
 
 val keystoreProperties = Properties()
-val keystorePropertiesFile = rootProject.file("app/key.properties")
-if (keystorePropertiesFile.exists()) {
+// Check both the app folder and the android root for key.properties
+val keystorePropertiesFile = listOf(
+    rootProject.file("app/key.properties"),
+    rootProject.file("key.properties")
+).firstOrNull { it.exists() }
+
+if (keystorePropertiesFile != null) {
     keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 }
 
@@ -40,20 +45,26 @@ android {
     }
 
     signingConfigs {
-        create("release") {
-            keyAlias = keystoreProperties["keyAlias"] as String
-            keyPassword = keystoreProperties["keyPassword"] as String
-            storeFile = keystoreProperties["storeFile"]?.let { file(it) }
-            storePassword = keystoreProperties["storePassword"] as String
+        val alias = keystoreProperties["keyAlias"] as? String ?: System.getenv("ANDROID_KEY_ALIAS")
+        val keyPass = keystoreProperties["keyPassword"] as? String ?: System.getenv("ANDROID_KEY_PASSWORD")
+        val storePass = keystoreProperties["storePassword"] as? String ?: System.getenv("ANDROID_STORE_PASSWORD")
+        val storeFileProp = keystoreProperties["storeFile"] as? String ?: System.getenv("ANDROID_STORE_FILE")
+
+        if (alias != null && keyPass != null && storePass != null && storeFileProp != null) {
+            create("release") {
+                keyAlias = alias
+                keyPassword = keyPass
+                storeFile = file(storeFileProp)
+                storePassword = storePass
+            }
         }
     }
 
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            // signingConfig = signingConfigs.getByName("debug")
-            signingConfig = signingConfigs.getByName("release")
+            // Signing with the debug keys for now if release keys are missing, so `flutter run --release` works.
+            signingConfig = signingConfigs.findByName("release") ?: signingConfigs.getByName("debug")
         }
     }
 }
