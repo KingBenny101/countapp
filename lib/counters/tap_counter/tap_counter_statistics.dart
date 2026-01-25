@@ -236,6 +236,100 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
     // No manual window size; chart displays all points with zoom enabled.
   }
 
+  Widget _buildPredictionCard() {
+    if (_updatesData.length < 2) {
+      return const Card(
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Text("Not enough data to predict next update."),
+        ),
+      );
+    }
+
+    final sortedUpdates = List<DateTime>.from(_updatesData)..sort();
+    final List<int> intervals = [];
+    for (int i = 1; i < sortedUpdates.length; i++) {
+      intervals
+          .add(sortedUpdates[i].difference(sortedUpdates[i - 1]).inMinutes);
+    }
+
+    // Use last 20 intervals for prediction to capture recent behavior
+    final recentIntervals = intervals.length > 20
+        ? intervals.sublist(intervals.length - 20)
+        : intervals;
+    final avgIntervalInMinutes =
+        recentIntervals.reduce((a, b) => a + b) / recentIntervals.length;
+
+    final nextUpdatePrediction =
+        sortedUpdates.last.add(Duration(minutes: avgIntervalInMinutes.round()));
+
+    final bool isToday =
+        DateFormat("yyyy-MM-dd").format(nextUpdatePrediction) ==
+            DateFormat("yyyy-MM-dd").format(DateTime.now());
+
+    final dateStr = isToday
+        ? "Today"
+        : DateFormat("MMM dd, yyyy").format(nextUpdatePrediction);
+    final timeStr = DateFormat("h:mm a").format(nextUpdatePrediction);
+
+    final lastUpdate = sortedUpdates.last;
+    final lastUpdateDateStr = DateFormat("MMM dd, yyyy").format(lastUpdate);
+    final lastUpdateTimeStr = DateFormat("h:mm a").format(lastUpdate);
+
+    return Card(
+      elevation: 4,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Column(
+              children: [
+                const Text(
+                  "Predicted Next Update",
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  "$dateStr at $timeStr",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+              ],
+            ),
+            const Divider(height: 24),
+            Column(
+              children: [
+                const Text(
+                  "Last Update",
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  "$lastUpdateDateStr at $lastUpdateTimeStr",
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   List<ChartData> _getHistogramData() {
     return _daysPerUpdateCount
         .map((entry) => ChartData(entry.key.toString(), entry.value.toDouble()))
@@ -328,11 +422,15 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
         .any((lb) => lb.attachedCounterId == _counter.id);
 
     return Scaffold(
-      appBar: AppBar(title: Text("Info for $_counterName")),
+      appBar: AppBar(
+        title: Text("Info for $_counterName"),
+      ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(8.0, 8.0, 16.0, 8.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+            _buildPredictionCard(),
+            const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
