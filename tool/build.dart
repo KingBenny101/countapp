@@ -52,8 +52,14 @@ Future<void> cleanEnvironment() async {
 }
 
 Future<void> buildAndroid() async {
-  print("\nBuilding for Android...");
-  await _runCommand("flutter", ["build", "apk", "--release"]);
+  print("\nBuilding for Android (Optimized)...");
+  await _runCommand("flutter", [
+    "build",
+    "apk",
+    "--release",
+    "--obfuscate",
+    "--split-debug-info=build/app/outputs/symbols",
+  ]);
 
   // Ensure release folder exists
   final releaseDir = Directory(releaseFolder);
