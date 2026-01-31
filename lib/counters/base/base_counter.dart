@@ -8,6 +8,7 @@ abstract class BaseCounter {
     required this.id,
     required this.name,
     required this.value,
+    this.isLocked = false,
     this.lastUpdated,
     List<DateTime>? updates,
   }) : updates = updates ?? [];
@@ -20,6 +21,9 @@ abstract class BaseCounter {
 
   /// Current count value
   num value;
+
+  /// Whether the counter is locked
+  bool isLocked;
 
   /// Timestamp of the last update
   DateTime? lastUpdated;

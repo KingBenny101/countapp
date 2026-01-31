@@ -23,6 +23,7 @@ class TapCounterAdapter extends TypeAdapter<TapCounter> {
       stepSize: (fields[0] as num).toInt(),
       isIncrement: fields[1] as bool,
       requireConfirmation: fields[2] == null ? true : fields[2] as bool,
+      isLocked: fields[8] == null ? false : fields[8] as bool,
       lastUpdated: fields[6] as DateTime?,
       updates: (fields[7] as List?)?.cast<DateTime>(),
     );
@@ -31,7 +32,7 @@ class TapCounterAdapter extends TypeAdapter<TapCounter> {
   @override
   void write(BinaryWriter writer, TapCounter obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.stepSize)
       ..writeByte(1)
@@ -47,7 +48,9 @@ class TapCounterAdapter extends TypeAdapter<TapCounter> {
       ..writeByte(6)
       ..write(obj.lastUpdated)
       ..writeByte(7)
-      ..write(obj.updates);
+      ..write(obj.updates)
+      ..writeByte(8)
+      ..write(obj.isLocked);
   }
 
   @override

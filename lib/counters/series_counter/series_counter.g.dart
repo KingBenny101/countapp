@@ -21,6 +21,7 @@ class SeriesCounterAdapter extends TypeAdapter<SeriesCounter> {
       name: fields[1] as String,
       value: fields[2] as num,
       description: fields[6] == null ? "" : fields[6] as String,
+      isLocked: fields[7] == null ? false : fields[7] as bool,
       lastUpdated: fields[3] as DateTime?,
       updates: (fields[4] as List?)?.cast<DateTime>(),
       seriesValues: (fields[5] as List?)?.cast<double>(),
@@ -30,7 +31,7 @@ class SeriesCounterAdapter extends TypeAdapter<SeriesCounter> {
   @override
   void write(BinaryWriter writer, SeriesCounter obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -44,7 +45,9 @@ class SeriesCounterAdapter extends TypeAdapter<SeriesCounter> {
       ..writeByte(5)
       ..write(obj.seriesValues)
       ..writeByte(6)
-      ..write(obj.description);
+      ..write(obj.description)
+      ..writeByte(7)
+      ..write(obj.isLocked);
   }
 
   @override
