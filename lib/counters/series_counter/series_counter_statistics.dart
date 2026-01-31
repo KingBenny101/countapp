@@ -326,10 +326,90 @@ class SeriesCounterStatisticsPageState
                 ],
               ],
             ),
+            const SizedBox(height: 12),
+            ElevatedButton(
+              onPressed: () => _showLockConfirmationDialog(context),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+                minimumSize: const Size(200, 45),
+              ),
+              child:
+                  Text(_counter.isLocked ? "Unlock Counter" : "Lock Counter"),
+            ),
             const SizedBox(height: 24),
           ],
         ),
       ),
+    );
+  }
+
+  Future<void> _showLockConfirmationDialog(BuildContext context) async {
+    final TextEditingController controller = TextEditingController();
+    final bool isLocked = _counter.isLocked;
+
+    await showDialog(
+      context: context,
+      builder: (context) {
+        String? errorMessage;
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text("${isLocked ? 'Unlock' : 'Lock'} Counter"),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'To confirm, please type the name of the counter: "${_counter.name}"',
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: controller,
+                    decoration: InputDecoration(
+                      border: const OutlineInputBorder(),
+                      hintText: "Enter counter name",
+                      errorText: errorMessage,
+                    ),
+                    onChanged: (_) {
+                      if (errorMessage != null) {
+                        setState(() => errorMessage = null);
+                      }
+                    },
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text("Cancel"),
+                ),
+                TextButton(
+                  onPressed: () {
+                    if (controller.text == _counter.name) {
+                      _counterProvider.toggleCounterLock(widget.index);
+                      Navigator.pop(context);
+                      this.setState(() {}); // Refresh statistics page UI
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        buildAppSnackBar(
+                          "Counter ${isLocked ? 'Unlocked' : 'Locked'} successfully!",
+                        ),
+                      );
+                    } else {
+                      setState(() {
+                        errorMessage = "Name mismatch! Please try again.";
+                      });
+                    }
+                  },
+                  child: Text(
+                    isLocked ? "Unlock" : "Lock",
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 

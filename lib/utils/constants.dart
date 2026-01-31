@@ -9,6 +9,7 @@ class AppConstants {
   static const String themeModeSetting = "themeMode";
   static const String currentThemeSetting = "currentTheme";
   static const String leaderboardAutoPostSetting = "leaderboardAutoPost";
+  static const String checkUpdatesAtStartupSetting = "checkUpdatesAtStartup";
 
   // Hive type IDs
   static const int tapCounterTypeId = 1;

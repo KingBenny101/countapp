@@ -65,6 +65,16 @@ class CounterProvider with ChangeNotifier {
 
   Future<void> updateCounter(BuildContext context, int index) async {
     final counter = _counters[index];
+
+    if (counter.isLocked) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          buildAppSnackBar("Counter is locked, unlock counter to update."),
+        );
+      }
+      return;
+    }
+
     final success = await counter.onInteraction(context);
 
     if (success) {
@@ -139,5 +149,17 @@ class CounterProvider with ChangeNotifier {
       lb.attachedCounterId = null;
       await LeaderboardService.updateLeaderboardMetadata(lb);
     }
+  }
+
+  /// Toggle the lock status of a counter
+  Future<void> toggleCounterLock(int index) async {
+    if (index < 0 || index >= _counters.length) return;
+
+    final counter = _counters[index];
+    counter.isLocked = !counter.isLocked;
+
+    final box = await _getBox();
+    await box.putAt(index, counter.toJson());
+    notifyListeners();
   }
 }
