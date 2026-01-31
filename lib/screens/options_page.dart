@@ -19,6 +19,8 @@ class _OptionsPageState extends State<OptionsPage> {
     final settingsBox = Hive.box(AppConstants.settingsBox);
     final autoPost = settingsBox.get(AppConstants.leaderboardAutoPostSetting,
         defaultValue: true) as bool;
+    final checkUpdates = settingsBox.get(AppConstants.checkUpdatesAtStartupSetting,
+        defaultValue: true) as bool;
 
     return Scaffold(
       appBar: AppBar(
@@ -67,6 +69,25 @@ class _OptionsPageState extends State<OptionsPage> {
                     onChanged: (value) {
                       settingsBox.put(
                           AppConstants.leaderboardAutoPostSetting, value);
+                      setState(() {});
+                    },
+                  ),
+                ),
+                const Divider(height: 1),
+                ListTile(
+                  contentPadding: const EdgeInsets.symmetric(
+                    vertical: 12.0,
+                    horizontal: 20.0,
+                  ),
+                  title: const Text(
+                    "Check for Updates at Startup",
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  trailing: Switch(
+                    value: checkUpdates,
+                    onChanged: (value) {
+                      settingsBox.put(
+                          AppConstants.checkUpdatesAtStartupSetting, value);
                       setState(() {});
                     },
                   ),

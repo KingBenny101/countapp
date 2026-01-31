@@ -1,6 +1,7 @@
 import "package:countapp/providers/counter_provider.dart";
 import "package:countapp/screens/leaderboards_page.dart";
 import "package:countapp/screens/selection_page.dart";
+import "package:countapp/services/update_service.dart";
 import "package:countapp/utils/files.dart";
 import "package:countapp/utils/widgets.dart";
 import "package:file_picker/file_picker.dart";
@@ -32,6 +33,11 @@ class HomePageState extends State<HomePage> {
     final counterProvider =
         Provider.of<CounterProvider>(context, listen: false);
     counterProvider.loadCounters();
+
+    // Check for updates in the background
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      UpdateService.checkUpdates(context);
+    });
   }
 
   @override
