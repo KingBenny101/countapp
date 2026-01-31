@@ -195,12 +195,21 @@ class HomePageState extends State<HomePage> {
                               const SizedBox(width: 8),
                             ],
                           ),
-                          title: Text(
-                            counter.name,
-                            style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: textColor),
+                          title: Row(
+                            children: [
+                              Text(
+                                counter.name,
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: textColor),
+                              ),
+                              if (counter.isLocked) ...[
+                                const SizedBox(width: 8),
+                                const Icon(Icons.lock,
+                                    size: 16, color: Colors.grey),
+                              ],
+                            ],
                           ),
                           subtitle: Text(
                             counter.getSubtitle(),

@@ -18,6 +18,7 @@ class SeriesCounter extends BaseCounter {
     required this.name,
     required this.value,
     this.description = "",
+    this.isLocked = false,
     this.lastUpdated,
     super.updates,
     List<double>? seriesValues,
@@ -28,6 +29,7 @@ class SeriesCounter extends BaseCounter {
           id: id ?? const Uuid().v4(),
           name: name,
           value: value,
+          isLocked: isLocked,
           lastUpdated: lastUpdated,
         );
 
@@ -42,6 +44,7 @@ class SeriesCounter extends BaseCounter {
       name: json["name"] as String,
       value: (json["value"] as num).toDouble(),
       description: json["description"] as String? ?? "",
+      isLocked: json["isLocked"] as bool? ?? false,
       lastUpdated: lastUpdated,
       updates: (json["updates"] as List<dynamic>?)
               ?.map((e) => DateTime.parse(e as String))
@@ -81,6 +84,10 @@ class SeriesCounter extends BaseCounter {
   /// Optional description for the counter
   @HiveField(6)
   String description;
+
+  @HiveField(7)
+  @override
+  bool isLocked;
 
   @override
   String get counterType => "series";
@@ -132,6 +139,7 @@ class SeriesCounter extends BaseCounter {
       "name": name,
       "value": value,
       "description": description,
+      "isLocked": isLocked,
       "lastUpdated": lastUpdated?.toIso8601String(),
       "updates": updates.map((e) => e.toIso8601String()).toList(),
       "seriesValues": seriesValues,

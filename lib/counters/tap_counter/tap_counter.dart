@@ -21,6 +21,7 @@ class TapCounter extends BaseCounter {
     required this.stepSize,
     required this.isIncrement,
     this.requireConfirmation = true,
+    this.isLocked = false,
     this.lastUpdated,
     super.updates,
   })  : id = id ?? const Uuid().v4(),
@@ -29,6 +30,7 @@ class TapCounter extends BaseCounter {
           id: id ?? const Uuid().v4(),
           name: name,
           value: value,
+          isLocked: isLocked,
           lastUpdated: lastUpdated,
         );
 
@@ -58,6 +60,7 @@ class TapCounter extends BaseCounter {
       stepSize: json["stepSize"] as int,
       isIncrement: isInc,
       requireConfirmation: json["requireConfirmation"] as bool? ?? true,
+      isLocked: json["isLocked"] as bool? ?? false,
       lastUpdated: lastUpdated,
       updates: (json["updates"] as List<dynamic>?)
               ?.map((e) => DateTime.parse(e as String))
@@ -97,6 +100,10 @@ class TapCounter extends BaseCounter {
   @HiveField(7)
   @override
   List<DateTime> updates;
+
+  @HiveField(8)
+  @override
+  bool isLocked;
 
   @override
   String get counterType => "tap";
@@ -153,6 +160,7 @@ class TapCounter extends BaseCounter {
       "stepSize": stepSize,
       "isIncrement": isIncrement,
       "requireConfirmation": requireConfirmation,
+      "isLocked": isLocked,
       "lastUpdated": lastUpdated?.toIso8601String(),
       "updates": updates.map((e) => e.toIso8601String()).toList(),
     };
@@ -320,7 +328,7 @@ class TapCounter extends BaseCounter {
 
     // Track first and last update to find the range
     DateTime firstUpdate = updates.last;
-    DateTime lastUpdate = DateTime.now();
+    final lastUpdate = DateTime.now();
 
     for (final update in updates) {
       final dayOfWeek = update.weekday % 7; // 0 = Sunday, 6 = Saturday
