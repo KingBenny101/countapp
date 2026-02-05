@@ -129,9 +129,45 @@ jobs:
           name: linux-exe
           path: countapp-${{ steps.version.outputs.VERSION }}-linux.tar.gz
 
+  build-macos:
+    name: Build macOS
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Extract version
+        id: version
+        run: echo "VERSION=$(grep '^version:' pubspec.yaml | awk '{print $2}')" >> $GITHUB_OUTPUT
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Build macOS
+        run: dart run tool/build.dart build_macos
+
+      - name: Compress macOS Build
+        run: |
+          cd release/macos
+          zip -r ../../countapp-${{ steps.version.outputs.VERSION }}-macos.zip .
+          cd ../..
+
+      - name: Upload macOS Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-app
+          path: countapp-${{ steps.version.outputs.VERSION }}-macos.zip
+
   release:
     name: Create Release
-    needs: [build-android, build-windows, build-linux]
+    needs: [build-android, build-windows, build-linux, build-macos]
     runs-on: ubuntu-latest
     permissions:
       contents: write

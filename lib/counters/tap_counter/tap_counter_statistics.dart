@@ -6,6 +6,7 @@ import "package:countapp/utils/widgets.dart";
 import "package:fl_chart/fl_chart.dart";
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
+import "package:ml_arima/ml_arima.dart" as ml_arima;
 import "package:provider/provider.dart";
 import "package:syncfusion_flutter_charts/charts.dart";
 import "package:syncfusion_flutter_datagrid/datagrid.dart";
@@ -246,22 +247,9 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
       );
     }
 
-    final sortedUpdates = List<DateTime>.from(_updatesData)..sort();
-    final List<int> intervals = [];
-    for (int i = 1; i < sortedUpdates.length; i++) {
-      intervals
-          .add(sortedUpdates[i].difference(sortedUpdates[i - 1]).inMinutes);
-    }
-
-    // Use last 20 intervals for prediction to capture recent behavior
-    final recentIntervals = intervals.length > 20
-        ? intervals.sublist(intervals.length - 20)
-        : intervals;
-    final avgIntervalInMinutes =
-        recentIntervals.reduce((a, b) => a + b) / recentIntervals.length;
-
+    // Try ARIMA prediction first, fall back to simple average if it fails
     final nextUpdatePrediction =
-        sortedUpdates.last.add(Duration(minutes: avgIntervalInMinutes.round()));
+        _predictNextUpdateWithArima() ?? _predictNextUpdateSimple();
 
     final bool isToday =
         DateFormat("yyyy-MM-dd").format(nextUpdatePrediction) ==
@@ -272,6 +260,7 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
         : DateFormat("MMM dd, yyyy").format(nextUpdatePrediction);
     final timeStr = DateFormat("h:mm a").format(nextUpdatePrediction);
 
+    final sortedUpdates = List<DateTime>.from(_updatesData)..sort();
     final lastUpdate = sortedUpdates.last;
     final lastUpdateDateStr = DateFormat("MMM dd, yyyy").format(lastUpdate);
     final lastUpdateTimeStr = DateFormat("h:mm a").format(lastUpdate);
@@ -336,17 +325,110 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
         .toList();
   }
 
+  /// Predict the next update time using ARIMA forecasting
+  DateTime? _predictNextUpdateWithArima() {
+    if (_updatesData.length < 5) return null;
+
+    try {
+      // Get daily update counts as a time series
+      final dailyUpdates = _updatesPerDay.map((e) => e.value.toDouble()).toList();
+      
+      // Need at least 10 data points for meaningful ARIMA forecasting
+      if (dailyUpdates.length < 10) {
+        return null; // Fall back to simple average
+      }
+
+      // Fit ARIMA(1,0,1) model and forecast 1 step ahead
+      final fit = ml_arima.Arima.fit(dailyUpdates, ml_arima.ArimaOrder(1, 0, 1));
+      final forecast = ml_arima.Arima.forecast(dailyUpdates, fit, 1);
+      
+      if (forecast.point.isEmpty) {
+        return null;
+      }
+
+      // Get the last date and add one day
+      final lastDate = DateTime.parse(_updatesPerDay.last.key);
+      final nextDate = lastDate.add(const Duration(days: 1));
+
+      // Estimate time based on the pattern of last few days
+      final sortedUpdates = List<DateTime>.from(_updatesData)..sort();
+      if (sortedUpdates.length < 2) return null;
+
+      // Calculate average time of day for updates
+      int totalMinutesOfDay = 0;
+      int updateCount = 0;
+      for (final update in sortedUpdates.sublist(
+          (sortedUpdates.length - 20).clamp(0, sortedUpdates.length))) {
+        totalMinutesOfDay += update.hour * 60 + update.minute;
+        updateCount++;
+      }
+
+      final avgMinutesOfDay = totalMinutesOfDay ~/ updateCount;
+      final avgHour = avgMinutesOfDay ~/ 60;
+      final avgMinute = avgMinutesOfDay % 60;
+
+      // Combine date and time
+      return DateTime(nextDate.year, nextDate.month, nextDate.day, avgHour, avgMinute);
+    } catch (e) {
+      // If ARIMA fails, return null to fall back to simple average
+      return null;
+    }
+  }
+
+  /// Fallback simple moving average prediction
+  DateTime _predictNextUpdateSimple() {
+    final sortedUpdates = List<DateTime>.from(_updatesData)..sort();
+    final List<int> intervals = [];
+    for (int i = 1; i < sortedUpdates.length; i++) {
+      intervals
+          .add(sortedUpdates[i].difference(sortedUpdates[i - 1]).inMinutes);
+    }
+
+    // Use last 20 intervals for prediction to capture recent behavior
+    final recentIntervals = intervals.length > 20
+        ? intervals.sublist(intervals.length - 20)
+        : intervals;
+    final avgIntervalInMinutes =
+        recentIntervals.reduce((a, b) => a + b) / recentIntervals.length;
+
+    return sortedUpdates.last
+        .add(Duration(minutes: avgIntervalInMinutes.round()));
+  }
+
   List<_DayPoint> _buildLinePoints() {
+    if (_updatesPerDay.isEmpty) return [];
+
     final formatter = DateFormat("MMM dd");
-    return List<_DayPoint>.generate(_updatesPerDay.length, (index) {
-      final entry = _updatesPerDay[index];
-      final date = DateTime.parse(entry.key);
-      return _DayPoint(
+
+    // Get first and last dates
+    final firstDate = DateTime.parse(_updatesPerDay.first.key);
+    final lastDate = DateTime.parse(_updatesPerDay.last.key);
+
+    // Create a map for quick lookup
+    final Map<String, int> updatesMap = {
+      for (var entry in _updatesPerDay) entry.key: entry.value
+    };
+
+    // Generate all dates between first and last (including days with 0 updates)
+    final List<_DayPoint> points = [];
+    DateTime current = firstDate;
+    int index = 0;
+
+    while (current.isBefore(lastDate) || current.isAtSameMomentAs(lastDate)) {
+      final dateStr = DateFormat("yyyy-MM-dd").format(current);
+      final value = updatesMap[dateStr] ?? 0;
+
+      points.add(_DayPoint(
         x: index,
-        label: formatter.format(date),
-        value: entry.value.toDouble(),
-      );
-    });
+        label: formatter.format(current),
+        value: value.toDouble(),
+      ));
+
+      current = current.add(const Duration(days: 1));
+      index++;
+    }
+
+    return points;
   }
 
   LineSeries<_DayPoint, String> _buildLineSeries(List<_DayPoint> points) {
@@ -489,6 +571,11 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
               ),
             ),
             const SizedBox(height: _sectionSpacing),
+            const Text(
+              "Updates per Day",
+              style: _sectionTitleStyle,
+            ),
+            const SizedBox(height: 16),
             SizedBox(
               height: 300,
               child: Column(
@@ -500,10 +587,6 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
                       final minIndex = totalPoints > 14 ? totalPoints - 14 : 0;
                       final maxIndex = totalPoints > 0 ? totalPoints - 1 : 0;
                       return SfCartesianChart(
-                        title: const ChartTitle(
-                          text: "Updates per Day",
-                          textStyle: _sectionTitleStyle,
-                        ),
                         primaryXAxis: CategoryAxis(
                           labelRotation: -65,
                           majorGridLines: const MajorGridLines(width: 0),
@@ -534,18 +617,23 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
               ),
             ),
             const SizedBox(height: _sectionSpacing),
+            Column(
+              children: _statsWidget,
+            ),
+            const SizedBox(height: _sectionSpacing),
             // Weekly Pro Heatmap
             _buildWeeklyProHeatmap(),
             const SizedBox(height: _sectionSpacing),
             // Monthly Activity
             _buildMonthlyProHeatmap(),
             const SizedBox(height: _sectionSpacing),
+            const Text(
+              "Updates Distribution",
+              style: _sectionTitleStyle,
+            ),
+            const SizedBox(height: 16),
             Center(
               child: SfCircularChart(
-                  title: const ChartTitle(
-                    text: "Updates Distribution",
-                    textStyle: _sectionTitleStyle,
-                  ),
                   legend: const Legend(isVisible: true),
                   series: <CircularSeries>[
                     PieSeries<ChartData, String>(
@@ -558,10 +646,6 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
                         dataLabelSettings:
                             const DataLabelSettings(isVisible: true)),
                   ]),
-            ),
-            const SizedBox(height: _sectionSpacing),
-            Column(
-              children: _statsWidget,
             ),
             const SizedBox(height: _sectionSpacing),
             Row(
@@ -608,7 +692,6 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
-                minimumSize: const Size(200, 45),
               ),
               child:
                   Text(_counter.isLocked ? "Unlock Counter" : "Lock Counter"),
@@ -945,8 +1028,6 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(2),
               gradient: LinearGradient(
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
                 colors: [
                   _getColorForValue(0, 1),
                   _getColorForValue(0.25, 1),

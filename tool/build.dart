@@ -7,6 +7,7 @@ const appName = "countapp";
 const androidBuild = "build/app/outputs/flutter-apk/app-release.apk";
 const windowsBuild = "build/windows/x64/runner/Release";
 const linuxBuild = "build/linux/x64/release/bundle";
+const macosBuild = "build/macos/Build/Products/Release";
 
 String version = "";
 
@@ -105,6 +106,21 @@ Future<void> buildLinux() async {
   }
 }
 
+Future<void> buildMacOS() async {
+  print("\nBuilding for macOS...");
+  await _runCommand("flutter", ["build", "macos", "--release"]);
+
+  final macosDir = Directory(macosBuild);
+  if (await macosDir.exists()) {
+    final targetDir = Directory("$releaseFolder/macos");
+    await targetDir.create(recursive: true);
+    await _copyDirectory(macosDir, targetDir);
+    print("\nmacOS build copied successfully.");
+  } else {
+    print("\nmacOS build not found.");
+  }
+}
+
 Future<void> buildAll() async {
   await getVersion();
   await cleanEnvironment();
@@ -116,7 +132,7 @@ Future<void> buildAll() async {
   } else if (Platform.isWindows) {
     await buildWindows();
   } else if (Platform.isMacOS) {
-    print("macOS build not configured");
+    await buildMacOS();
   }
 }
 
@@ -159,6 +175,7 @@ void printUsage() {
   print("  build_android  - Build Android APK");
   print("  build_windows  - Build Windows executable");
   print("  build_linux    - Build Linux executable");
+  print("  build_macos    - Build macOS application");
   print("  all            - Clean and build for current platform + Android");
 }
 
@@ -185,6 +202,9 @@ void main(List<String> arguments) async {
       case "build_linux":
         await getVersion();
         await buildLinux();
+      case "build_macos":
+        await getVersion();
+        await buildMacOS();
       case "all":
         await buildAll();
       default:
