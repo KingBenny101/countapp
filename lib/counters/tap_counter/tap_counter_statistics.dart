@@ -945,8 +945,6 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(2),
               gradient: LinearGradient(
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
                 colors: [
                   _getColorForValue(0, 1),
                   _getColorForValue(0.25, 1),

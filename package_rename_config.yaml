@@ -6,10 +6,15 @@ package_rename_config:
   windows:
     app_name: Count App
     organization: KingBenny101
-    copyright_notice: © 2025 KingBenny101. All rights reserved.
+    copyright_notice: © 2026 KingBenny101. All rights reserved.
     exe_name: countapp
 
   linux:
     app_name: Count App
     package_name: com.kingbenny101.countapp
     exe_name: countapp
+
+  macos:
+    app_name: Count App
+    package_name: com.kingbenny101.countapp
+    copyright_notice: © 2026 KingBenny101. All rights reserved.

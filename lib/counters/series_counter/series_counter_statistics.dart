@@ -230,10 +230,8 @@ class SeriesCounterStatisticsPageState
                         enable: true,
                         activationMode: ActivationMode.singleTap,
                         tooltipSettings: const InteractiveTooltip(
-                          enable: true,
                           format: "point.x : point.y",
                         ),
-                        lineType: TrackballLineType.vertical,
                       ),
                       zoomPanBehavior: ZoomPanBehavior(
                         enablePinching: true,
@@ -260,7 +258,6 @@ class SeriesCounterStatisticsPageState
                           ),
                           markerSettings: const MarkerSettings(
                             isVisible: true,
-                            shape: DataMarkerType.circle,
                             height: 4,
                             width: 4,
                           ),
