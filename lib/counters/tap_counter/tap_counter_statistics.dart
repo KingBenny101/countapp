@@ -6,6 +6,7 @@ import "package:countapp/utils/widgets.dart";
 import "package:fl_chart/fl_chart.dart";
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
+import "package:ml_arima/ml_arima.dart" as ml_arima;
 import "package:provider/provider.dart";
 import "package:syncfusion_flutter_charts/charts.dart";
 import "package:syncfusion_flutter_datagrid/datagrid.dart";
@@ -246,22 +247,9 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
       );
     }
 
-    final sortedUpdates = List<DateTime>.from(_updatesData)..sort();
-    final List<int> intervals = [];
-    for (int i = 1; i < sortedUpdates.length; i++) {
-      intervals
-          .add(sortedUpdates[i].difference(sortedUpdates[i - 1]).inMinutes);
-    }
-
-    // Use last 20 intervals for prediction to capture recent behavior
-    final recentIntervals = intervals.length > 20
-        ? intervals.sublist(intervals.length - 20)
-        : intervals;
-    final avgIntervalInMinutes =
-        recentIntervals.reduce((a, b) => a + b) / recentIntervals.length;
-
+    // Try ARIMA prediction first, fall back to simple average if it fails
     final nextUpdatePrediction =
-        sortedUpdates.last.add(Duration(minutes: avgIntervalInMinutes.round()));
+        _predictNextUpdateWithArima() ?? _predictNextUpdateSimple();
 
     final bool isToday =
         DateFormat("yyyy-MM-dd").format(nextUpdatePrediction) ==
@@ -272,6 +260,7 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
         : DateFormat("MMM dd, yyyy").format(nextUpdatePrediction);
     final timeStr = DateFormat("h:mm a").format(nextUpdatePrediction);
 
+    final sortedUpdates = List<DateTime>.from(_updatesData)..sort();
     final lastUpdate = sortedUpdates.last;
     final lastUpdateDateStr = DateFormat("MMM dd, yyyy").format(lastUpdate);
     final lastUpdateTimeStr = DateFormat("h:mm a").format(lastUpdate);
@@ -334,6 +323,76 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
     return _daysPerUpdateCount
         .map((entry) => ChartData(entry.key.toString(), entry.value.toDouble()))
         .toList();
+  }
+
+  /// Predict the next update time using ARIMA forecasting
+  DateTime? _predictNextUpdateWithArima() {
+    if (_updatesData.length < 5) return null;
+
+    try {
+      // Get daily update counts as a time series
+      final dailyUpdates = _updatesPerDay.map((e) => e.value.toDouble()).toList();
+      
+      // Need at least 10 data points for meaningful ARIMA forecasting
+      if (dailyUpdates.length < 10) {
+        return null; // Fall back to simple average
+      }
+
+      // Fit ARIMA(1,0,1) model and forecast 1 step ahead
+      final fit = ml_arima.Arima.fit(dailyUpdates, ml_arima.ArimaOrder(1, 0, 1));
+      final forecast = ml_arima.Arima.forecast(dailyUpdates, fit, 1);
+      
+      if (forecast.point.isEmpty) {
+        return null;
+      }
+
+      // Get the last date and add one day
+      final lastDate = DateTime.parse(_updatesPerDay.last.key);
+      final nextDate = lastDate.add(const Duration(days: 1));
+
+      // Estimate time based on the pattern of last few days
+      final sortedUpdates = List<DateTime>.from(_updatesData)..sort();
+      if (sortedUpdates.length < 2) return null;
+
+      // Calculate average time of day for updates
+      int totalMinutesOfDay = 0;
+      int updateCount = 0;
+      for (final update in sortedUpdates.sublist(
+          (sortedUpdates.length - 20).clamp(0, sortedUpdates.length))) {
+        totalMinutesOfDay += update.hour * 60 + update.minute;
+        updateCount++;
+      }
+
+      final avgMinutesOfDay = totalMinutesOfDay ~/ updateCount;
+      final avgHour = avgMinutesOfDay ~/ 60;
+      final avgMinute = avgMinutesOfDay % 60;
+
+      // Combine date and time
+      return DateTime(nextDate.year, nextDate.month, nextDate.day, avgHour, avgMinute);
+    } catch (e) {
+      // If ARIMA fails, return null to fall back to simple average
+      return null;
+    }
+  }
+
+  /// Fallback simple moving average prediction
+  DateTime _predictNextUpdateSimple() {
+    final sortedUpdates = List<DateTime>.from(_updatesData)..sort();
+    final List<int> intervals = [];
+    for (int i = 1; i < sortedUpdates.length; i++) {
+      intervals
+          .add(sortedUpdates[i].difference(sortedUpdates[i - 1]).inMinutes);
+    }
+
+    // Use last 20 intervals for prediction to capture recent behavior
+    final recentIntervals = intervals.length > 20
+        ? intervals.sublist(intervals.length - 20)
+        : intervals;
+    final avgIntervalInMinutes =
+        recentIntervals.reduce((a, b) => a + b) / recentIntervals.length;
+
+    return sortedUpdates.last
+        .add(Duration(minutes: avgIntervalInMinutes.round()));
   }
 
   List<_DayPoint> _buildLinePoints() {
