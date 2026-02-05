@@ -130,4 +130,4 @@ Future<void> loadCounters() async {
 
 - [BaseCounter](base-counter.md) - Abstract base class
 - [TapCounter](tap-counter.md) - Concrete implementation
-- [Adding Counter Types](../guides/adding-counter-types.md) - Implementation guide
+- [Adding Counter Types](../developers/adding-counter-types.md) - Implementation guide

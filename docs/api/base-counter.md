@@ -24,6 +24,7 @@
 | `id` | `String` | No | Unique UUID identifier |
 | `name` | `String` | Yes | Display name |
 | `value` | `int` | Yes | Current count value |
+| `isLocked` | `bool` | Yes | Whether the counter is locked |
 | `lastUpdated` | `DateTime?` | Yes | Most recent update timestamp |
 | `updates` | `List<DateTime>` | Yes | Complete update history |
 
@@ -44,6 +45,7 @@ abstract class BaseCounter {
     required this.id,
     required this.name,
     required this.value,
+    this.isLocked = false,
     this.lastUpdated,
     List<DateTime>? updates,
   }) : updates = updates ?? [];
@@ -117,6 +119,29 @@ Current count value of the counter.
 
 ```dart
 42
+```
+
+---
+
+---
+
+### isLocked
+
+```dart
+bool isLocked;
+```
+
+Indicates whether the counter is locked to prevent accidental updates.
+
+- **Type**: `bool`
+- **Required**: No
+- **Default**: `false`
+- **Mutable**: Yes
+
+**Example**:
+
+```dart
+true
 ```
 
 ---
@@ -603,7 +628,7 @@ if (counter.validate()) {
 
 - [CounterFactory](counter-factory.md) - Dynamic counter instantiation
 - [TapCounter](tap-counter.md) - Concrete implementation example
-- [Adding Counter Types](../guides/adding-counter-types.md) - Implementation guide
+- [Adding Counter Types](../developers/adding-counter-types.md) - Implementation guide
 
 ## Related Types
 

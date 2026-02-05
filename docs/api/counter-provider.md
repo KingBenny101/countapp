@@ -10,6 +10,9 @@ class CounterProvider with ChangeNotifier {
   Box? _box;
 
   List<BaseCounter> get counters => _counters;
+
+  Future<void> reorderCounters(int oldIndex, int newIndex);
+  Future<void> toggleCounterLock(int index);
 }
 ```
 
@@ -101,6 +104,37 @@ Future<void> removeCounters(List<int> indices) async
 Removes multiple counters efficiently.
 
 **Note**: Indices are sorted in reverse to prevent shifting issues.
+
+### reorderCounters
+
+```dart
+Future<void> reorderCounters(int oldIndex, int newIndex) async
+```
+
+Reorders counters in the list and persists the new order to Hive.
+
+**Parameters**:
+
+- `oldIndex`: Current index of the counter
+- `newIndex`: New target index
+
+### toggleCounterLock
+
+```dart
+Future<void> toggleCounterLock(int index) async
+```
+
+Toggles the lock status of the counter at the specified index.
+
+**Parameters**:
+
+- `index`: Index of the counter to toggle
+
+**Behavior**:
+
+1. Toggles `isLocked` property
+2. Persists change to storage
+3. Notifies listeners
 
 ## Usage Examples
 

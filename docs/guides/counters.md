@@ -83,7 +83,15 @@ The amount to add or subtract per tap.
 
 ---
 
+<p align="center">
+  <img src="../images/screenshots/tap-counter.png" width="250" />
+</p>
+
 ## Series Counter
+
+<p align="center">
+  <img src="../images/screenshots/series-counter.png" width="250" />
+</p>
 
 ### Overview
 
@@ -180,7 +188,7 @@ Ask yourself these questions:
 ### Examples by Category
 
 | Category | Use Case | Recommended Type | Why |
-|----------|----------|------------------|-----|
+|----------|----------|------------------|-----
 | **Health** | Daily steps | Tap Counter | Consistent increment, frequent updates |
 | **Health** | Body weight | Series Counter | Values vary, trend analysis needed |
 | **Finance** | Cups of coffee bought | Tap Counter | Counting occurrences |
@@ -251,5 +259,5 @@ If you start with one type and realize you need the other:
 ## See Also
 
 - **[Using the App](using-the-app.md)** - Learn how to create and manage counters
-- **[Adding Counter Types](adding-counter-types.md)** - Developer guide for creating custom counter types
+- **[Adding Counter Types](../developers/adding-counter-types.md)** - Developer guide for creating custom counter types
 - **[API Reference](../api/base-counter.md)** - Technical documentation for counter implementation

@@ -293,4 +293,4 @@ Navigator.push(context, MaterialPageRoute(builder: (_) => statsPage!));
 
 - [BaseCounter](base-counter.md) - Base class documentation
 - [CounterFactory](counter-factory.md) - Factory pattern
-- [Adding Counter Types](../guides/adding-counter-types.md) - Create custom counters
+- [Adding Counter Types](../developers/adding-counter-types.md) - Create custom counters
