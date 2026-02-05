@@ -110,29 +110,30 @@ Future<void> buildMacOS() async {
   print("\nBuilding for macOS...");
   await _runCommand("flutter", ["build", "macos", "--release"]);
 
+  // The .app file is built at: build/macos/Build/Products/Release/<AppName>.app
+  // List the directory to find the .app bundle
   final macosDir = Directory(macosBuild);
   if (await macosDir.exists()) {
-    // Find the .app file in the Release directory
     final appFile = macosDir.listSync().whereType<Directory>().firstWhere(
           (dir) => dir.path.endsWith(".app"),
           orElse: () => Directory(""),
         );
 
     if (appFile.path.isNotEmpty) {
-      final targetDir = Directory("$releaseFolder/macos");
-      await targetDir.create(recursive: true);
+      final appFileName = appFile.path.split(Platform.pathSeparator).last;
+      final targetAppPath = "$releaseFolder/macos/$appFileName";
 
-      // Copy only the .app directory
-      final appName = appFile.path.split(Platform.pathSeparator).last;
-      final targetApp = Directory("$releaseFolder/macos/$appName");
+      // Create parent directories
+      await Directory(targetAppPath).parent.create(recursive: true);
 
-      await _copyDirectory(appFile, targetApp);
-      print("\nmacOS .app file copied successfully.");
+      // Copy the .app bundle
+      await _copyDirectory(appFile, Directory(targetAppPath));
+      print("\nmacOS .app file ($appFileName) copied successfully.");
     } else {
       print("\nmacOS .app file not found in $macosBuild");
     }
   } else {
-    print("\nmacOS build not found.");
+    print("\nmacOS build directory not found at $macosBuild");
   }
 }
 
