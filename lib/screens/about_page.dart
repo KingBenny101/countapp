@@ -81,7 +81,7 @@ class _AboutPageState extends State<AboutPage> {
                     ),
                     const SizedBox(height: 10),
                     const Text(
-                      "© 2025 KingBenny101. All rights reserved.",
+                      "© 2026 KingBenny101. All rights reserved.",
                       style: TextStyle(fontSize: 12),
                     ),
                   ],

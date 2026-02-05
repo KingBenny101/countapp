@@ -69,7 +69,8 @@ class CounterProvider with ChangeNotifier {
     if (counter.isLocked) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          buildAppSnackBar("Counter is locked, unlock counter to update."),
+          buildAppSnackBar("Counter is locked, unlock counter to update.",
+              context: context),
         );
       }
       return;
@@ -114,7 +115,7 @@ class CounterProvider with ChangeNotifier {
 
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          buildAppSnackBar("Counter Updated Successfully!"),
+          buildAppSnackBar("Counter Updated Successfully!", context: context),
         );
       }
     }
