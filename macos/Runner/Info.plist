@@ -28,5 +28,11 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>NSDocumentUsageDescription</key>
+	<string>This app needs access to your documents and files to read and write data.</string>
+	<key>NSDownloadsFolderUsageDescription</key>
+	<string>This app needs access to your Downloads folder to manage files.</string>
+	<key>NSNetworkUsageDescription</key>
+	<string>This app needs access to the internet to sync data and communicate with services.</string>
 </dict>
 </plist>
