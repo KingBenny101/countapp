@@ -112,10 +112,25 @@ Future<void> buildMacOS() async {
 
   final macosDir = Directory(macosBuild);
   if (await macosDir.exists()) {
-    final targetDir = Directory("$releaseFolder/macos");
-    await targetDir.create(recursive: true);
-    await _copyDirectory(macosDir, targetDir);
-    print("\nmacOS build copied successfully.");
+    // Find the .app file in the Release directory
+    final appFile = macosDir.listSync().whereType<Directory>().firstWhere(
+          (dir) => dir.path.endsWith(".app"),
+          orElse: () => Directory(""),
+        );
+
+    if (appFile.path.isNotEmpty) {
+      final targetDir = Directory("$releaseFolder/macos");
+      await targetDir.create(recursive: true);
+
+      // Copy only the .app directory
+      final appName = appFile.path.split(Platform.pathSeparator).last;
+      final targetApp = Directory("$releaseFolder/macos/$appName");
+
+      await _copyDirectory(appFile, targetApp);
+      print("\nmacOS .app file copied successfully.");
+    } else {
+      print("\nmacOS .app file not found in $macosBuild");
+    }
   } else {
     print("\nmacOS build not found.");
   }
