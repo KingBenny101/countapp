@@ -111,7 +111,8 @@ class SeriesCounterConfigPageState extends State<SeriesCounterConfigPage> {
             if (context.mounted) {
               Navigator.of(context).pop();
               ScaffoldMessenger.of(context).showSnackBar(
-                buildAppSnackBar("Counter Added Successfully!"),
+                buildAppSnackBar("Counter Added Successfully!",
+                    context: context),
               );
             }
           }

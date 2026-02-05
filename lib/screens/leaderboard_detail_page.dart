@@ -96,7 +96,7 @@ class _LeaderboardDetailPageState extends State<LeaderboardDetailPage> {
               await _load();
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  buildAppSnackBar("Leaderboard refreshed"),
+                  buildAppSnackBar("Leaderboard refreshed", context: context),
                 );
               }
             },
@@ -127,7 +127,7 @@ class _LeaderboardDetailPageState extends State<LeaderboardDetailPage> {
                 await LeaderboardService.deleteLeaderboard(widget.code);
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    buildAppSnackBar("Leaderboard deleted"),
+                    buildAppSnackBar("Leaderboard deleted", context: context),
                   );
                   Navigator.of(context).pop();
                 }

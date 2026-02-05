@@ -331,17 +331,19 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
 
     try {
       // Get daily update counts as a time series
-      final dailyUpdates = _updatesPerDay.map((e) => e.value.toDouble()).toList();
-      
+      final dailyUpdates =
+          _updatesPerDay.map((e) => e.value.toDouble()).toList();
+
       // Need at least 10 data points for meaningful ARIMA forecasting
       if (dailyUpdates.length < 10) {
         return null; // Fall back to simple average
       }
 
       // Fit ARIMA(1,0,1) model and forecast 1 step ahead
-      final fit = ml_arima.Arima.fit(dailyUpdates, ml_arima.ArimaOrder(1, 0, 1));
+      final fit =
+          ml_arima.Arima.fit(dailyUpdates, ml_arima.ArimaOrder(1, 0, 1));
       final forecast = ml_arima.Arima.forecast(dailyUpdates, fit, 1);
-      
+
       if (forecast.point.isEmpty) {
         return null;
       }
@@ -368,7 +370,8 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
       final avgMinute = avgMinutesOfDay % 60;
 
       // Combine date and time
-      return DateTime(nextDate.year, nextDate.month, nextDate.day, avgHour, avgMinute);
+      return DateTime(
+          nextDate.year, nextDate.month, nextDate.day, avgHour, avgMinute);
     } catch (e) {
       // If ARIMA fails, return null to fall back to simple average
       return null;
@@ -449,7 +452,8 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
     if (widget.index < 0 || widget.index >= _counterProvider.counters.length) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          buildAppSnackBar("Counter no longer exists", success: false),
+          buildAppSnackBar("Counter no longer exists",
+              success: false, context: context),
         );
       }
       setState(() => _syncingLeaderboard = false);
@@ -466,7 +470,7 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           buildAppSnackBar("No leaderboard attached to this counter",
-              success: false),
+              success: false, context: context),
         );
       }
       setState(() => _syncingLeaderboard = false);
@@ -483,7 +487,8 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         buildAppSnackBar(
             allOk ? "Synced to leaderboard" : "Some leaderboard syncs failed",
-            success: allOk),
+            success: allOk,
+            context: context),
       );
       setState(() => _syncingLeaderboard = false);
     } else {
@@ -751,6 +756,7 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         buildAppSnackBar(
                           "Counter ${isLocked ? 'Unlocked' : 'Locked'} successfully!",
+                          context: context,
                         ),
                       );
                     } else {
