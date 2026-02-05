@@ -9,13 +9,13 @@
         <meta name="author" content="KingBenny101">
       
       
-        <link rel="canonical" href="https://kingbenny101.github.io/countapp/api/counter-provider/">
+        <link rel="canonical" href="https://kingbenny101.github.io/countapp/api/date-statistics/">
       
       
-        <link rel="prev" href="../counter-factory/">
+        <link rel="prev" href="../leaderboard-service/">
       
       
-        <link rel="next" href="../tap-counter/">
+        <link rel="next" href="../configuration/">
       
       
         
@@ -26,7 +26,7 @@
     
     
       
-        <title>CounterProvider - Count App</title>
+        <title>DateStatistics - Count App</title>
       
     
     
@@ -87,7 +87,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#counterprovider-api-reference" class="md-skip">
+        <a href="#datestatistics-api-reference" class="md-skip">
           Skip to content
         </a>
       
@@ -121,7 +121,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              CounterProvider
+              DateStatistics
             
           </span>
         </div>
@@ -865,37 +865,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    CounterProvider
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../counter-provider/" class="md-nav__link">
         
   
   
@@ -911,231 +884,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#class-definition" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Class Definition
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#properties" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Properties
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Properties">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#counters" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        counters
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#methods" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Methods
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Methods">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#loadcounters" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        loadCounters
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#addcounter" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        addCounter
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#updatecounter" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        updateCounter
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#removecounter" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        removeCounter
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#removecounters" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        removeCounters
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#reordercounters" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        reorderCounters
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#togglecounterlock" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        toggleCounterLock
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#usage-examples" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Usage Examples
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Usage Examples">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#loading-counters" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Loading Counters
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#adding-a-counter" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Adding a Counter
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#updating-a-counter" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Updating a Counter
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#accessing-counters" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Accessing Counters
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#see-also" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        See Also
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1229,10 +977,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../date-statistics/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DateStatistics
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1248,6 +1023,109 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#class-definition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Class Definition
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Methods
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#groupupdatesbyday" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        groupUpdatesByDay
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#findmostactivetimewindow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        findMostActiveTimeWindow
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#calculateaverageupdatesperday" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        calculateAverageUpdatesPerDay
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#calculateaveragelastndays" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        calculateAverageLastNDays
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Usage Example
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1308,135 +1186,60 @@
   
 
 
-<h1 id="counterprovider-api-reference">CounterProvider API Reference<a class="headerlink" href="#counterprovider-api-reference" title="Anchor link to this section">¶</a></h1>
-<p><code>CounterProvider</code> is the state management provider for counters, handling loading, saving, and updates.</p>
+<h1 id="datestatistics-api-reference">DateStatistics API Reference<a class="headerlink" href="#datestatistics-api-reference" title="Anchor link to this section">¶</a></h1>
+<p><code>DateStatistics</code> provides static utility methods for analyzing <code>DateTime</code> data, primarily used for generating charts and insights from counter history.</p>
 <h2 id="class-definition">Class Definition<a class="headerlink" href="#class-definition" title="Anchor link to this section">¶</a></h2>
-<div class="language-dart highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kd">class</span><span class="w"> </span><span class="nc">CounterProvider</span><span class="w"> </span><span class="kd">with</span><span class="w"> </span><span class="n">ChangeNotifier</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="n">List</span><span class="o">&lt;</span><span class="n">BaseCounter</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_counters</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[];</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="n">Box</span><span class="o">?</span><span class="w"> </span><span class="n">_box</span><span class="p">;</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">  </span><span class="n">List</span><span class="o">&lt;</span><span class="n">BaseCounter</span><span class="o">&gt;</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">counters</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_counters</span><span class="p">;</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">reorderCounters</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">oldIndex</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">newIndex</span><span class="p">);</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">  </span><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">toggleCounterLock</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">index</span><span class="p">);</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="p">}</span>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kd">class</span><span class="w"> </span><span class="nc">DateStatistics</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="n">DateStatistics</span><span class="p">.</span><span class="n">_</span><span class="p">();</span><span class="w"> </span><span class="c1">// Private constructor</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">}</span>
 </span></code></pre></div>
-<p><strong>Location</strong>: <code>lib/providers/counter_provider.dart</code></p>
-<p><strong>Pattern</strong>: Provider (ChangeNotifier)</p>
-<h2 id="properties">Properties<a class="headerlink" href="#properties" title="Anchor link to this section">¶</a></h2>
-<h3 id="counters">counters<a class="headerlink" href="#counters" title="Anchor link to this section">¶</a></h3>
-<div class="language-dart highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">List</span><span class="o">&lt;</span><span class="n">BaseCounter</span><span class="o">&gt;</span><span class="w"> </span><span class="kd">get</span><span class="w"> </span><span class="n">counters</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">_counters</span><span class="p">;</span>
-</span></code></pre></div>
-<p>Read-only access to the current list of counters.</p>
-<ul>
-<li><strong>Type</strong>: <code>List&lt;BaseCounter&gt;</code></li>
-<li><strong>Usage</strong>: Access via <code>Provider.of&lt;CounterProvider&gt;(context).counters</code></li>
-</ul>
+<p><strong>Location</strong>: <code>lib/utils/statistics.dart</code></p>
 <h2 id="methods">Methods<a class="headerlink" href="#methods" title="Anchor link to this section">¶</a></h2>
-<h3 id="loadcounters">loadCounters<a class="headerlink" href="#loadcounters" title="Anchor link to this section">¶</a></h3>
-<div class="language-dart highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">loadCounters</span><span class="p">()</span><span class="w"> </span><span class="kd">async</span>
+<h3 id="groupupdatesbyday">groupUpdatesByDay<a class="headerlink" href="#groupupdatesbyday" title="Anchor link to this section">¶</a></h3>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kd">static</span><span class="w"> </span><span class="n">Map</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">groupUpdatesByDay</span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">DateTime</span><span class="o">&gt;</span><span class="w"> </span><span class="n">updates</span><span class="p">)</span>
 </span></code></pre></div>
-<p>Loads all counters from Hive storage using the factory pattern.</p>
-<p><strong>Example</strong>:</p>
-<div class="language-dart highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kd">await</span><span class="w"> </span><span class="n">provider</span><span class="p">.</span><span class="n">loadCounters</span><span class="p">();</span>
+<p>Groups a list of timestamps by date (YYYY-MM-DD).</p>
+<p><strong>Returns</strong>: <code>Map&lt;String, int&gt;</code> where key is date string and value is count.</p>
+<h3 id="findmostactivetimewindow">findMostActiveTimeWindow<a class="headerlink" href="#findmostactivetimewindow" title="Anchor link to this section">¶</a></h3>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kd">static</span><span class="w"> </span><span class="n">TimeWindowResult</span><span class="w"> </span><span class="n">findMostActiveTimeWindow</span><span class="p">(</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="n">List</span><span class="o">&lt;</span><span class="n">DateTime</span><span class="o">&gt;</span><span class="w"> </span><span class="n">updates</span><span class="p">,</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">windowSizeMinutes</span><span class="p">,</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="p">)</span>
 </span></code></pre></div>
-<h3 id="addcounter">addCounter<a class="headerlink" href="#addcounter" title="Anchor link to this section">¶</a></h3>
-<div class="language-dart highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">addCounter</span><span class="p">(</span><span class="n">BaseCounter</span><span class="w"> </span><span class="n">counter</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span>
+<p>Finds the time window of a specified duration with the highest activity density.</p>
+<p><strong>Parameters</strong>:
+- <code>updates</code>: List of timestamps
+- <code>windowSizeMinutes</code>: Duration of window (e.g., 60 for 1 hour)</p>
+<p><strong>Returns</strong>: <code>TimeWindowResult</code> containing:
+- <code>count</code>: Number of updates in window
+- <code>windowStart</code>: Start time
+- <code>windowEnd</code>: End time</p>
+<h3 id="calculateaverageupdatesperday">calculateAverageUpdatesPerDay<a class="headerlink" href="#calculateaverageupdatesperday" title="Anchor link to this section">¶</a></h3>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kd">static</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">calculateAverageUpdatesPerDay</span><span class="p">(</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="n">List</span><span class="o">&lt;</span><span class="n">DateTime</span><span class="o">&gt;</span><span class="w"> </span><span class="n">updates</span><span class="p">,</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">totalDays</span><span class="p">,</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="p">)</span>
 </span></code></pre></div>
-<p>Adds a new counter to the list and persists to storage.</p>
-<p><strong>Parameters</strong>:</p>
-<ul>
-<li><code>counter</code> (<code>BaseCounter</code>): Counter to add</li>
-</ul>
-<p><strong>Side Effects</strong>:</p>
-<ul>
-<li>Adds to <code>_counters</code> list</li>
-<li>Persists to Hive box</li>
-<li>Calls <code>notifyListeners()</code></li>
-</ul>
-<h3 id="updatecounter">updateCounter<a class="headerlink" href="#updatecounter" title="Anchor link to this section">¶</a></h3>
-<div class="language-dart highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">updateCounter</span><span class="p">(</span><span class="n">BuildContext</span><span class="w"> </span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span>
+<p>Calculates basic daily average.</p>
+<h3 id="calculateaveragelastndays">calculateAverageLastNDays<a class="headerlink" href="#calculateaveragelastndays" title="Anchor link to this section">¶</a></h3>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kd">static</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">calculateAverageLastNDays</span><span class="p">(</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="n">Map</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">updatesPerDay</span><span class="p">,</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">days</span><span class="p">,</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="p">)</span>
 </span></code></pre></div>
-<p>Triggers counter interaction and persists changes if successful.</p>
-<p><strong>Parameters</strong>:</p>
-<ul>
-<li><code>context</code> (<code>BuildContext</code>): For showing dialogs/snackbars</li>
-<li><code>index</code> (<code>int</code>): Index of counter in list</li>
-</ul>
-<p><strong>Behavior</strong>:</p>
-<ol>
-<li>Calls <code>counter.onInteraction(context)</code></li>
-<li>If successful, persists to storage</li>
-<li>Notifies listeners</li>
-<li>Shows success snackbar</li>
-</ol>
-<h3 id="removecounter">removeCounter<a class="headerlink" href="#removecounter" title="Anchor link to this section">¶</a></h3>
-<div class="language-dart highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">removeCounter</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span>
+<p>Calculates moving average over the last N days (e.g., 7-day or 30-day average).</p>
+<h2 id="usage-example">Usage Example<a class="headerlink" href="#usage-example" title="Anchor link to this section">¶</a></h2>
+<div class="language-dart highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kd">final</span><span class="w"> </span><span class="n">updates</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">myCounter</span><span class="p">.</span><span class="n">updates</span><span class="p">;</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="c1">// 1. Group by day</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="kd">final</span><span class="w"> </span><span class="n">dailyStats</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DateStatistics</span><span class="p">.</span><span class="n">groupUpdatesByDay</span><span class="p">(</span><span class="n">updates</span><span class="p">);</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="c1">// 2. Find busiest hour</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="kd">final</span><span class="w"> </span><span class="n">busiestHour</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DateStatistics</span><span class="p">.</span><span class="n">findMostActiveTimeWindow</span><span class="p">(</span><span class="n">updates</span><span class="p">,</span><span class="w"> </span><span class="m">60</span><span class="p">);</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="n">print</span><span class="p">(</span><span class="s2">"Busiest time: </span><span class="si">${</span><span class="n">busiestHour</span><span class="p">.</span><span class="n">toFormattedString</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">);</span>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="c1">// Output: "15|Dec 10, 2025|3:00 PM - 4:00 PM"</span>
 </span></code></pre></div>
-<p>Removes a single counter at the specified index.</p>
-<h3 id="removecounters">removeCounters<a class="headerlink" href="#removecounters" title="Anchor link to this section">¶</a></h3>
-<div class="language-dart highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">removeCounters</span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">indices</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span>
-</span></code></pre></div>
-<p>Removes multiple counters efficiently.</p>
-<p><strong>Note</strong>: Indices are sorted in reverse to prevent shifting issues.</p>
-<h3 id="reordercounters">reorderCounters<a class="headerlink" href="#reordercounters" title="Anchor link to this section">¶</a></h3>
-<div class="language-dart highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">reorderCounters</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">oldIndex</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">newIndex</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span>
-</span></code></pre></div>
-<p>Reorders counters in the list and persists the new order to Hive.</p>
-<p><strong>Parameters</strong>:</p>
-<ul>
-<li><code>oldIndex</code>: Current index of the counter</li>
-<li><code>newIndex</code>: New target index</li>
-</ul>
-<h3 id="togglecounterlock">toggleCounterLock<a class="headerlink" href="#togglecounterlock" title="Anchor link to this section">¶</a></h3>
-<div class="language-dart highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">Future</span><span class="o">&lt;</span><span class="kt">void</span><span class="o">&gt;</span><span class="w"> </span><span class="n">toggleCounterLock</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="kd">async</span>
-</span></code></pre></div>
-<p>Toggles the lock status of the counter at the specified index.</p>
-<p><strong>Parameters</strong>:</p>
-<ul>
-<li><code>index</code>: Index of the counter to toggle</li>
-</ul>
-<p><strong>Behavior</strong>:</p>
-<ol>
-<li>Toggles <code>isLocked</code> property</li>
-<li>Persists change to storage</li>
-<li>Notifies listeners</li>
-</ol>
-<h2 id="usage-examples">Usage Examples<a class="headerlink" href="#usage-examples" title="Anchor link to this section">¶</a></h2>
-<h3 id="loading-counters">Loading Counters<a class="headerlink" href="#loading-counters" title="Anchor link to this section">¶</a></h3>
-<div class="language-dart highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="kd">final</span><span class="w"> </span><span class="n">provider</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Provider</span><span class="p">.</span><span class="n">of</span><span class="o">&lt;</span><span class="n">CounterProvider</span><span class="o">&gt;</span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="nl">listen:</span><span class="w"> </span><span class="kc">false</span><span class="p">);</span>
-</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="kd">await</span><span class="w"> </span><span class="n">provider</span><span class="p">.</span><span class="n">loadCounters</span><span class="p">();</span>
-</span></code></pre></div>
-<h3 id="adding-a-counter">Adding a Counter<a class="headerlink" href="#adding-a-counter" title="Anchor link to this section">¶</a></h3>
-<div class="language-dart highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="kd">final</span><span class="w"> </span><span class="n">newCounter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TapCounter</span><span class="p">(</span>
-</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">  </span><span class="nl">name:</span><span class="w"> </span><span class="s2">"Water"</span><span class="p">,</span>
-</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="w">  </span><span class="nl">value:</span><span class="w"> </span><span class="m">0</span><span class="p">,</span>
-</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="w">  </span><span class="nl">stepSize:</span><span class="w"> </span><span class="m">1</span><span class="p">,</span>
-</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="w">  </span><span class="nl">isIncrement:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
-</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="p">);</span>
-</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>
-</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="kd">await</span><span class="w"> </span><span class="n">provider</span><span class="p">.</span><span class="n">addCounter</span><span class="p">(</span><span class="n">newCounter</span><span class="p">);</span>
-</span></code></pre></div>
-<h3 id="updating-a-counter">Updating a Counter<a class="headerlink" href="#updating-a-counter" title="Anchor link to this section">¶</a></h3>
-<div class="language-dart highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="kd">await</span><span class="w"> </span><span class="n">provider</span><span class="p">.</span><span class="n">updateCounter</span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">);</span>
-</span></code></pre></div>
-<h3 id="accessing-counters">Accessing Counters<a class="headerlink" href="#accessing-counters" title="Anchor link to this section">¶</a></h3>
-<div class="language-dart highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="n">Consumer</span><span class="o">&lt;</span><span class="n">CounterProvider</span><span class="o">&gt;</span><span class="p">(</span>
-</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="w">  </span><span class="nl">builder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">provider</span><span class="p">,</span><span class="w"> </span><span class="n">child</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">ListView</span><span class="p">.</span><span class="n">builder</span><span class="p">(</span>
-</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="w">      </span><span class="nl">itemCount:</span><span class="w"> </span><span class="n">provider</span><span class="p">.</span><span class="n">counters</span><span class="p">.</span><span class="n">length</span><span class="p">,</span>
-</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="w">      </span><span class="nl">itemBuilder:</span><span class="w"> </span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="w">        </span><span class="kd">final</span><span class="w"> </span><span class="n">counter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">provider</span><span class="p">.</span><span class="n">counters</span><span class="p">[</span><span class="n">index</span><span class="p">];</span>
-</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">ListTile</span><span class="p">(</span><span class="nl">title:</span><span class="w"> </span><span class="n">Text</span><span class="p">(</span><span class="n">counter</span><span class="p">.</span><span class="n">name</span><span class="p">));</span>
-</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a><span class="w">      </span><span class="p">},</span>
-</span><span id="__span-13-9"><a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a><span class="w">    </span><span class="p">);</span>
-</span><span id="__span-13-10"><a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a><span class="w">  </span><span class="p">},</span>
-</span><span id="__span-13-11"><a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a><span class="p">)</span>
-</span></code></pre></div>
-<h2 id="see-also">See Also<a class="headerlink" href="#see-also" title="Anchor link to this section">¶</a></h2>
-<ul>
-<li><a href="../base-counter/">BaseCounter</a></li>
-</ul>
 
 
 
@@ -1472,7 +1275,7 @@
       <nav class="md-footer__inner md-grid" aria-label="Footer">
         
           
-          <a href="../counter-factory/" class="md-footer__link md-footer__link--prev" aria-label="Previous: CounterFactory">
+          <a href="../leaderboard-service/" class="md-footer__link md-footer__link--prev" aria-label="Previous: LeaderboardService">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
@@ -1482,20 +1285,20 @@
                 Previous
               </span>
               <div class="md-ellipsis">
-                CounterFactory
+                LeaderboardService
               </div>
             </div>
           </a>
         
         
           
-          <a href="../tap-counter/" class="md-footer__link md-footer__link--next" aria-label="Next: TapCounter">
+          <a href="../configuration/" class="md-footer__link md-footer__link--next" aria-label="Next: Configuration">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                TapCounter
+                Configuration
               </div>
             </div>
             <div class="md-footer__button md-icon">
