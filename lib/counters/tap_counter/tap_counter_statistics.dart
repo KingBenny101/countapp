@@ -337,16 +337,39 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
   }
 
   List<_DayPoint> _buildLinePoints() {
+    if (_updatesPerDay.isEmpty) return [];
+
     final formatter = DateFormat("MMM dd");
-    return List<_DayPoint>.generate(_updatesPerDay.length, (index) {
-      final entry = _updatesPerDay[index];
-      final date = DateTime.parse(entry.key);
-      return _DayPoint(
+
+    // Get first and last dates
+    final firstDate = DateTime.parse(_updatesPerDay.first.key);
+    final lastDate = DateTime.parse(_updatesPerDay.last.key);
+
+    // Create a map for quick lookup
+    final Map<String, int> updatesMap = {
+      for (var entry in _updatesPerDay) entry.key: entry.value
+    };
+
+    // Generate all dates between first and last (including days with 0 updates)
+    final List<_DayPoint> points = [];
+    DateTime current = firstDate;
+    int index = 0;
+
+    while (current.isBefore(lastDate) || current.isAtSameMomentAs(lastDate)) {
+      final dateStr = DateFormat("yyyy-MM-dd").format(current);
+      final value = updatesMap[dateStr] ?? 0;
+
+      points.add(_DayPoint(
         x: index,
-        label: formatter.format(date),
-        value: entry.value.toDouble(),
-      );
-    });
+        label: formatter.format(current),
+        value: value.toDouble(),
+      ));
+
+      current = current.add(const Duration(days: 1));
+      index++;
+    }
+
+    return points;
   }
 
   LineSeries<_DayPoint, String> _buildLineSeries(List<_DayPoint> points) {
@@ -489,6 +512,11 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
               ),
             ),
             const SizedBox(height: _sectionSpacing),
+            const Text(
+              "Updates per Day",
+              style: _sectionTitleStyle,
+            ),
+            const SizedBox(height: 16),
             SizedBox(
               height: 300,
               child: Column(
@@ -500,10 +528,6 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
                       final minIndex = totalPoints > 14 ? totalPoints - 14 : 0;
                       final maxIndex = totalPoints > 0 ? totalPoints - 1 : 0;
                       return SfCartesianChart(
-                        title: const ChartTitle(
-                          text: "Updates per Day",
-                          textStyle: _sectionTitleStyle,
-                        ),
                         primaryXAxis: CategoryAxis(
                           labelRotation: -65,
                           majorGridLines: const MajorGridLines(width: 0),
@@ -534,18 +558,23 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
               ),
             ),
             const SizedBox(height: _sectionSpacing),
+            Column(
+              children: _statsWidget,
+            ),
+            const SizedBox(height: _sectionSpacing),
             // Weekly Pro Heatmap
             _buildWeeklyProHeatmap(),
             const SizedBox(height: _sectionSpacing),
             // Monthly Activity
             _buildMonthlyProHeatmap(),
             const SizedBox(height: _sectionSpacing),
+            const Text(
+              "Updates Distribution",
+              style: _sectionTitleStyle,
+            ),
+            const SizedBox(height: 16),
             Center(
               child: SfCircularChart(
-                  title: const ChartTitle(
-                    text: "Updates Distribution",
-                    textStyle: _sectionTitleStyle,
-                  ),
                   legend: const Legend(isVisible: true),
                   series: <CircularSeries>[
                     PieSeries<ChartData, String>(
@@ -558,10 +587,6 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
                         dataLabelSettings:
                             const DataLabelSettings(isVisible: true)),
                   ]),
-            ),
-            const SizedBox(height: _sectionSpacing),
-            Column(
-              children: _statsWidget,
             ),
             const SizedBox(height: _sectionSpacing),
             Row(
@@ -608,7 +633,6 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
-                minimumSize: const Size(200, 45),
               ),
               child:
                   Text(_counter.isLocked ? "Unlock Counter" : "Lock Counter"),
