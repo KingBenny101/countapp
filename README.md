@@ -9,7 +9,7 @@ An unnecessarily complex counter application built with Flutter. Mostly vibecode
 
 ## Documentation
 
-For comprehensive documentation including setup instructions, architecture details, API reference, and guides on extending the application, visit:
+For comprehensive documentation, visit:
 
 **[https://kingbenny101.github.io/countapp/](https://kingbenny101.github.io/countapp/)**
 

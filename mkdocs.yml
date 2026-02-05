@@ -1,4 +1,4 @@
-site_name: Count App Documentation
+site_name: Count App
 site_description: 'Documentation for Count App - A Flutter counter tracking application'
 site_author: 'KingBenny101'
 site_url: 'https://kingbenny101.github.io/countapp/'
@@ -76,22 +76,24 @@ extra:
 
 nav:
   - Home: index.md
-  - Getting Started:
-      - Installation: getting-started/installation.md
-      - Development: getting-started/development.md
+  - Installation: getting-started/installation.md
+  - User Guide:
+      - Quick Start: guides/quick-start.md
+      - Using the App: guides/using-the-app.md
+      - Counter Types: guides/counters.md
+      - Leaderboards: guides/leaderboards.md
+  - For Developers:
+      - Development Setup: developers/setup.md
+      - Architecture: developers/architecture.md
+      - Custom Counter Types: developers/adding-counter-types.md
   - API Reference:
-      - Classes:
-          - BaseCounter: api/base-counter.md
-          - CounterFactory: api/counter-factory.md
-          - Configuration: api/configuration.md
-      - Counter Types:
-          - TapCounter: api/tap-counter.md
-          - SeriesCounter: api/series-counter.md
-      - Providers:
-          - CounterProvider: api/counter-provider.md
-  - Guides:
-      - Using the app: guides/using-the-app.md
-      - Counters: guides/counters.md
-      - Adding New Counter Types: guides/adding-counter-types.md
+      - BaseCounter: api/base-counter.md
+      - CounterFactory: api/counter-factory.md
+      - CounterProvider: api/counter-provider.md
+      - TapCounter: api/tap-counter.md
+      - SeriesCounter: api/series-counter.md
+      - LeaderboardService: api/leaderboard-service.md
+      - DateStatistics: api/date-statistics.md
+      - Configuration: api/configuration.md
 
-copyright: Copyright &copy; 2025 KingBenny101
+copyright: Copyright &copy; 2026 KingBenny101

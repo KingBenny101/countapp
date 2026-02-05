@@ -41,4 +41,4 @@ After modifying constants, run a release or debug build to apply the changes.
 ## See also
 
 - [BaseCounter API](base-counter.md)
-- [Configuration alternatives](../getting-started/development.md) - building and release notes
+- [Configuration alternatives](../developers/setup.md) - building and release notes

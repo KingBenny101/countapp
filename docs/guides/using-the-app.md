@@ -2,6 +2,10 @@
 
 A comprehensive user guide for everyday use of Count App.
 
+<p align="center">
+  <img src="../../images/screenshots/home-screen.png" width="250" />
+</p>
+
 ---
 
 ## Getting Started
@@ -118,6 +122,10 @@ When creating a Series Counter, you'll configure:
 - Most active days
 - Update history timeline
 - Frequency charts
+- **Heatmap visualizations:**
+  - Weekly heatmap (7 days × 24 hours) - shows when you typically update during the week
+  - Monthly heatmap (12 months × 31 days) - reveals seasonal patterns
+- Days per update count histogram
 
 ### Series Counter Statistics
 
@@ -130,15 +138,42 @@ When creating a Series Counter, you'll configure:
   - 3M (last 90 days)
   - 1Y (last 365 days)
   - All (complete history)
+- **View all updates:** Access a complete history of all recorded values with timestamps
 
 **Using the chart:**
 - Tap the time range buttons to filter data
 - View trends and patterns
 - Identify highs and lows visually
+- Access the full update history to see every data point
+
+!!! tip "Analyzing Trends"
+    Use the time range filters to zoom in on specific periods and identify patterns in your data.
 
 ---
 
 ## Managing Counters
+
+### Reorder Counters
+
+Organize your counter list by dragging and dropping:
+
+1. **Long-press any counter** to enter selection mode
+2. **Drag the handle** (≡) on the right side of a counter
+3. **Move it up or down** to your desired position
+4. Release to set the new order
+
+Your custom counter order is automatically saved.
+
+### Lock/Unlock a Counter
+
+Prevent accidental changes to a counter by locking it:
+
+- **Locked counters** display a lock icon next to their name
+- Locked counters cannot be updated or edited
+- To lock/unlock, select the counter and choose the lock/unlock option
+
+!!! tip "Protecting Important Data"
+    Lock counters that track critical data to prevent accidental modifications.
 
 ### Edit a Counter
 
@@ -177,7 +212,11 @@ Create a backup of all your counters:
 1. **Open the app menu** (three dots or hamburger icon)
 2. **Select "Export Counters"**
 3. **Choose a save location** on your device
-4. **Save the JSON file**
+4. **Enter a custom filename** (optional)
+   - Default: Timestamp-based filename (e.g., `2025-02-05_14-30-00.json`)
+   - You can provide your own descriptive name
+   - Invalid characters will be rejected
+5. **Save the JSON file**
 
 The export file contains:
 - All counter configurations
@@ -204,6 +243,40 @@ Restore counters from a previous export:
 
 !!! warning
     "Replace" mode will delete all current counters. Make sure you have a backup before using this option.
+
+---
+
+## Leaderboards
+
+Compete with friends and family by creating or joining leaderboards!
+
+<p align="center">
+  <img src="../../images/screenshots/leaderboards-list.png" width="250" />
+</p>
+
+### Accessing Leaderboards
+
+1. **Open the app menu** (☰)
+2. **Select "Leaderboards"**
+
+### Joining a Leaderboard
+
+1. **Tap the plus (+) button** on the leaderboards page
+2. **Enter the 6-character code** (e.g., `ABC123`)
+3. **Enter your display name**
+4. **Select a counter** to attach to the leaderboard
+5. **Tap Confirm**
+
+### Viewing Rankings
+
+1. **Tap on a leaderboard** to view details
+2. See rankings sorted by counter value
+3. **Pull to refresh** to update rankings
+
+!!! tip "Sharing Codes"
+    Share your leaderboard code with others so they can join and compete with you!
+
+For more details, see the [Leaderboards Guide](leaderboards.md).
 
 ---
 
@@ -255,13 +328,18 @@ Restore counters from a previous export:
 ### Switch Between Light and Dark Mode
 
 1. **Open the app menu**
-2. **Select "Settings"** or "Theme"
+2. **Select "Options"**
 3. **Choose your preferred theme:**
-   - Light mode
-   - Dark mode
-   - System default (matches device setting)
+   - **Light mode** - bright background, optimized for daylight viewing
+   - **Dark mode** - dark background, easier on the eyes at night
+   - **System default** - automatically matches your device's theme setting
 
 The theme applies immediately to all screens.
+
+**Quick toggle:** Use the Dark Mode switch in Options for instant toggling.
+
+!!! tip "Battery Saving"
+    On OLED displays, dark mode can help conserve battery power.
 
 ---
 
@@ -330,6 +408,7 @@ The theme applies immediately to all screens.
 
 ## See Also
 
-- **[Counter Types Guide](counters.md)** - Detailed information about Tap and Series counters
+- **[Adding Counter Types](../developers/adding-counter-types.md)** - Developer guide for creating custom counter types and Series counters
+- **[Leaderboards Guide](leaderboards.md)** - Create and join competitive leaderboards
 - **[Installation](../getting-started/installation.md)** - Download and install the app
-- **[Development](../getting-started/development.md)** - Build from source
+- **[Development](../developers/setup.md)** - Build from source

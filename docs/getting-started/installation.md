@@ -2,77 +2,64 @@
 
 Download and install Count App on your device using the pre-built packages from the official releases page.
 
----
-
-## System Requirements
-
-| Platform | Minimum Version | Recommended | Architecture |
-|----------|----------------|-------------|--------------|
-| **Android** | 5.0 (API 21) | 10.0+ | ARM, ARM64, x86 |
-| **Windows** | 10 | 11 | x64 |
-| **Linux** | Ubuntu 20.04+ | Ubuntu 22.04+ | x64 |
-
-!!! note
+!!! note "Downloads"
     All releases are available on the [GitHub Releases page](https://github.com/KingBenny101/countapp/releases).
 
 ---
 
-## Android (APK)
+## Android (apk)
 
 1. Download the latest `.apk` from the [Releases page](https://github.com/KingBenny101/countapp/releases).
 2. On your device, allow installation from unknown sources (Settings → Security) if required.
-3. Open the downloaded file and follow the prompts to install, or transfer the APK to your device and install with a file manager.
+3. Open the downloaded file and follow the prompts to install.
 
-Alternative (ADB):
-
+**Alternative (adb):**
 ```bash
-adb install -r countapp-1.4.2.apk
+adb install -r countapp-1.5.7.apk
 ```
 
-## Windows (ZIP)
+---
 
-1. Download the Windows `.zip` file from the [Releases page](https://github.com/KingBenny101/countapp/releases) (contains the binary executable).
-2. Extract the zip and run the executable (double-click or via command line). Example (PowerShell):
+## Windows (zip)
 
-```powershell
-Expand-Archive -Path countapp-1.4.2-windows.zip -DestinationPath .\countapp
-cd .\countapp
-.\countapp.exe
-```
+1. Download the Windows `.zip` file from the [Releases page](https://github.com/KingBenny101/countapp/releases).
+2. Extract the zip file to a folder of your choice.
+3. Run `countapp.exe`.
 
-(If you prefer command-line tools on WSL or Git Bash, use `unzip` and run the executable similarly.)
+!!! note "Windows Defender"
+    Windows might prevent the app from starting because it's unsigned. Click "More info" → "Run anyway" to proceed.
+
+---
+
+## macOS (.app)
+
+1. Download the macOS `.zip` file from the [Releases page](https://github.com/KingBenny101/countapp/releases).
+2. Extract the zip file to get `Count App.app`.
+3. Drag `Count App.app` to your Applications folder.
+4. Double-click to launch.
+
+!!! warning "Security Warning"
+    On first launch, macOS may block the app. Control-click (right-click) the app icon and select "Open" from the menu, then click "Open" in the dialog box.
+
+---
 
 ## Linux (tar.gz)
 
-1. Download the Linux `tar.gz` file from the [Releases page](https://github.com/KingBenny101/countapp/releases).
-2. Extract the tarball and run the included binary. Example:
-
-```bash
-tar -xzf countapp-1.4.2-linux.tar.gz
-cd countapp
-./countapp
-```
-
-!!! note
-    Releases provide the APK (Android), a ZIP for Windows, and a tar.gz for Linux. If you need to build locally, follow the [Development setup](development.md) guide.
-
----
-
-## Verification
-
-After installation, verify that Count App is working correctly:
-
-**Android:**
-1. Open the app from your app drawer
-2. You should see the empty counter list screen
-3. Try creating a test counter
-
-**Windows/Linux:**
-1. Run the executable
-2. The app window should open
-3. Try creating a test counter
+1. Download the Linux `tar.gz` file.
+2. Extract the tarball:
+   ```bash
+   tar -xzf countapp-1.5.7-linux.tar.gz
+   cd countapp
+   ```
+3. Run the application:
+   ```bash
+   chmod +x countapp  # If needed
+   ./countapp
+   ```
 
 ---
+
+
 
 ## Troubleshooting
 
@@ -130,4 +117,4 @@ chmod +x countapp
 
 ## Want to build from source?
 
-If you prefer building the app yourself (e.g., to modify features), follow the [Development setup](development.md) guide which explains how to use the `dev` branch and build locally.
+If you prefer building the app yourself (e.g., to modify features), follow the [Development setup](../developers/setup.md) guide which explains how to use the `dev` branch and build locally.
