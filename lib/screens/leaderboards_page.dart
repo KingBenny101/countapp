@@ -225,7 +225,8 @@ class _LeaderboardsPageState extends State<LeaderboardsPage> {
                             ScaffoldMessenger.of(parentContext).showSnackBar(
                               buildAppSnackBar(
                                   "A leaderboard with code $code already exists",
-                                  success: false),
+                                  success: false,
+                                  context: parentContext),
                             );
                           }
                           return;
@@ -248,7 +249,8 @@ class _LeaderboardsPageState extends State<LeaderboardsPage> {
                           if (parentContext.mounted) {
                             Navigator.of(parentContext).pop(true);
                             ScaffoldMessenger.of(parentContext).showSnackBar(
-                              buildAppSnackBar("Joined/Created leaderboard"),
+                              buildAppSnackBar("Joined/Created leaderboard",
+                                  context: parentContext),
                             );
                           }
                         } else {
@@ -260,7 +262,8 @@ class _LeaderboardsPageState extends State<LeaderboardsPage> {
                           if (parentContext.mounted) {
                             Navigator.of(parentContext).pop(false);
                             ScaffoldMessenger.of(parentContext).showSnackBar(
-                              buildAppSnackBar(msg, success: false),
+                              buildAppSnackBar(msg,
+                                  success: false, context: parentContext),
                             );
                           }
                         }

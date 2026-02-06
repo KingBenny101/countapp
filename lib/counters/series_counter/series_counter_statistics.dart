@@ -92,7 +92,8 @@ class SeriesCounterStatisticsPageState
     if (widget.index < 0 || widget.index >= _counterProvider.counters.length) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          buildAppSnackBar("Counter no longer exists", success: false),
+          buildAppSnackBar("Counter no longer exists",
+              success: false, context: context),
         );
       }
       setState(() => _syncingLeaderboard = false);
@@ -109,7 +110,7 @@ class SeriesCounterStatisticsPageState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           buildAppSnackBar("No leaderboard attached to this counter",
-              success: false),
+              success: false, context: context),
         );
       }
       setState(() => _syncingLeaderboard = false);
@@ -126,7 +127,8 @@ class SeriesCounterStatisticsPageState
       ScaffoldMessenger.of(context).showSnackBar(
         buildAppSnackBar(
             allOk ? "Synced to leaderboard" : "Some leaderboard syncs failed",
-            success: allOk),
+            success: allOk,
+            context: context),
       );
       setState(() => _syncingLeaderboard = false);
     } else {
@@ -389,6 +391,7 @@ class SeriesCounterStatisticsPageState
                       ScaffoldMessenger.of(context).showSnackBar(
                         buildAppSnackBar(
                           "Counter ${isLocked ? 'Unlocked' : 'Locked'} successfully!",
+                          context: context,
                         ),
                       );
                     } else {

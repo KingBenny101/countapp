@@ -404,7 +404,8 @@ class HomePageState extends State<HomePage> {
                         if (context.mounted) {
                           Navigator.of(context).pop();
                           ScaffoldMessenger.of(context).showSnackBar(
-                            buildAppSnackBar("Counters Imported Successfully!"),
+                            buildAppSnackBar("Counters Imported Successfully!",
+                                context: context),
                           );
                         }
                       } catch (e) {
@@ -414,6 +415,7 @@ class HomePageState extends State<HomePage> {
                             buildAppSnackBar(
                               "Failed to import: Invalid JSON format",
                               success: false,
+                              context: context,
                             ),
                           );
                         }
@@ -516,6 +518,7 @@ class HomePageState extends State<HomePage> {
                                   ? "Counters Exported Successfully!"
                                   : "Export failed: No permission!",
                               success: success,
+                              context: context,
                             ),
                           );
                         }
@@ -614,6 +617,7 @@ class _DeleteButton extends StatelessWidget {
               ScaffoldMessenger.of(context).showSnackBar(
                 buildAppSnackBar(
                   "${selectedIndices.length} Counters Deleted Successfully!",
+                  context: context,
                 ),
               );
             }

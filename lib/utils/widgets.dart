@@ -70,19 +70,46 @@ Widget buildCustomListTile(DateTime date) {
   );
 }
 
-SnackBar buildAppSnackBar(String message, {bool success = true}) {
+SnackBar buildAppSnackBar(
+  String message, {
+  bool success = true,
+  required BuildContext context,
+}) {
+  final colorScheme = Theme.of(context).colorScheme;
+  final backgroundColor = success ? colorScheme.primary : colorScheme.error;
+  final textColor = success ? colorScheme.onPrimary : colorScheme.onError;
+
   return SnackBar(
-    content: Text(
-      message,
-      textAlign: TextAlign.center,
+    content: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(
+          success ? Icons.check_circle : Icons.error_outline,
+          color: textColor,
+          size: 20,
+        ),
+        const SizedBox(width: 12),
+        Text(
+          message,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: textColor,
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
     ),
-    backgroundColor: success ? Colors.green : Colors.red,
+    backgroundColor: backgroundColor,
     behavior: SnackBarBehavior.floating,
     shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(10),
+      borderRadius: BorderRadius.circular(12),
     ),
-    duration: const Duration(seconds: 2),
-    margin: const EdgeInsets.symmetric(horizontal: 96, vertical: 8),
+    elevation: 6,
+    duration: const Duration(seconds: 3),
+    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
   );
 }
 

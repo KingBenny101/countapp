@@ -82,18 +82,7 @@ nav:
       - Using the App: guides/using-the-app.md
       - Counter Types: guides/counters.md
       - Leaderboards: guides/leaderboards.md
-  - For Developers:
-      - Development Setup: developers/setup.md
-      - Architecture: developers/architecture.md
-      - Custom Counter Types: developers/adding-counter-types.md
-  - API Reference:
-      - BaseCounter: api/base-counter.md
-      - CounterFactory: api/counter-factory.md
-      - CounterProvider: api/counter-provider.md
-      - TapCounter: api/tap-counter.md
-      - SeriesCounter: api/series-counter.md
-      - LeaderboardService: api/leaderboard-service.md
-      - DateStatistics: api/date-statistics.md
-      - Configuration: api/configuration.md
+  - For Developers: developers/setup.md
+
 
 copyright: Copyright &copy; 2026 KingBenny101

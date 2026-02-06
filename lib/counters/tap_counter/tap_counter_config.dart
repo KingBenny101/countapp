@@ -145,7 +145,8 @@ class TapCounterConfigPageState extends State<TapCounterConfigPage> {
 
             if (context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
-                buildAppSnackBar("Counter Added Successfully!"),
+                buildAppSnackBar("Counter Added Successfully!",
+                    context: context),
               );
               Navigator.pop(context);
             }
