@@ -1,5 +1,7 @@
 import "package:countapp/counters/base/base_counter.dart";
 import "package:countapp/counters/base/counter_factory.dart";
+import "package:countapp/counters/series_counter/series_counter.dart";
+import "package:countapp/counters/tap_counter/tap_counter.dart";
 import "package:countapp/services/leaderboard_service.dart";
 import "package:countapp/utils/constants.dart";
 import "package:countapp/utils/widgets.dart";
@@ -137,6 +139,103 @@ class CounterProvider with ChangeNotifier {
       await box.add(counter.toJson());
     }
 
+    notifyListeners();
+  }
+
+  Future<void> deleteCounterUpdates(
+      int counterIndex, List<int> updateIndices) async {
+    final counter = _counters[counterIndex];
+    final sortedIndices = updateIndices.toList()
+      ..sort((a, b) => b.compareTo(a));
+
+    if (counter is TapCounter) {
+      for (final index in sortedIndices) {
+        if (index < counter.updates.length) {
+          counter.updates.removeAt(index);
+          if (counter.isIncrement) {
+            counter.value -= counter.stepSize;
+          } else {
+            counter.value += counter.stepSize;
+          }
+        }
+      }
+      if (counter.updates.isNotEmpty) {
+        counter.lastUpdated = counter.updates.first;
+      } else {
+        counter.lastUpdated = null;
+      }
+    } else if (counter is SeriesCounter) {
+      for (final index in sortedIndices) {
+        if (index < counter.updates.length &&
+            index < counter.seriesValues.length) {
+          counter.updates.removeAt(index);
+          counter.seriesValues.removeAt(index);
+        }
+      }
+      if (counter.updates.isNotEmpty) {
+        counter.lastUpdated = counter.updates.first;
+        counter.value = counter.seriesValues.first;
+      } else {
+        counter.lastUpdated = null;
+        counter.value = 0;
+      }
+    }
+
+    final box = await _getBox();
+    await box.putAt(counterIndex, counter.toJson());
+    notifyListeners();
+  }
+
+  Future<void> editCounterUpdate(int counterIndex, int updateIndex,
+      {DateTime? newDate, double? newValue}) async {
+    final counter = _counters[counterIndex];
+
+    if (counter is TapCounter) {
+      if (newDate != null && updateIndex < counter.updates.length) {
+        counter.updates[updateIndex] = newDate;
+        // Sort updates descending (newest first)
+        counter.updates.sort((a, b) => b.compareTo(a));
+        counter.lastUpdated =
+            counter.updates.isNotEmpty ? counter.updates.first : null;
+      }
+    } else if (counter is SeriesCounter) {
+      bool changed = false;
+      if (newDate != null && updateIndex < counter.updates.length) {
+        counter.updates[updateIndex] = newDate;
+        changed = true;
+      }
+      if (newValue != null && updateIndex < counter.seriesValues.length) {
+        counter.seriesValues[updateIndex] = newValue;
+        changed = true;
+      }
+
+      if (changed) {
+        // Zip updates and values to maintain relationship during sort
+        final zipped = List.generate(
+          counter.updates.length,
+          (i) => MapEntry(counter.updates[i], counter.seriesValues[i]),
+        );
+
+        // Sort by date descending
+        zipped.sort((a, b) => b.key.compareTo(a.key));
+
+        // Unzip back into counter lists
+        counter.updates = zipped.map((e) => e.key).toList();
+        counter.seriesValues = zipped.map((e) => e.value).toList();
+
+        // Update current value and last updated timestamp to reflect the new newest entry
+        if (counter.updates.isNotEmpty) {
+          counter.lastUpdated = counter.updates.first;
+          counter.value = counter.seriesValues.first;
+        } else {
+          counter.lastUpdated = null;
+          counter.value = 0;
+        }
+      }
+    }
+
+    final box = await _getBox();
+    await box.putAt(counterIndex, counter.toJson());
     notifyListeners();
   }
 
