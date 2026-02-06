@@ -3,7 +3,7 @@
 Compete with friends, family, or colleagues using Count App's leaderboard feature! Create shared leaderboards to track who's leading in habits, fitness goals, or any counter-based competition.
 
 <p align="center">
-  <img src="../images/screenshots/leaderboards-list.png" width="250" />
+  <img src="../../images/screenshots/leaderboards-list.png" width="250" />
 </p>
 
 ---
@@ -33,7 +33,7 @@ Each leaderboard is identified by a unique **6-character code** (letters and num
 3. **Enter leaderboard details:**
    
    <p align="center">
-     <img src="../images/screenshots/join-leaderboard.png" width="250" />
+     <img src="../../images/screenshots/join-leaderboard.png" width="250" />
    </p>
    
    - **Code:** 6-character alphanumeric code (e.g., `ABC123`)
@@ -100,7 +100,7 @@ You can attach any counter you've created:
 2. **Tap a leaderboard** to view details
 
 <p align="center">
-  <img src="../images/screenshots/leaderboard-detail.png" width="250" />
+  <img src="../../images/screenshots/leaderboard-detail.png" width="250" />
 </p>
 
 ### Leaderboard View
@@ -140,132 +140,18 @@ Your leaderboard ranking updates automatically when you update the attached coun
 1. Update your counter normally (from the home page)
 2. The leaderboard will reflect your new value on next sync
 
-### Leaving a Leaderboard
+### Deleting a Leaderboard
 
 To remove a leaderboard from your list:
 
-1. **Swipe left** on the leaderboard (or long-press)
-2. **Tap Delete**
+1. **Open** the leaderboard 
+2. **Tap Delete** on the leaderboard detail page
 3. **Confirm deletion**
 
 !!! note "Leaving vs Deleting"
     Deleting a leaderboard only removes it from your device. Other participants can still see the leaderboard, but your data will no longer be shared.
 
 ---
-
-## Use Cases & Examples
-
-### Fitness Challenges
-
-**Daily Steps Competition**
-
-1. Create a leaderboard with code `STEPS2024`
-2. Attach your "Daily Steps" Tap Counter
-3. Share the code with your fitness group
-4. Compete to see who walks the most!
-
-<p align="center">
-  <img src="../images/screenshots/leaderboard-detail.png" width="250" />
-</p>
-
-### Habit Tracking
-
-**Water Intake Challenge**
-
-- Code: `WATER8`
-- Counter: "Water Glasses" (Tap Counter with step size 1)
-- Goal: Track who drinks the most water daily
-
-### Weight Loss Group
-
-**Team Weight Loss**
-
-- Code: `WEIGHTLOSS`
-- Counter: "Current Weight" (Series Counter)
-- Goal: Support each other's progress (lowest value wins)
-
-### Business Metrics
-
-**Sales Team Challenge**
-
-- Code: `SALES24`
-- Counter: "Daily Sales" (Series Counter)
-- Goal: Compare daily revenue across team members
-
----
-
-## Troubleshooting
-
-### Cannot Join Leaderboard
-
-**Problem:** Error message when trying to join
-
-**Possible Causes:**
-
-- Invalid code format (must be exactly 6 alphanumeric characters)
-- No internet connection
-- Server temporarily unavailable
-
-**Solutions:**
-
-1. Verify the code is exactly 6 characters (A-Z, 0-9)
-2. Check your internet connection
-3. Try again in a few moments
-
-### Leaderboard Not Updating
-
-**Problem:** Rankings don't reflect latest counter values
-
-**Solutions:**
-
-1. **Pull to refresh** on the leaderboard detail page
-2. Check your internet connection
-3. Verify you updated the correct counter
-4. Close and reopen the leaderboard page
-
-### Duplicate Leaderboard Error
-
-**Problem:** "A leaderboard with code XXX already exists"
-
-**Cause:** You've already joined this leaderboard on your device
-
-**Solution:** 
-
-- Check your existing leaderboards list
-- The leaderboard should already be there
-- You cannot join the same leaderboard twice from one device
-
-### Counter Not Showing in Dropdown
-
-**Problem:** No counters available when joining a leaderboard
-
-**Cause:** You haven't created any counters yet
-
-**Solution:**
-
-1. Exit the leaderboard dialog
-2. Create a counter first from the home page
-3. Return to join the leaderboard
-
----
-
-## Best Practices
-
-### Naming Your Leaderboards
-
-When creating a new leaderboard code, choose memorable codes:
-
-- **Descriptive:** `WATER8`, `STEPS`, `WEIGHT`
-- **Time-based:** `JAN2024`, `WEEK01`
-- **Group-based:** `TEAM01`, `FAM123`
-
-### Counter Selection
-
-Choose appropriate counters for fair competition:
-
-- **Same type:** All participants should use similar counter types
-- **Same units:** Agree on measurement units (kg vs lbs, etc.)
-- **Clear rules:** Define what counts (e.g., "log weight once per day")
 
 ### Privacy Considerations
 
@@ -276,30 +162,6 @@ Remember:
 - Choose counter names that don't reveal sensitive information
 - Use generic names like "Daily Goal" instead of specific details
 
----
-
-## Technical Details
-
-### Data Synchronization
-
-- Leaderboards sync via HTTPS to a remote server
-- Data is updated when you open the leaderboard detail page
-- Background sync is not supported (manual refresh required)
-
-### Data Stored Locally
-
-On your device:
-
-- Leaderboard codes you've joined
-- Your display name for each leaderboard
-- Reference to your attached counter
-- Cached participant data from last sync
-
-### Network Requirements
-
-- Active internet connection required to join/create leaderboards
-- Internet needed to view updated rankings
-- Offline mode: View cached data only (rankings may be outdated)
 
 ---
 

@@ -1,11 +1,9 @@
 # Count App
 
-> **A powerful, extensible counter tracking application for Android, Windows, and Linux**
+> **A powerful, extensible counter tracking application for Android, Windows, Linux and macOS**
 
 Track counts and numeric series effortlessly with a beautiful, intuitive interface. Whether you're counting daily habits, monitoring body metrics, or tracking business data, Count App provides the tools you need.
- <p align="center">
-  <img src="images/screenshots/home-screen.png" width="250" />
-    </p>
+
 
 
 ---
@@ -13,6 +11,16 @@ Track counts and numeric series effortlessly with a beautiful, intuitive interfa
 ## Features
 
 <div class="grid cards" markdown>
+-   :material-counter: **Clean and Modern UI**
+
+    ---
+
+    A **sleek**, **user-friendly** interface designed for quick updates and easy navigation.
+
+    <p align="center">
+  <img src="images/screenshots/home-screen.png" width="250" />
+    </p>
+
 
 -   :material-counter: **Multiple Counter Types**
 
@@ -170,28 +178,9 @@ Perfect for getting started as an end user:
 Welcome developers! Here's how to get started:
 
 - **[Development Setup](developers/setup.md)** - Set up your local environment
-- **[API Reference](api/base-counter.md)** - Explore the codebase architecture
-- **[Adding Counter Types](developers/adding-counter-types.md)** - Extend the app with custom counters
 
 ---
 
-
-
-## Support & Community
-
-Need help or want to contribute?
-
-- **[GitHub Issues](https://github.com/KingBenny101/countapp/issues)** - Report bugs or request features
-- **[Source Code](https://github.com/KingBenny101/countapp)** - View the code and contribute
-- **[Development Guide](developers/setup.md)** - Learn how to build from source
-
----
-
-## License
-
-Count App is open source software licensed under the MIT License.
-
----
 
 !!! note "Latest Release"
     Version 1.5.7 is now available! Visit the [GitHub releases page](https://github.com/KingBenny101/countapp/releases) to download.
