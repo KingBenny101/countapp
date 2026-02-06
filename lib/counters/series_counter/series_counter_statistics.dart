@@ -31,24 +31,11 @@ class SeriesCounterStatisticsPageState
     fontWeight: FontWeight.bold,
   );
 
-  late CounterProvider _counterProvider;
-  late SeriesCounter _counter;
-  late String _counterName;
   String _selectedRange = "1W"; // Default to 1 week
   bool _syncingLeaderboard = false;
 
-  // Minimal chart state
-
-  @override
-  void initState() {
-    super.initState();
-    _counterProvider = Provider.of<CounterProvider>(context, listen: false);
-    _counter = _counterProvider.counters[widget.index] as SeriesCounter;
-    _counterName = _counter.name;
-  }
-
-  List<_SeriesDataPoint> _getLineChartData() {
-    if (_counter.seriesValues.isEmpty) return [];
+  List<_SeriesDataPoint> _getLineChartData(SeriesCounter counter) {
+    if (counter.seriesValues.isEmpty) return [];
 
     final now = DateTime.now();
     DateTime cutoffDate;
@@ -72,10 +59,10 @@ class SeriesCounterStatisticsPageState
 
     // Collect matching updates (date, value) then sort chronologically (oldest -> newest)
     final entries = <_SeriesDataPoint>[];
-    for (int i = 0; i < _counter.updates.length; i++) {
-      final dt = _counter.updates[i];
+    for (int i = 0; i < counter.updates.length; i++) {
+      final dt = counter.updates[i];
       if (dt.isAfter(cutoffDate)) {
-        entries.add(_SeriesDataPoint(dt, _counter.seriesValues[i]));
+        entries.add(_SeriesDataPoint(dt, counter.seriesValues[i]));
       }
     }
 
@@ -83,13 +70,14 @@ class SeriesCounterStatisticsPageState
     return entries;
   }
 
-  Future<void> _syncAttachedLeaderboards() async {
+  Future<void> _syncAttachedLeaderboards(
+      CounterProvider provider, SeriesCounter counter) async {
     if (_syncingLeaderboard) return;
 
     setState(() => _syncingLeaderboard = true);
 
-    // Validate index bounds and refresh the counter instance
-    if (widget.index < 0 || widget.index >= _counterProvider.counters.length) {
+    // Validate index bounds
+    if (widget.index < 0 || widget.index >= provider.counters.length) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           buildAppSnackBar("Counter no longer exists",
@@ -100,10 +88,8 @@ class SeriesCounterStatisticsPageState
       return;
     }
 
-    _counter = _counterProvider.counters[widget.index] as SeriesCounter;
-
     final attached = LeaderboardService.getAll()
-        .where((lb) => lb.attachedCounterId == _counter.id)
+        .where((lb) => lb.attachedCounterId == counter.id)
         .toList();
 
     if (attached.isEmpty) {
@@ -119,7 +105,7 @@ class SeriesCounterStatisticsPageState
 
     bool allOk = true;
     for (final lb in attached) {
-      final ok = await LeaderboardService.postUpdate(lb: lb, counter: _counter);
+      final ok = await LeaderboardService.postUpdate(lb: lb, counter: counter);
       allOk = allOk && ok;
     }
 
@@ -138,9 +124,17 @@ class SeriesCounterStatisticsPageState
 
   @override
   Widget build(BuildContext context) {
-    if (_counter.seriesValues.isEmpty) {
+    final provider = context.watch<CounterProvider>();
+    if (widget.index < 0 || widget.index >= provider.counters.length) {
+      return const Scaffold(body: Center(child: Text("Counter not found")));
+    }
+
+    final counter = provider.counters[widget.index] as SeriesCounter;
+    final counterName = counter.name;
+
+    if (counter.seriesValues.isEmpty) {
       return Scaffold(
-        appBar: AppBar(title: Text("Statistics for $_counterName")),
+        appBar: AppBar(title: Text("Statistics for $counterName")),
         body: const Center(
           child: Text(
             "No data available yet.\nAdd values to see statistics.",
@@ -151,21 +145,21 @@ class SeriesCounterStatisticsPageState
       );
     }
 
-    final lineData = _getLineChartData();
+    final lineData = _getLineChartData(counter);
     final hasData = lineData.isNotEmpty;
     final bool hasAttachedLeaderboard = LeaderboardService.getAll()
-        .any((lb) => lb.attachedCounterId == _counter.id);
+        .any((lb) => lb.attachedCounterId == counter.id);
 
-    final weeklyAvg = _counter.getWeeklyAverage();
-    final monthlyAvg = _counter.getMonthlyAverage();
-    final weeklyHigh = _counter.getWeeklyHigh();
-    final weeklyLow = _counter.getWeeklyLow();
-    final allTimeHigh = _counter.getAllTimeHighest();
-    final allTimeLow = _counter.getAllTimeLowest();
+    final weeklyAvg = counter.getWeeklyAverage();
+    final monthlyAvg = counter.getMonthlyAverage();
+    final weeklyHigh = counter.getWeeklyHigh();
+    final weeklyLow = counter.getWeeklyLow();
+    final allTimeHigh = counter.getAllTimeHighest();
+    final allTimeLow = counter.getAllTimeLowest();
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Info for $_counterName"),
+        title: Text("Info for $counterName"),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -295,9 +289,8 @@ class SeriesCounterStatisticsPageState
                       context,
                       MaterialPageRoute(
                         builder: (context) => SeriesCounterUpdatesPage(
-                          name: _counterName,
-                          updates: _counter.updates,
-                          values: _counter.seriesValues,
+                          name: counterName,
+                          counterIndex: widget.index,
                         ),
                       ),
                     );
@@ -307,8 +300,9 @@ class SeriesCounterStatisticsPageState
                 if (hasAttachedLeaderboard) ...[
                   const SizedBox(width: 12),
                   ElevatedButton.icon(
-                    onPressed:
-                        _syncingLeaderboard ? null : _syncAttachedLeaderboards,
+                    onPressed: _syncingLeaderboard
+                        ? null
+                        : () => _syncAttachedLeaderboards(provider, counter),
                     icon: _syncingLeaderboard
                         ? const SizedBox(
                             width: 16,
@@ -327,14 +321,13 @@ class SeriesCounterStatisticsPageState
             ),
             const SizedBox(height: 12),
             ElevatedButton(
-              onPressed: () => _showLockConfirmationDialog(context),
+              onPressed: () =>
+                  _showLockConfirmationDialog(context, counter, provider),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
-                minimumSize: const Size(200, 45),
               ),
-              child:
-                  Text(_counter.isLocked ? "Unlock Counter" : "Lock Counter"),
+              child: Text(counter.isLocked ? "Unlock Counter" : "Lock Counter"),
             ),
             const SizedBox(height: 24),
           ],
@@ -343,9 +336,10 @@ class SeriesCounterStatisticsPageState
     );
   }
 
-  Future<void> _showLockConfirmationDialog(BuildContext context) async {
+  Future<void> _showLockConfirmationDialog(BuildContext context,
+      SeriesCounter counter, CounterProvider provider) async {
     final TextEditingController controller = TextEditingController();
-    final bool isLocked = _counter.isLocked;
+    final bool isLocked = counter.isLocked;
 
     await showDialog(
       context: context,
@@ -359,7 +353,7 @@ class SeriesCounterStatisticsPageState
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'To confirm, please type the name of the counter: "${_counter.name}"',
+                    'To confirm, please type the name of the counter: "${counter.name}"',
                   ),
                   const SizedBox(height: 16),
                   TextField(
@@ -384,10 +378,9 @@ class SeriesCounterStatisticsPageState
                 ),
                 TextButton(
                   onPressed: () {
-                    if (controller.text == _counter.name) {
-                      _counterProvider.toggleCounterLock(widget.index);
+                    if (controller.text == counter.name) {
+                      provider.toggleCounterLock(widget.index);
                       Navigator.pop(context);
-                      this.setState(() {}); // Refresh statistics page UI
                       ScaffoldMessenger.of(context).showSnackBar(
                         buildAppSnackBar(
                           "Counter ${isLocked ? 'Unlocked' : 'Locked'} successfully!",
