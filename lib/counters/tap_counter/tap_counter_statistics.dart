@@ -201,44 +201,19 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
   );
 
   final int _numberOfDates = 7;
-  late CounterProvider _counterProvider;
-  late TapCounter _counter;
-  late String _counterName;
-  late List<DateTime> _updatesData;
-  late List<Widget> _statsWidget;
-  late List<MapEntry<String, int>> _updatesPerDay;
-  late List<MapEntry<int, int>> _daysPerUpdateCount;
-  late int _indexOfEndDate;
+  int? _indexOfEndDate;
   bool _syncingLeaderboard = false;
   // Using Syncfusion's built-in zoom/pan; no manual windowing needed.
 
   @override
   void initState() {
     super.initState();
-    _counterProvider = Provider.of<CounterProvider>(context, listen: false);
-    _counter = _counterProvider.counters[widget.index] as TapCounter;
-    _counterName = _counter.name;
-    _updatesData = _counter.updates;
-
-    _statsWidget = _counter.generateStatisticsWidgets();
-
-    _updatesPerDay = Map<String, int>.fromEntries(
-      _counter.getUpdatesPerDay().entries.toList()
-        ..sort(
-          (MapEntry<String, int> a, MapEntry<String, int> b) =>
-              a.key.compareTo(b.key),
-        ),
-    ).entries.toList();
-
-    _indexOfEndDate = _updatesPerDay.length - 1;
-    _daysPerUpdateCount = _counter.getDaysPerUpdateCount().entries.toList()
-      ..sort((a, b) => a.key.compareTo(b.key));
-
     // No manual window size; chart displays all points with zoom enabled.
   }
 
-  Widget _buildPredictionCard() {
-    if (_updatesData.length < 2) {
+  Widget _buildPredictionCard(TapCounter counter, List<DateTime> updatesData,
+      List<MapEntry<String, int>> updatesPerDay) {
+    if (updatesData.length < 2) {
       return const Card(
         child: Padding(
           padding: EdgeInsets.all(16.0),
@@ -249,7 +224,8 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
 
     // Try ARIMA prediction first, fall back to simple average if it fails
     final nextUpdatePrediction =
-        _predictNextUpdateWithArima() ?? _predictNextUpdateSimple();
+        _predictNextUpdateWithArima(updatesData, updatesPerDay) ??
+            _predictNextUpdateSimple(updatesData);
 
     final bool isToday =
         DateFormat("yyyy-MM-dd").format(nextUpdatePrediction) ==
@@ -260,7 +236,7 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
         : DateFormat("MMM dd, yyyy").format(nextUpdatePrediction);
     final timeStr = DateFormat("h:mm a").format(nextUpdatePrediction);
 
-    final sortedUpdates = List<DateTime>.from(_updatesData)..sort();
+    final sortedUpdates = List<DateTime>.from(updatesData)..sort();
     final lastUpdate = sortedUpdates.last;
     final lastUpdateDateStr = DateFormat("MMM dd, yyyy").format(lastUpdate);
     final lastUpdateTimeStr = DateFormat("h:mm a").format(lastUpdate);
@@ -319,20 +295,22 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
     );
   }
 
-  List<ChartData> _getHistogramData() {
-    return _daysPerUpdateCount
+  List<ChartData> _getHistogramData(
+      List<MapEntry<int, int>> daysPerUpdateCount) {
+    return daysPerUpdateCount
         .map((entry) => ChartData(entry.key.toString(), entry.value.toDouble()))
         .toList();
   }
 
   /// Predict the next update time using ARIMA forecasting
-  DateTime? _predictNextUpdateWithArima() {
-    if (_updatesData.length < 5) return null;
+  DateTime? _predictNextUpdateWithArima(
+      List<DateTime> updatesData, List<MapEntry<String, int>> updatesPerDay) {
+    if (updatesData.length < 5) return null;
 
     try {
       // Get daily update counts as a time series
       final dailyUpdates =
-          _updatesPerDay.map((e) => e.value.toDouble()).toList();
+          updatesPerDay.map((e) => e.value.toDouble()).toList();
 
       // Need at least 10 data points for meaningful ARIMA forecasting
       if (dailyUpdates.length < 10) {
@@ -341,7 +319,7 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
 
       // Fit ARIMA(1,0,1) model and forecast 1 step ahead
       final fit =
-          ml_arima.Arima.fit(dailyUpdates, ml_arima.ArimaOrder(1, 0, 1));
+          ml_arima.Arima.fit(dailyUpdates, const ml_arima.ArimaOrder(1, 0, 1));
       final forecast = ml_arima.Arima.forecast(dailyUpdates, fit, 1);
 
       if (forecast.point.isEmpty) {
@@ -349,11 +327,11 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
       }
 
       // Get the last date and add one day
-      final lastDate = DateTime.parse(_updatesPerDay.last.key);
+      final lastDate = DateTime.parse(updatesPerDay.last.key);
       final nextDate = lastDate.add(const Duration(days: 1));
 
       // Estimate time based on the pattern of last few days
-      final sortedUpdates = List<DateTime>.from(_updatesData)..sort();
+      final sortedUpdates = List<DateTime>.from(updatesData)..sort();
       if (sortedUpdates.length < 2) return null;
 
       // Calculate average time of day for updates
@@ -379,8 +357,8 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
   }
 
   /// Fallback simple moving average prediction
-  DateTime _predictNextUpdateSimple() {
-    final sortedUpdates = List<DateTime>.from(_updatesData)..sort();
+  DateTime _predictNextUpdateSimple(List<DateTime> updatesData) {
+    final sortedUpdates = List<DateTime>.from(updatesData)..sort();
     final List<int> intervals = [];
     for (int i = 1; i < sortedUpdates.length; i++) {
       intervals
@@ -398,18 +376,18 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
         .add(Duration(minutes: avgIntervalInMinutes.round()));
   }
 
-  List<_DayPoint> _buildLinePoints() {
-    if (_updatesPerDay.isEmpty) return [];
+  List<_DayPoint> _buildLinePoints(List<MapEntry<String, int>> updatesPerDay) {
+    if (updatesPerDay.isEmpty) return [];
 
     final formatter = DateFormat("MMM dd");
 
     // Get first and last dates
-    final firstDate = DateTime.parse(_updatesPerDay.first.key);
-    final lastDate = DateTime.parse(_updatesPerDay.last.key);
+    final firstDate = DateTime.parse(updatesPerDay.first.key);
+    final lastDate = DateTime.parse(updatesPerDay.last.key);
 
     // Create a map for quick lookup
     final Map<String, int> updatesMap = {
-      for (var entry in _updatesPerDay) entry.key: entry.value
+      for (final entry in updatesPerDay) entry.key: entry.value
     };
 
     // Generate all dates between first and last (including days with 0 updates)
@@ -444,12 +422,13 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
     );
   }
 
-  Future<void> _syncAttachedLeaderboards() async {
+  Future<void> _syncAttachedLeaderboards(
+      CounterProvider counterProvider, TapCounter counter) async {
     if (_syncingLeaderboard) return;
 
     setState(() => _syncingLeaderboard = true);
 
-    if (widget.index < 0 || widget.index >= _counterProvider.counters.length) {
+    if (widget.index < 0 || widget.index >= counterProvider.counters.length) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           buildAppSnackBar("Counter no longer exists",
@@ -460,10 +439,8 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
       return;
     }
 
-    _counter = _counterProvider.counters[widget.index] as TapCounter;
-
     final attached = LeaderboardService.getAll()
-        .where((lb) => lb.attachedCounterId == _counter.id)
+        .where((lb) => lb.attachedCounterId == counter.id)
         .toList();
 
     if (attached.isEmpty) {
@@ -479,7 +456,7 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
 
     bool allOk = true;
     for (final lb in attached) {
-      final ok = await LeaderboardService.postUpdate(lb: lb, counter: _counter);
+      final ok = await LeaderboardService.postUpdate(lb: lb, counter: counter);
       allOk = allOk && ok;
     }
 
@@ -498,52 +475,88 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final counterProvider = context.watch<CounterProvider>();
+    if (widget.index < 0 || widget.index >= counterProvider.counters.length) {
+      return Scaffold(
+        appBar: AppBar(title: const Text("Counter Not Found")),
+        body: const Center(child: Text("This counter no longer exists.")),
+      );
+    }
+
+    final counter = counterProvider.counters[widget.index] as TapCounter;
+    final counterName = counter.name;
+    final updatesData = counter.updates;
+    final statsWidget = counter.generateStatisticsWidgets();
+
+    final updatesPerDay = Map<String, int>.fromEntries(
+      counter.getUpdatesPerDay().entries.toList()
+        ..sort(
+          (MapEntry<String, int> a, MapEntry<String, int> b) =>
+              a.key.compareTo(b.key),
+        ),
+    ).entries.toList();
+
+    final daysPerUpdateCount = counter.getDaysPerUpdateCount().entries.toList()
+      ..sort((a, b) => a.key.compareTo(b.key));
+
+    _indexOfEndDate ??= updatesPerDay.length - 1;
+    if (_indexOfEndDate! >= updatesPerDay.length) {
+      _indexOfEndDate = updatesPerDay.length - 1;
+    }
+    if (_indexOfEndDate! < 0 && updatesPerDay.isNotEmpty) {
+      _indexOfEndDate = 0;
+    }
+
     final int startIndex =
-        (_indexOfEndDate - _numberOfDates + 1).clamp(0, _updatesPerDay.length);
+        (_indexOfEndDate! - _numberOfDates + 1).clamp(0, updatesPerDay.length);
 
-    final int endIndex = (_indexOfEndDate + 1).clamp(0, _updatesPerDay.length);
+    final int endIndex = (_indexOfEndDate! + 1).clamp(0, updatesPerDay.length);
 
-    final plotData = _updatesPerDay.sublist(startIndex, endIndex);
-    final chartData = _getHistogramData();
+    final plotData = updatesPerDay.sublist(startIndex, endIndex);
+    final chartData = _getHistogramData(daysPerUpdateCount);
     final bool hasAttachedLeaderboard = LeaderboardService.getAll()
-        .any((lb) => lb.attachedCounterId == _counter.id);
+        .any((lb) => lb.attachedCounterId == counter.id);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Info for $_counterName"),
+        title: Text("Info for $counterName"),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            _buildPredictionCard(),
+            _buildPredictionCard(counter, updatesData, updatesPerDay),
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _indexOfEndDate -= _numberOfDates;
+                  onPressed: updatesPerDay.isEmpty
+                      ? null
+                      : () {
+                          setState(() {
+                            _indexOfEndDate = _indexOfEndDate! - _numberOfDates;
 
-                      if (_indexOfEndDate < 0) {
-                        _indexOfEndDate += _numberOfDates;
-                      }
-                    });
-                  },
+                            if (_indexOfEndDate! < 0) {
+                              _indexOfEndDate = 0;
+                            }
+                          });
+                        },
                   child: const Text("Previous"),
                 ),
                 const SizedBox(width: 30),
                 ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _indexOfEndDate += _numberOfDates;
+                  onPressed: updatesPerDay.isEmpty
+                      ? null
+                      : () {
+                          setState(() {
+                            _indexOfEndDate = _indexOfEndDate! + _numberOfDates;
 
-                      if (_indexOfEndDate >= _updatesPerDay.length) {
-                        _indexOfEndDate = _updatesPerDay.length - 1;
-                      }
-                    });
-                  },
+                            if (_indexOfEndDate! >= updatesPerDay.length) {
+                              _indexOfEndDate = updatesPerDay.length - 1;
+                            }
+                          });
+                        },
                   child: const Text("Next"),
                 ),
               ],
@@ -556,24 +569,26 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
             const SizedBox(height: 16),
             SizedBox(
               height: 300,
-              child: BarChart(
-                BarChartData(
-                  titlesData: customAxisTitles(plotData),
-                  borderData: FlBorderData(show: false),
-                  gridData: const FlGridData(show: false),
-                  barGroups: List.generate(plotData.length, (index) {
-                    return BarChartGroupData(
-                      x: index,
-                      barRods: [
-                        BarChartRodData(
-                          toY: plotData[index].value.toDouble(),
-                          width: 16,
-                        ),
-                      ],
-                    );
-                  }),
-                ),
-              ),
+              child: plotData.isEmpty
+                  ? const Center(child: Text("No activity data available"))
+                  : BarChart(
+                      BarChartData(
+                        titlesData: customAxisTitles(plotData),
+                        borderData: FlBorderData(show: false),
+                        gridData: const FlGridData(show: false),
+                        barGroups: List.generate(plotData.length, (index) {
+                          return BarChartGroupData(
+                            x: index,
+                            barRods: [
+                              BarChartRodData(
+                                toY: plotData[index].value.toDouble(),
+                                width: 16,
+                              ),
+                            ],
+                          );
+                        }),
+                      ),
+                    ),
             ),
             const SizedBox(height: _sectionSpacing),
             const Text(
@@ -587,7 +602,10 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
                 children: [
                   Expanded(
                     child: Builder(builder: (context) {
-                      final points = _buildLinePoints();
+                      final points = _buildLinePoints(updatesPerDay);
+                      if (points.isEmpty) {
+                        return const Center(child: Text("No data available"));
+                      }
                       final totalPoints = points.length;
                       final minIndex = totalPoints > 14 ? totalPoints - 14 : 0;
                       final maxIndex = totalPoints > 0 ? totalPoints - 1 : 0;
@@ -623,14 +641,14 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
             ),
             const SizedBox(height: _sectionSpacing),
             Column(
-              children: _statsWidget,
+              children: statsWidget,
             ),
             const SizedBox(height: _sectionSpacing),
             // Weekly Pro Heatmap
-            _buildWeeklyProHeatmap(),
+            _buildWeeklyProHeatmap(counter),
             const SizedBox(height: _sectionSpacing),
             // Monthly Activity
-            _buildMonthlyProHeatmap(),
+            _buildMonthlyProHeatmap(counter),
             const SizedBox(height: _sectionSpacing),
             const Text(
               "Updates Distribution",
@@ -638,19 +656,21 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
             ),
             const SizedBox(height: 16),
             Center(
-              child: SfCircularChart(
-                  legend: const Legend(isVisible: true),
-                  series: <CircularSeries>[
-                    PieSeries<ChartData, String>(
-                        explode: true,
-                        dataSource: chartData,
-                        xValueMapper: (ChartData data, _) => data.x,
-                        yValueMapper: (ChartData data, _) => data.y,
-                        dataLabelMapper: (ChartData data, _) =>
-                            data.y.toInt().toString(),
-                        dataLabelSettings:
-                            const DataLabelSettings(isVisible: true)),
-                  ]),
+              child: chartData.isEmpty
+                  ? const Text("No distribution data available")
+                  : SfCircularChart(
+                      legend: const Legend(isVisible: true),
+                      series: <CircularSeries>[
+                          PieSeries<ChartData, String>(
+                              explode: true,
+                              dataSource: chartData,
+                              xValueMapper: (ChartData data, _) => data.x,
+                              yValueMapper: (ChartData data, _) => data.y,
+                              dataLabelMapper: (ChartData data, _) =>
+                                  data.y.toInt().toString(),
+                              dataLabelSettings:
+                                  const DataLabelSettings(isVisible: true)),
+                        ]),
             ),
             const SizedBox(height: _sectionSpacing),
             Row(
@@ -662,8 +682,8 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => TapCounterUpdatesPage(
-                          name: _counterName,
-                          data: _updatesData,
+                          name: counterName,
+                          counterIndex: widget.index,
                         ),
                       ),
                     );
@@ -673,8 +693,10 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
                 if (hasAttachedLeaderboard) ...[
                   const SizedBox(width: 12),
                   ElevatedButton.icon(
-                    onPressed:
-                        _syncingLeaderboard ? null : _syncAttachedLeaderboards,
+                    onPressed: _syncingLeaderboard
+                        ? null
+                        : () =>
+                            _syncAttachedLeaderboards(counterProvider, counter),
                     icon: _syncingLeaderboard
                         ? const SizedBox(
                             width: 16,
@@ -693,13 +715,13 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
             ),
             const SizedBox(height: 12),
             ElevatedButton(
-              onPressed: () => _showLockConfirmationDialog(context),
+              onPressed: () => _showLockConfirmationDialog(
+                  context, counterProvider, counter),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
               ),
-              child:
-                  Text(_counter.isLocked ? "Unlock Counter" : "Lock Counter"),
+              child: Text(counter.isLocked ? "Unlock Counter" : "Lock Counter"),
             ),
             const SizedBox(height: 24),
           ],
@@ -708,9 +730,10 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
     );
   }
 
-  Future<void> _showLockConfirmationDialog(BuildContext context) async {
+  Future<void> _showLockConfirmationDialog(BuildContext context,
+      CounterProvider counterProvider, TapCounter counter) async {
     final TextEditingController controller = TextEditingController();
-    final bool isLocked = _counter.isLocked;
+    final bool isLocked = counter.isLocked;
 
     await showDialog(
       context: context,
@@ -724,7 +747,7 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'To confirm, please type the name of the counter: "${_counter.name}"',
+                    'To confirm, please type the name of the counter: "${counter.name}"',
                   ),
                   const SizedBox(height: 16),
                   TextField(
@@ -749,10 +772,9 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
                 ),
                 TextButton(
                   onPressed: () {
-                    if (controller.text == _counter.name) {
-                      _counterProvider.toggleCounterLock(widget.index);
+                    if (controller.text == counter.name) {
+                      counterProvider.toggleCounterLock(widget.index);
                       Navigator.pop(context);
-                      this.setState(() {}); // Refresh statistics page UI
                       ScaffoldMessenger.of(context).showSnackBar(
                         buildAppSnackBar(
                           "Counter ${isLocked ? 'Unlocked' : 'Locked'} successfully!",
@@ -848,8 +870,8 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
     );
   }
 
-  Widget _buildWeeklyProHeatmap() {
-    final weeklyData = _counter.generateWeeklyHeatmapData();
+  Widget _buildWeeklyProHeatmap(TapCounter counter) {
+    final weeklyData = counter.generateWeeklyHeatmapData();
     const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     double maxValue = 0;
     for (var d = 0; d < 7; d++) {
@@ -919,8 +941,8 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
     );
   }
 
-  Widget _buildMonthlyProHeatmap() {
-    final monthlyData = _counter.generateMonthlyHeatmapData();
+  Widget _buildMonthlyProHeatmap(TapCounter counter) {
+    final monthlyData = counter.generateMonthlyHeatmapData();
     const monthNames = [
       "Jan",
       "Feb",
