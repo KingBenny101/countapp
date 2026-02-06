@@ -63,6 +63,9 @@ class Leaderboard {
   /// The user name that this local device joined the leaderboard with
   String? joinedUserName;
 
+  /// The last counter value that was synced to this leaderboard
+  int? lastSyncedValue;
+
   Map<String, dynamic> toJson() => {
         "code": code,
         "leaderboard_name": leaderboardName,
@@ -70,6 +73,7 @@ class Leaderboard {
         "leaderboard": leaderboard.map((e) => e.toJson()).toList(),
         "attachedCounterId": attachedCounterId,
         "joinedUserName": joinedUserName,
+        "lastSyncedValue": lastSyncedValue,
       };
 }
 
@@ -117,6 +121,12 @@ class LeaderboardAdapter extends TypeAdapter<Leaderboard> {
       final entry = LeaderboardEntryAdapter().read(reader);
       entries.add(entry);
     }
+    // Read lastSyncedValue if available (backward compatibility)
+    int? lastSynced;
+    if (reader.availableBytes > 0) {
+      final hasLastSynced = reader.readBool();
+      lastSynced = hasLastSynced ? reader.readInt() : null;
+    }
     return Leaderboard(
       code: code,
       leaderboardName: name,
@@ -124,7 +134,7 @@ class LeaderboardAdapter extends TypeAdapter<Leaderboard> {
       leaderboard: entries,
       attachedCounterId: attached,
       joinedUserName: joined,
-    );
+    )..lastSyncedValue = lastSynced;
   }
 
   @override
@@ -144,6 +154,10 @@ class LeaderboardAdapter extends TypeAdapter<Leaderboard> {
     final entryAdapter = LeaderboardEntryAdapter();
     for (final e in obj.leaderboard) {
       entryAdapter.write(writer, e);
+    }
+    writer.writeBool(obj.lastSyncedValue != null);
+    if (obj.lastSyncedValue != null) {
+      writer.writeInt(obj.lastSyncedValue!);
     }
   }
 }
