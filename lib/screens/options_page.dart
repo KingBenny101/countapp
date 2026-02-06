@@ -18,8 +18,12 @@ class _OptionsPageState extends State<OptionsPage> {
     final themeNotifier = Provider.of<ThemeNotifier>(context);
     final settingsBox = Hive.box(AppConstants.settingsBox);
     final autoPost = settingsBox.get(AppConstants.leaderboardAutoPostSetting,
-        defaultValue: true) as bool;
-    final checkUpdates = settingsBox.get(AppConstants.checkUpdatesAtStartupSetting,
+        defaultValue: false) as bool;
+    final syncOnLaunch = settingsBox.get(
+        AppConstants.leaderboardSyncOnLaunchSetting,
+        defaultValue: false) as bool;
+    final checkUpdates = settingsBox.get(
+        AppConstants.checkUpdatesAtStartupSetting,
         defaultValue: true) as bool;
 
     return Scaffold(
@@ -64,13 +68,61 @@ class _OptionsPageState extends State<OptionsPage> {
                     "Auto-sync Leaderboard",
                     style: TextStyle(fontSize: 18),
                   ),
+                  subtitle: syncOnLaunch
+                      ? const Text(
+                          "Disabled when Sync on Launch is enabled",
+                          style: TextStyle(fontSize: 12),
+                        )
+                      : null,
                   trailing: Switch(
                     value: autoPost,
-                    onChanged: (value) {
-                      settingsBox.put(
-                          AppConstants.leaderboardAutoPostSetting, value);
-                      setState(() {});
-                    },
+                    onChanged: syncOnLaunch
+                        ? null
+                        : (value) {
+                            settingsBox.put(
+                                AppConstants.leaderboardAutoPostSetting, value);
+                            if (value) {
+                              // Disable sync on launch when auto-sync is enabled
+                              settingsBox.put(
+                                  AppConstants.leaderboardSyncOnLaunchSetting,
+                                  false);
+                            }
+                            setState(() {});
+                          },
+                  ),
+                ),
+                const Divider(height: 1),
+                ListTile(
+                  contentPadding: const EdgeInsets.symmetric(
+                    vertical: 12.0,
+                    horizontal: 20.0,
+                  ),
+                  title: const Text(
+                    "Sync Leaderboard on Launch",
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  subtitle: autoPost
+                      ? const Text(
+                          "Disabled when Auto-sync is enabled",
+                          style: TextStyle(fontSize: 12),
+                        )
+                      : null,
+                  trailing: Switch(
+                    value: syncOnLaunch,
+                    onChanged: autoPost
+                        ? null
+                        : (value) {
+                            settingsBox.put(
+                                AppConstants.leaderboardSyncOnLaunchSetting,
+                                value);
+                            if (value) {
+                              // Disable auto-sync when sync on launch is enabled
+                              settingsBox.put(
+                                  AppConstants.leaderboardAutoPostSetting,
+                                  false);
+                            }
+                            setState(() {});
+                          },
                   ),
                 ),
                 const Divider(height: 1),

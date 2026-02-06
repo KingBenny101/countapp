@@ -147,139 +147,146 @@ class HomePageState extends State<HomePage> {
                           vertical: 8,
                           horizontal: 16,
                         ),
-                        child: ListTile(
-                          contentPadding: const EdgeInsets.all(12),
-                          leading: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              AnimatedSwitcher(
-                                duration: const Duration(milliseconds: 150),
-                                transitionBuilder: (Widget child,
-                                    Animation<double> animation) {
-                                  return FadeTransition(
-                                    opacity: animation,
-                                    child: SizeTransition(
-                                      sizeFactor: animation,
-                                      axis: Axis.horizontal,
-                                      child: child,
-                                    ),
-                                  );
-                                },
-                                child: _isSelecting
-                                    ? Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Checkbox(
-                                          value: _selectedCounters[index],
-                                          onChanged: (value) {
-                                            setState(() {
-                                              _selectedCounters[index] = value!;
-                                            });
-                                          },
-                                        ),
-                                      )
-                                    : const SizedBox(
-                                        width: 8,
-                                      ),
-                              ),
-                              const SizedBox(width: 8),
-                              GestureDetector(
-                                onLongPress: () {
-                                  // Enter selection mode and select this counter
-                                  setState(() {
-                                    _selectedCounters[index] = true;
-                                    _isSelecting = true;
-                                  });
-                                },
-                                child: AnimatedContainer(
+                        child: Theme(
+                          data: Theme.of(context).copyWith(
+                            splashColor: Colors.transparent,
+                            highlightColor: Colors.transparent,
+                          ),
+                          child: ListTile(
+                            contentPadding: const EdgeInsets.all(12),
+                            leading: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                AnimatedSwitcher(
                                   duration: const Duration(milliseconds: 150),
-                                  curve: Curves.easeInOut,
-                                  width: _isSelecting ? 40 : 48,
-                                  height: _isSelecting ? 40 : 48,
-                                  child: counter.buildIcon(),
+                                  transitionBuilder: (Widget child,
+                                      Animation<double> animation) {
+                                    return FadeTransition(
+                                      opacity: animation,
+                                      child: SizeTransition(
+                                        sizeFactor: animation,
+                                        axis: Axis.horizontal,
+                                        child: child,
+                                      ),
+                                    );
+                                  },
+                                  child: _isSelecting
+                                      ? Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Checkbox(
+                                            value: _selectedCounters[index],
+                                            onChanged: (value) {
+                                              setState(() {
+                                                _selectedCounters[index] =
+                                                    value!;
+                                              });
+                                            },
+                                          ),
+                                        )
+                                      : const SizedBox(
+                                          width: 8,
+                                        ),
                                 ),
-                              ),
-                              const SizedBox(width: 8),
-                            ],
-                          ),
-                          title: Row(
-                            children: [
-                              Text(
-                                counter.name,
-                                style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: textColor),
-                              ),
-                              if (counter.isLocked) ...[
                                 const SizedBox(width: 8),
-                                const Icon(Icons.lock,
-                                    size: 16, color: Colors.grey),
-                              ],
-                            ],
-                          ),
-                          subtitle: Text(
-                            counter.getSubtitle(),
-                            style: const TextStyle(
-                                fontSize: 14, color: Colors.grey),
-                          ),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              // Keep the value visible but allow it to shrink on small screens
-                              ConstrainedBox(
-                                constraints:
-                                    const BoxConstraints(maxWidth: 120),
-                                child: FittedBox(
-                                  fit: BoxFit.scaleDown,
-                                  alignment: Alignment.centerRight,
-                                  child: Text(
-                                    "${counter.value}",
-                                    style: TextStyle(
-                                        fontSize: 30,
-                                        fontWeight: FontWeight.bold,
-                                        color: textColor),
+                                GestureDetector(
+                                  onLongPress: () {
+                                    // Enter selection mode and select this counter
+                                    setState(() {
+                                      _selectedCounters[index] = true;
+                                      _isSelecting = true;
+                                    });
+                                  },
+                                  child: AnimatedContainer(
+                                    duration: const Duration(milliseconds: 150),
+                                    curve: Curves.easeInOut,
+                                    width: _isSelecting ? 40 : 48,
+                                    height: _isSelecting ? 40 : 48,
+                                    child: counter.buildIcon(),
                                   ),
                                 ),
-                              ),
-                              const SizedBox(width: 8),
-
-                              // Animated drag handle (matches checkbox animation)
-                              AnimatedSwitcher(
-                                duration: const Duration(milliseconds: 150),
-                                transitionBuilder: (Widget child,
-                                    Animation<double> animation) {
-                                  return FadeTransition(
-                                    opacity: animation,
-                                    child: SizeTransition(
-                                      sizeFactor: animation,
-                                      axis: Axis.horizontal,
-                                      child: child,
+                                const SizedBox(width: 8),
+                              ],
+                            ),
+                            title: Row(
+                              children: [
+                                Text(
+                                  counter.name,
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: textColor),
+                                ),
+                                if (counter.isLocked) ...[
+                                  const SizedBox(width: 8),
+                                  const Icon(Icons.lock,
+                                      size: 16, color: Colors.grey),
+                                ],
+                              ],
+                            ),
+                            subtitle: Text(
+                              counter.getSubtitle(),
+                              style: const TextStyle(
+                                  fontSize: 14, color: Colors.grey),
+                            ),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                // Keep the value visible but allow it to shrink on small screens
+                                ConstrainedBox(
+                                  constraints:
+                                      const BoxConstraints(maxWidth: 120),
+                                  child: FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    alignment: Alignment.centerRight,
+                                    child: Text(
+                                      "${counter.value}",
+                                      style: TextStyle(
+                                          fontSize: 30,
+                                          fontWeight: FontWeight.bold,
+                                          color: textColor),
                                     ),
-                                  );
-                                },
-                                child: _isSelecting
-                                    ? Align(
-                                        alignment: Alignment.centerRight,
-                                        child: ReorderableDragStartListener(
-                                          index: index,
-                                          child: SizedBox(
-                                            width: 28,
-                                            height: 28,
-                                            child: Center(
-                                              child: Icon(
-                                                Icons.drag_handle,
-                                                size: 20,
-                                                color: Theme.of(context)
-                                                    .iconTheme
-                                                    .color,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+
+                                // Animated drag handle (matches checkbox animation)
+                                AnimatedSwitcher(
+                                  duration: const Duration(milliseconds: 150),
+                                  transitionBuilder: (Widget child,
+                                      Animation<double> animation) {
+                                    return FadeTransition(
+                                      opacity: animation,
+                                      child: SizeTransition(
+                                        sizeFactor: animation,
+                                        axis: Axis.horizontal,
+                                        child: child,
+                                      ),
+                                    );
+                                  },
+                                  child: _isSelecting
+                                      ? Align(
+                                          alignment: Alignment.centerRight,
+                                          child: ReorderableDragStartListener(
+                                            index: index,
+                                            child: SizedBox(
+                                              width: 28,
+                                              height: 28,
+                                              child: Center(
+                                                child: Icon(
+                                                  Icons.drag_handle,
+                                                  size: 20,
+                                                  color: Theme.of(context)
+                                                      .iconTheme
+                                                      .color,
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                      )
-                                    : const SizedBox(width: 0),
-                              ),
-                            ],
+                                        )
+                                      : const SizedBox(width: 0),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),

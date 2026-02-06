@@ -253,6 +253,8 @@ class LeaderboardService {
         // Ensure attachedCounterId and joinedUserName are preserved
         lb.attachedCounterId = lb.attachedCounterId ?? lb.attachedCounterId;
         lb.joinedUserName = lb.joinedUserName ?? lb.joinedUserName;
+        // Save the synced value to avoid redundant updates
+        lb.lastSyncedValue = counter.value.toInt();
         await _save(lb);
         debugPrint("postUpdate succeeded for leaderboard ${lb.code}");
         return true;
