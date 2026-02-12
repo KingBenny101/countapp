@@ -70,9 +70,7 @@ class UpdateService {
           ElevatedButton(
             onPressed: () async {
               final Uri uri = Uri.parse(url);
-              if (await canLaunchUrl(uri)) {
-                await launchUrl(uri, mode: LaunchMode.externalApplication);
-              }
+              await launchUrl(uri, mode: LaunchMode.externalApplication);
               if (context.mounted) Navigator.pop(context);
             },
             child: const Text("Download"),
