@@ -102,13 +102,12 @@ SnackBar buildAppSnackBar(
       ],
     ),
     backgroundColor: backgroundColor,
-    behavior: SnackBarBehavior.floating,
+    behavior: SnackBarBehavior.fixed,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(12),
     ),
     elevation: 6,
     duration: const Duration(seconds: 3),
-    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
   );
 }
