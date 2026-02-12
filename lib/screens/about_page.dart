@@ -59,7 +59,7 @@ class _AboutPageState extends State<AboutPage> {
                   Icon(Icons.menu_book, size: 20),
                   SizedBox(width: 8),
                   Text(
-                    "View Documentation",
+                    "Visit Website",
                     style: TextStyle(fontSize: 16),
                   ),
                 ],
