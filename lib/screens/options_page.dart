@@ -18,7 +18,7 @@ class _OptionsPageState extends State<OptionsPage> {
     final themeNotifier = Provider.of<ThemeNotifier>(context);
     final settingsBox = Hive.box(AppConstants.settingsBox);
     final autoPost = settingsBox.get(AppConstants.leaderboardAutoPostSetting,
-        defaultValue: false) as bool;
+        defaultValue: true) as bool;
     final syncOnLaunch = settingsBox.get(
         AppConstants.leaderboardSyncOnLaunchSetting,
         defaultValue: false) as bool;
