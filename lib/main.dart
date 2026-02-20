@@ -104,8 +104,8 @@ Future<void> _initializeBackup(
     // Initialize GistBackupService with settings box
     GistBackupService().initialize(settingsBox);
 
-    // Initialize BackupProvider with CounterProvider
-    await backupProvider.initialize(counterProvider);
+    // Initialize BackupProvider with CounterProvider and settings box
+    await backupProvider.initialize(counterProvider, settingsBox);
 
     // Check if auto-backup on start is enabled
     final backupOnStart = settingsBox.get(

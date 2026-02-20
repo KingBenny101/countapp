@@ -11,6 +11,7 @@ import "package:hive_ce/hive.dart";
 class BackupProvider with ChangeNotifier {
   final GistBackupService _gistService = GistBackupService();
   CounterProvider? _counterProvider;
+  Box? _settingsBox;
 
   String? githubUsername;
   bool isBusy = false;
@@ -18,8 +19,19 @@ class BackupProvider with ChangeNotifier {
   String? errorMessage;
 
   /// Initialize the backup provider
-  Future<void> initialize(CounterProvider counterProvider) async {
+  Future<void> initialize(CounterProvider counterProvider, Box settingsBox) async {
     _counterProvider = counterProvider;
+    _settingsBox = settingsBox;
+
+    // Load last backup time from settings
+    final storedTime = settingsBox.get(AppConstants.lastBackupTimeSetting) as String?;
+    if (storedTime != null) {
+      try {
+        lastBackupTime = DateTime.parse(storedTime);
+      } catch (e) {
+        debugPrint("[BackupProvider] Failed to parse stored backup time: $e");
+      }
+    }
 
     // Try to fetch username if token exists
     if (_gistService.isAuthenticated()) {
@@ -92,6 +104,11 @@ class BackupProvider with ChangeNotifier {
       await _gistService.uploadBackup(json.encode(backupData));
 
       lastBackupTime = DateTime.now();
+      // Persist last backup time
+      await _settingsBox?.put(
+        AppConstants.lastBackupTimeSetting,
+        lastBackupTime!.toIso8601String(),
+      );
       debugPrint("[BackupProvider] Backup created successfully");
     } catch (e) {
       debugPrint("[BackupProvider] Backup failed: $e");
