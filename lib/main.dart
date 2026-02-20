@@ -28,11 +28,11 @@ Future<void> _syncLeaderboardsOnLaunch() async {
     ) as bool;
 
     if (!syncOnLaunch) {
-      debugPrint("Sync on launch is disabled, skipping background sync.");
+      debugPrint("[LeaderboardSync] Sync on launch is disabled, skipping background sync.");
       return;
     }
 
-    debugPrint("Starting background leaderboard sync on launch...");
+    debugPrint("[LeaderboardSync] Starting background leaderboard sync on launch...");
 
     // Open counters box and load all counters
     final countersBox = await Hive.openBox(AppConstants.countersBox);
@@ -41,7 +41,7 @@ Future<void> _syncLeaderboardsOnLaunch() async {
             CounterFactory.fromJson(Map<String, dynamic>.from(json as Map)))
         .toList();
 
-    debugPrint("Found ${counters.length} counters to sync.");
+    debugPrint("[LeaderboardSync] Found ${counters.length} counters to sync.");
 
     // Get all leaderboards
     final allLeaderboards = LeaderboardService.getAll();
@@ -54,44 +54,44 @@ Future<void> _syncLeaderboardsOnLaunch() async {
 
       if (attachedLeaderboards.isEmpty) {
         debugPrint(
-            "Counter ${counter.name} (${counter.id}) has no attached leaderboards.");
+            "[LeaderboardSync] Counter ${counter.name} (${counter.id}) has no attached leaderboards.");
         continue;
       }
 
       debugPrint(
-          "Syncing counter ${counter.name} (${counter.id}) to ${attachedLeaderboards.length} leaderboard(s)...");
+          "[LeaderboardSync] Syncing counter ${counter.name} (${counter.id}) to ${attachedLeaderboards.length} leaderboard(s)...");
 
       for (final lb in attachedLeaderboards) {
         // Check if the counter value has changed since last sync
         if (lb.lastSyncedValue != null &&
             lb.lastSyncedValue == counter.value.toInt()) {
           debugPrint(
-              "Skipping sync for counter ${counter.name} to leaderboard ${lb.code} - no change (value: ${counter.value.toInt()})");
+              "[LeaderboardSync] Skipping sync for counter ${counter.name} to leaderboard ${lb.code} - no change (value: ${counter.value.toInt()})");
           continue;
         }
 
         debugPrint(
-            "Counter ${counter.name} value changed from ${lb.lastSyncedValue} to ${counter.value.toInt()} - syncing to leaderboard ${lb.code}");
+            "[LeaderboardSync] Counter ${counter.name} value changed from ${lb.lastSyncedValue} to ${counter.value.toInt()} - syncing to leaderboard ${lb.code}");
 
         // Fire and forget - don't block the UI
         LeaderboardService.postUpdate(lb: lb, counter: counter).then((ok) {
           if (ok) {
             debugPrint(
-                "Successfully synced counter ${counter.name} to leaderboard ${lb.code}");
+                "[LeaderboardSync] Successfully synced counter ${counter.name} to leaderboard ${lb.code}");
           } else {
             debugPrint(
-                "Failed to sync counter ${counter.name} to leaderboard ${lb.code}");
+                "[LeaderboardSync] Failed to sync counter ${counter.name} to leaderboard ${lb.code}");
           }
         }).catchError((error) {
           debugPrint(
-              "Error syncing counter ${counter.name} to leaderboard ${lb.code}: $error");
+              "[LeaderboardSync] Error syncing counter ${counter.name} to leaderboard ${lb.code}: $error");
         });
       }
     }
 
-    debugPrint("Background leaderboard sync initiated for all counters.");
+    debugPrint("[LeaderboardSync] Background leaderboard sync initiated for all counters.");
   } catch (e) {
-    debugPrint("Error during background leaderboard sync: $e");
+    debugPrint("[LeaderboardSync] Error during background leaderboard sync: $e");
   }
 }
 
@@ -114,15 +114,15 @@ Future<void> _initializeBackup(
     ) as bool;
 
     if (backupOnStart && backupProvider.isAuthenticated) {
-      debugPrint("Auto-backup on start is enabled, creating backup...");
+      debugPrint("[BackupInit] Auto-backup on start is enabled, creating backup...");
       backupProvider.createBackup().then((_) {
-        debugPrint("Auto-backup completed successfully");
+        debugPrint("[BackupInit] Auto-backup completed successfully");
       }).catchError((error) {
-        debugPrint("Auto-backup failed: $error");
+        debugPrint("[BackupInit] Auto-backup failed: $error");
       });
     }
   } catch (e) {
-    debugPrint("Error during backup initialization: $e");
+    debugPrint("[BackupInit] Error during backup initialization: $e");
   }
 }
 
