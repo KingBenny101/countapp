@@ -2,11 +2,14 @@ import "package:countapp/counters/base/counter_factory.dart";
 import "package:countapp/counters/series_counter/series_counter.dart";
 import "package:countapp/counters/tap_counter/tap_counter.dart";
 import "package:countapp/models/leaderboard.dart";
+import "package:countapp/providers/backup_provider.dart";
 import "package:countapp/providers/counter_provider.dart";
 import "package:countapp/screens/about_page.dart";
+import "package:countapp/screens/backups_page.dart";
 import "package:countapp/screens/home_page.dart";
 import "package:countapp/screens/options_page.dart";
 import "package:countapp/screens/update_page.dart";
+import "package:countapp/services/gist_backup_service.dart";
 import "package:countapp/services/leaderboard_service.dart";
 import "package:countapp/theme/theme_notifier.dart";
 import "package:countapp/utils/constants.dart";
@@ -92,6 +95,37 @@ Future<void> _syncLeaderboardsOnLaunch() async {
   }
 }
 
+/// Initialize backup provider and perform auto-backup if enabled
+Future<void> _initializeBackup(
+    BackupProvider backupProvider, CounterProvider counterProvider) async {
+  try {
+    final settingsBox = Hive.box(AppConstants.settingsBox);
+
+    // Initialize GistBackupService with settings box
+    GistBackupService().initialize(settingsBox);
+
+    // Initialize BackupProvider with CounterProvider
+    await backupProvider.initialize(counterProvider);
+
+    // Check if auto-backup on start is enabled
+    final backupOnStart = settingsBox.get(
+      AppConstants.backupOnStartSetting,
+      defaultValue: false,
+    ) as bool;
+
+    if (backupOnStart && backupProvider.isAuthenticated) {
+      debugPrint("Auto-backup on start is enabled, creating backup...");
+      backupProvider.createBackup().then((_) {
+        debugPrint("Auto-backup completed successfully");
+      }).catchError((error) {
+        debugPrint("Auto-backup failed: $error");
+      });
+    }
+  } catch (e) {
+    debugPrint("Error during backup initialization: $e");
+  }
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -112,11 +146,19 @@ void main() async {
   // Perform background sync if enabled
   _syncLeaderboardsOnLaunch();
 
+  // Create providers
+  final counterProvider = CounterProvider();
+  final backupProvider = BackupProvider();
+
+  // Initialize backup provider
+  _initializeBackup(backupProvider, counterProvider);
+
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeNotifier()),
-        ChangeNotifierProvider(create: (_) => CounterProvider()),
+        ChangeNotifierProvider.value(value: counterProvider),
+        ChangeNotifierProvider.value(value: backupProvider),
       ],
       child: const MainApp(),
     ),
@@ -140,6 +182,7 @@ class MainApp extends StatelessWidget {
             "/updates": (context) => const UpdatePage(),
             "/options": (context) => const OptionsPage(),
             "/about": (context) => const AboutPage(),
+            "/backups": (context) => const BackupsPage(),
           },
         );
       },

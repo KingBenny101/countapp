@@ -12,6 +12,12 @@ class AppConstants {
   static const String leaderboardSyncOnLaunchSetting =
       "leaderboardSyncOnLaunch";
   static const String checkUpdatesAtStartupSetting = "checkUpdatesAtStartup";
+  static const String githubPatSetting = "githubPat";
+  static const String backupOnStartSetting = "backupOnStart";
+
+  // URLs
+  static const String backupDocsUrl =
+      "https://kingbenny101.github.io/countapp/guides/backups/#step-by-step-instructions";
 
   // Hive type IDs
   static const int tapCounterTypeId = 1;
