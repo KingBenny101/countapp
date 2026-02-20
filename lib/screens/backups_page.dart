@@ -1,5 +1,6 @@
 import "package:countapp/providers/backup_provider.dart";
 import "package:countapp/utils/constants.dart";
+import "package:countapp/utils/widgets.dart";
 import "package:flutter/material.dart";
 import "package:intl/intl.dart";
 import "package:provider/provider.dart";
@@ -39,19 +40,20 @@ class _BackupsPageState extends State<BackupsPage> {
       await backupProvider.createBackup();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Backup uploaded successfully"),
-            backgroundColor: Colors.green,
+          buildAppSnackBar(
+            "Backup uploaded successfully",
+            context: context,
+            success: true,
           ),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-                "Backup failed: ${e.toString().replaceFirst('Exception: ', '')}"),
-            backgroundColor: Colors.red,
+          buildAppSnackBar(
+            "Backup failed: ${e.toString().replaceFirst('Exception: ', '')}",
+            context: context,
+            success: false,
           ),
         );
       }
@@ -101,19 +103,20 @@ class _BackupsPageState extends State<BackupsPage> {
       await backupProvider.restoreBackup();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Backup restored successfully"),
-            backgroundColor: Colors.green,
+          buildAppSnackBar(
+            "Backup restored successfully",
+            context: context,
+            success: true,
           ),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-                "Restore failed: ${e.toString().replaceFirst('Exception: ', '')}"),
-            backgroundColor: Colors.red,
+          buildAppSnackBar(
+            "Restore failed: ${e.toString().replaceFirst('Exception: ', '')}",
+            context: context,
+            success: false,
           ),
         );
       }
