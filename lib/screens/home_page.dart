@@ -535,6 +535,24 @@ class HomePageState extends State<HomePage> {
                   splashColor: Colors.transparent,
                 ),
                 ListTile(
+                  leading: const Icon(Icons.backup),
+                  title: Container(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 10,
+                      horizontal: 10,
+                    ),
+                    child: Text(
+                      "Backups",
+                      style: TextStyle(fontSize: 18, color: textColor),
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.pushNamed(context, "/backups");
+                  },
+                  splashColor: Colors.transparent,
+                ),
+                ListTile(
                   leading: const Icon(Icons.help_outline),
                   title: Container(
                     padding: const EdgeInsets.symmetric(
