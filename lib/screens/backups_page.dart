@@ -31,15 +31,7 @@ class _BackupsPageState extends State<BackupsPage> {
 
   Future<void> _openDocumentation() async {
     final uri = Uri.parse(AppConstants.backupDocsUrl);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } else {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Could not open documentation")),
-        );
-      }
-    }
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
   }
 
   Future<void> _handleUploadBackup(BackupProvider backupProvider) async {
