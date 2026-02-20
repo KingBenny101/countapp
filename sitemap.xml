@@ -2,30 +2,34 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://kingbenny101.github.io/countapp/</loc>
-         <lastmod>2026-02-06</lastmod>
+         <lastmod>2026-02-20</lastmod>
     </url>
     <url>
          <loc>https://kingbenny101.github.io/countapp/developers/setup/</loc>
-         <lastmod>2026-02-06</lastmod>
+         <lastmod>2026-02-20</lastmod>
     </url>
     <url>
          <loc>https://kingbenny101.github.io/countapp/getting-started/installation/</loc>
-         <lastmod>2026-02-06</lastmod>
+         <lastmod>2026-02-20</lastmod>
+    </url>
+    <url>
+         <loc>https://kingbenny101.github.io/countapp/guides/backups/</loc>
+         <lastmod>2026-02-20</lastmod>
     </url>
     <url>
          <loc>https://kingbenny101.github.io/countapp/guides/counters/</loc>
-         <lastmod>2026-02-06</lastmod>
+         <lastmod>2026-02-20</lastmod>
     </url>
     <url>
          <loc>https://kingbenny101.github.io/countapp/guides/leaderboards/</loc>
-         <lastmod>2026-02-06</lastmod>
+         <lastmod>2026-02-20</lastmod>
     </url>
     <url>
          <loc>https://kingbenny101.github.io/countapp/guides/quick-start/</loc>
-         <lastmod>2026-02-06</lastmod>
+         <lastmod>2026-02-20</lastmod>
     </url>
     <url>
          <loc>https://kingbenny101.github.io/countapp/guides/using-the-app/</loc>
-         <lastmod>2026-02-06</lastmod>
+         <lastmod>2026-02-20</lastmod>
     </url>
 </urlset>
