@@ -25,6 +25,8 @@ class _OptionsPageState extends State<OptionsPage> {
     final checkUpdates = settingsBox.get(
         AppConstants.checkUpdatesAtStartupSetting,
         defaultValue: true) as bool;
+    final backupOnStart = settingsBox.get(AppConstants.backupOnStartSetting,
+        defaultValue: false) as bool;
 
     return Scaffold(
       appBar: AppBar(
@@ -140,6 +142,28 @@ class _OptionsPageState extends State<OptionsPage> {
                     onChanged: (value) {
                       settingsBox.put(
                           AppConstants.checkUpdatesAtStartupSetting, value);
+                      setState(() {});
+                    },
+                  ),
+                ),
+                const Divider(height: 1),
+                ListTile(
+                  contentPadding: const EdgeInsets.symmetric(
+                    vertical: 12.0,
+                    horizontal: 20.0,
+                  ),
+                  title: const Text(
+                    "Backup on App Start",
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  subtitle: const Text(
+                    "Automatically upload to GitHub when app launches",
+                    style: TextStyle(fontSize: 12),
+                  ),
+                  trailing: Switch(
+                    value: backupOnStart,
+                    onChanged: (value) {
+                      settingsBox.put(AppConstants.backupOnStartSetting, value);
                       setState(() {});
                     },
                   ),

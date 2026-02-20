@@ -82,7 +82,7 @@ nav:
       - Using the App: guides/using-the-app.md
       - Counter Types: guides/counters.md
       - Leaderboards: guides/leaderboards.md
+      - Cloud Backups: guides/backups.md
   - For Developers: developers/setup.md
-
 
 copyright: Copyright &copy; 2026 KingBenny101
