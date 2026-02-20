@@ -354,34 +354,20 @@ class HomePageState extends State<HomePage> {
                   splashColor: Colors.transparent,
                 ),
                 ListTile(
-                  leading: const Icon(Icons.update),
+                  leading: const Icon(Icons.backup),
                   title: Container(
                     padding: const EdgeInsets.symmetric(
                       vertical: 10,
                       horizontal: 10,
                     ),
-                    child: Text("Updates",
-                        style: TextStyle(fontSize: 18, color: textColor)),
-                  ),
-                  onTap: () async {
-                    FocusScope.of(context).unfocus();
-                    await Navigator.pushNamed(context, "/updates");
-                  },
-                  splashColor: Colors.transparent,
-                ),
-                ListTile(
-                  leading: const Icon(Icons.settings),
-                  title: Container(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 10,
-                      horizontal: 10,
+                    child: Text(
+                      "Backups",
+                      style: TextStyle(fontSize: 18, color: textColor),
                     ),
-                    child: Text("Options",
-                        style: TextStyle(fontSize: 18, color: textColor)),
                   ),
-                  onTap: () async {
-                    FocusScope.of(context).unfocus();
-                    await Navigator.pushNamed(context, "/options");
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.pushNamed(context, "/backups");
                   },
                   splashColor: Colors.transparent,
                 ),
@@ -531,6 +517,38 @@ class HomePageState extends State<HomePage> {
                         }
                       }
                     }
+                  },
+                  splashColor: Colors.transparent,
+                ),
+                ListTile(
+                  leading: const Icon(Icons.settings),
+                  title: Container(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 10,
+                      horizontal: 10,
+                    ),
+                    child: Text("Options",
+                        style: TextStyle(fontSize: 18, color: textColor)),
+                  ),
+                  onTap: () async {
+                    FocusScope.of(context).unfocus();
+                    await Navigator.pushNamed(context, "/options");
+                  },
+                  splashColor: Colors.transparent,
+                ),
+                ListTile(
+                  leading: const Icon(Icons.update),
+                  title: Container(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 10,
+                      horizontal: 10,
+                    ),
+                    child: Text("Updates",
+                        style: TextStyle(fontSize: 18, color: textColor)),
+                  ),
+                  onTap: () async {
+                    FocusScope.of(context).unfocus();
+                    await Navigator.pushNamed(context, "/updates");
                   },
                   splashColor: Colors.transparent,
                 ),
