@@ -15,6 +15,7 @@ class AppConstants {
   static const String githubPatSetting = "githubPat";
   static const String backupOnStartSetting = "backupOnStart";
   static const String lastBackupTimeSetting = "lastBackupTime";
+  static const String gistBackupFileNameSetting = "gistBackupFileName";
 
   // URLs
   static const String backupDocsUrl =
