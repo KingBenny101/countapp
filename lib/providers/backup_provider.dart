@@ -19,12 +19,14 @@ class BackupProvider with ChangeNotifier {
   String? errorMessage;
 
   /// Initialize the backup provider
-  Future<void> initialize(CounterProvider counterProvider, Box settingsBox) async {
+  Future<void> initialize(
+      CounterProvider counterProvider, Box settingsBox) async {
     _counterProvider = counterProvider;
     _settingsBox = settingsBox;
 
     // Load last backup time from settings
-    final storedTime = settingsBox.get(AppConstants.lastBackupTimeSetting) as String?;
+    final storedTime =
+        settingsBox.get(AppConstants.lastBackupTimeSetting) as String?;
     if (storedTime != null) {
       try {
         lastBackupTime = DateTime.parse(storedTime);
@@ -222,4 +224,19 @@ class BackupProvider with ChangeNotifier {
 
   /// Get stored token
   String? get storedToken => _gistService.getStoredToken();
+
+  /// Get configured backup file name
+  String get backupFileName => _gistService.getBackupFileName();
+
+  /// Update configured backup file name
+  void updateBackupFileName(String fileName) {
+    _gistService.setBackupFileName(fileName);
+    notifyListeners();
+  }
+
+  /// Get backup gist URL
+  Future<Uri> getBackupGistUri() async {
+    final gistUrl = await _gistService.getBackupGistUrl();
+    return Uri.parse(gistUrl);
+  }
 }

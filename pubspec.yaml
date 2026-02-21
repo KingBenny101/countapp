@@ -1,7 +1,7 @@
 name: countapp
 description: 'A simple application to help users keep track of their counts effortlessly.'
 publish_to: 'none'
-version: 1.6.0
+version: 1.6.1
 
 environment:
   sdk: '>=3.3.3 <4.0.0'
@@ -42,9 +42,3 @@ flutter:
   uses-material-design: true
   assets:
     - assets/icon/android/icon.png
-
-msix_config:
-  display_name: Count App
-  publisher_display_name: KingBenny101
-  identity_name: com.kingbenny101.countapp
-  logo_path: assets/icon/windows/icon.png

@@ -7,21 +7,26 @@ import "package:http/http.dart" as http;
 
 /// Service for managing GitHub Gist backups
 class GistBackupService {
-  GistBackupService._();
-
+  static const String _baseUrl = "https://api.github.com";
+  static const String _defaultBackupFileName = "countapp_backup";
   static final GistBackupService _instance = GistBackupService._();
 
   factory GistBackupService() => _instance;
 
-  static const String _baseUrl = "https://api.github.com";
+  GistBackupService._();
+
   String? _token;
   Box? _settingsBox;
   String? _cachedGistId;
+  String _backupFileName = _defaultBackupFileName;
 
   /// Initialize the service with settings box reference
   void initialize(Box settingsBox) {
     _settingsBox = settingsBox;
     _token = settingsBox.get(AppConstants.githubPatSetting) as String?;
+    final storedFileName =
+        settingsBox.get(AppConstants.gistBackupFileNameSetting) as String?;
+    _backupFileName = _sanitizeBackupFileName(storedFileName);
   }
 
   /// Store the GitHub Personal Access Token
@@ -34,6 +39,18 @@ class GistBackupService {
   /// Get the stored token
   String? getStoredToken() {
     return _token;
+  }
+
+  /// Get the configured backup file name (without extension)
+  String getBackupFileName() {
+    return _backupFileName;
+  }
+
+  /// Set the backup file name (without extension)
+  void setBackupFileName(String fileName) {
+    _backupFileName = _sanitizeBackupFileName(fileName);
+    _settingsBox?.put(AppConstants.gistBackupFileNameSetting, _backupFileName);
+    _cachedGistId = null;
   }
 
   /// Check if user is authenticated
@@ -68,7 +85,7 @@ class GistBackupService {
   }
 
   /// Get the current GitHub username
-  Future<String> getCurrentUser() async {
+  Future<String> getCurrentUser() {
     return validateToken();
   }
 
@@ -83,35 +100,40 @@ class GistBackupService {
     }
 
     try {
-      // Search for existing gist
-      final response = await http.get(
-        Uri.parse("$_baseUrl/gists"),
-        headers: _getHeaders(),
-      );
-
-      if (response.statusCode == 200) {
-        final gists = json.decode(response.body) as List;
-
-        // Look for our backup gist
-        for (final gist in gists) {
-          final files = gist["files"] as Map<String, dynamic>?;
-          if (files != null && files.containsKey("countapp_backup.json")) {
-            _cachedGistId = gist["id"] as String;
-            debugPrint("[GistBackup] Found existing gist: $_cachedGistId");
-            return _cachedGistId!;
-          }
-        }
-
-        // Gist doesn't exist, create it
-        debugPrint("[GistBackup] Creating new secret gist");
-        return await _createBackupGist();
-      } else {
-        throw Exception("Failed to list gists: ${response.statusCode}");
+      final existingGistId = await _findExistingBackupGistId();
+      if (existingGistId != null) {
+        _cachedGistId = existingGistId;
+        debugPrint("[GistBackup] Found existing gist: $_cachedGistId");
+        return _cachedGistId!;
       }
+
+      // Gist doesn't exist, create it
+      debugPrint("[GistBackup] Creating new secret gist");
+      return await _createBackupGist();
     } catch (e) {
       debugPrint("[GistBackup] Error getting/creating gist: $e");
       rethrow;
     }
+  }
+
+  /// Get the backup gist if it exists
+  Future<String> getExistingBackupGist() async {
+    if (_cachedGistId != null) {
+      return _cachedGistId!;
+    }
+
+    if (!isAuthenticated()) {
+      throw Exception("Not authenticated");
+    }
+
+    final existingGistId = await _findExistingBackupGistId();
+    if (existingGistId == null) {
+      throw Exception(
+          "No backup found for '$_backupFileNameWithExtension'. Upload a backup first.");
+    }
+
+    _cachedGistId = existingGistId;
+    return _cachedGistId!;
   }
 
   /// Create a new secret backup gist
@@ -123,7 +145,7 @@ class GistBackupService {
         "description": "Countapp backup data",
         "public": false, // Secret gist
         "files": {
-          "countapp_backup.json": {
+          _backupFileNameWithExtension: {
             "content": json.encode({
               "timestamp": DateTime.now().toIso8601String(),
               "appVersion": "1.6.0",
@@ -153,7 +175,7 @@ class GistBackupService {
       headers: _getHeaders(),
       body: json.encode({
         "files": {
-          "countapp_backup.json": {
+          _backupFileNameWithExtension: {
             "content": jsonData,
           },
         },
@@ -169,7 +191,7 @@ class GistBackupService {
 
   /// Download backup data from the gist
   Future<String> downloadBackup() async {
-    final gistId = await getOrCreateBackupGist();
+    final gistId = await getExistingBackupGist();
 
     final response = await http.get(
       Uri.parse("$_baseUrl/gists/$gistId"),
@@ -179,7 +201,12 @@ class GistBackupService {
     if (response.statusCode == 200) {
       final data = json.decode(response.body) as Map<String, dynamic>;
       final files = data["files"] as Map<String, dynamic>;
-      final backupFile = files["countapp_backup.json"] as Map<String, dynamic>;
+      final backupFile =
+          files[_backupFileNameWithExtension] as Map<String, dynamic>?;
+      if (backupFile == null) {
+        throw Exception(
+            "Backup file '$_backupFileNameWithExtension' not found in gist");
+      }
       final content = backupFile["content"] as String;
       debugPrint("[GistBackup] Backup downloaded successfully");
       return content;
@@ -196,6 +223,52 @@ class GistBackupService {
       "timestamp": data["timestamp"] as String?,
       "appVersion": data["appVersion"] as String?,
     };
+  }
+
+  /// Get the URL of the backup gist
+  Future<String> getBackupGistUrl() async {
+    final gistId = await getExistingBackupGist();
+    return "https://gist.github.com/$gistId";
+  }
+
+  Future<String?> _findExistingBackupGistId() async {
+    final response = await http.get(
+      Uri.parse("$_baseUrl/gists"),
+      headers: _getHeaders(),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception("Failed to list gists: ${response.statusCode}");
+    }
+
+    final gists = json.decode(response.body) as List;
+
+    for (final gist in gists) {
+      final gistMap = gist as Map<String, dynamic>;
+      final files = gistMap["files"] as Map<String, dynamic>?;
+      if (files != null && files.containsKey(_backupFileNameWithExtension)) {
+        return gistMap["id"] as String;
+      }
+    }
+
+    return null;
+  }
+
+  String get _backupFileNameWithExtension => "$_backupFileName.json";
+
+  String _sanitizeBackupFileName(String? fileName) {
+    final trimmed = fileName?.trim() ?? "";
+    if (trimmed.isEmpty) {
+      return _defaultBackupFileName;
+    }
+
+    final withoutExtension =
+        trimmed.replaceAll(RegExp(r"\.json$", caseSensitive: false), "");
+    if (withoutExtension.isEmpty) {
+      return _defaultBackupFileName;
+    }
+
+    return withoutExtension;
   }
 
   /// Get request headers with authorization

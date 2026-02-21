@@ -31,7 +31,7 @@ class SeriesCounterStatisticsPageState
     fontWeight: FontWeight.bold,
   );
 
-  String _selectedRange = "1W"; // Default to 1 week
+  String _selectedRange = "1M"; // Default to 1 month
   bool _syncingLeaderboard = false;
 
   List<_SeriesDataPoint> _getLineChartData(SeriesCounter counter) {
@@ -236,27 +236,25 @@ class SeriesCounterStatisticsPageState
                         zoomMode: ZoomMode.x,
                       ),
                       series: <CartesianSeries<_SeriesDataPoint, DateTime>>[
-                        AreaSeries<_SeriesDataPoint, DateTime>(
+                        ScatterSeries<_SeriesDataPoint, DateTime>(
                           dataSource: lineData,
                           xValueMapper: (point, _) => point.date,
                           yValueMapper: (point, _) => point.value,
                           color: Colors.deepPurple,
-                          borderColor: Colors.deepPurple,
-                          borderWidth: 3,
-                          animationDuration: 1000,
-                          gradient: LinearGradient(
-                            colors: [
-                              Colors.deepPurple.withValues(alpha: 0.3),
-                              Colors.deepPurple.withValues(alpha: 0.0),
-                            ],
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                          ),
                           markerSettings: const MarkerSettings(
                             isVisible: true,
-                            height: 4,
-                            width: 4,
+                            height: 6,
+                            width: 6,
                           ),
+                          trendlines: [
+                            Trendline(
+                              type: TrendlineType.polynomial,
+                              polynomialOrder: 6, // Maximum degree polynomial
+                              color: Colors.orange,
+                              dashArray: [5, 5],
+                              name: "Polynomial Trend",
+                            ),
+                          ],
                         ),
                       ],
                     )
