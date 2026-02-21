@@ -43,7 +43,6 @@ class _BackupsPageState extends State<BackupsPage> {
           buildAppSnackBar(
             "Backup uploaded successfully",
             context: context,
-            success: true,
           ),
         );
       }
@@ -93,7 +92,6 @@ class _BackupsPageState extends State<BackupsPage> {
           buildAppSnackBar(
             "Backup restored successfully",
             context: context,
-            success: true,
           ),
         );
       }
@@ -282,7 +280,6 @@ class _BackupsPageState extends State<BackupsPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Icon(
                             Icons.info_outline,
@@ -296,7 +293,6 @@ class _BackupsPageState extends State<BackupsPage> {
                             "About Backups",
                             style: TextStyle(
                               fontSize: 16,
-                              fontWeight: FontWeight.bold,
                               color: Theme.of(context)
                                   .colorScheme
                                   .onPrimaryContainer,

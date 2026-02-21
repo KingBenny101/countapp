@@ -258,7 +258,7 @@ class SeriesCounterStatisticsPageState
                         ),
                       ],
                     )
-                  : Center(
+                  : const Center(
                       child: Text(
                         "No data in the selected time range.",
                         style: TextStyle(fontSize: 14),

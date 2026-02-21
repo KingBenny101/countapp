@@ -7,14 +7,14 @@ import "package:http/http.dart" as http;
 
 /// Service for managing GitHub Gist backups
 class GistBackupService {
-  GistBackupService._();
-
+  static const String _baseUrl = "https://api.github.com";
+  static const String _defaultBackupFileName = "countapp_backup";
   static final GistBackupService _instance = GistBackupService._();
 
   factory GistBackupService() => _instance;
 
-  static const String _baseUrl = "https://api.github.com";
-  static const String _defaultBackupFileName = "countapp_backup";
+  GistBackupService._();
+
   String? _token;
   Box? _settingsBox;
   String? _cachedGistId;
@@ -85,7 +85,7 @@ class GistBackupService {
   }
 
   /// Get the current GitHub username
-  Future<String> getCurrentUser() async {
+  Future<String> getCurrentUser() {
     return validateToken();
   }
 
@@ -244,9 +244,10 @@ class GistBackupService {
     final gists = json.decode(response.body) as List;
 
     for (final gist in gists) {
-      final files = gist["files"] as Map<String, dynamic>?;
+      final gistMap = gist as Map<String, dynamic>;
+      final files = gistMap["files"] as Map<String, dynamic>?;
       if (files != null && files.containsKey(_backupFileNameWithExtension)) {
-        return gist["id"] as String;
+        return gistMap["id"] as String;
       }
     }
 
