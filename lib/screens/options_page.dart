@@ -89,6 +89,91 @@ class _OptionsPageState extends State<OptionsPage> {
     );
   }
 
+  Widget _buildSectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 4, bottom: 8),
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 13,
+          fontWeight: FontWeight.w700,
+          color: Theme.of(context).colorScheme.primary,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOptionsCard(List<Widget> children) {
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      elevation: 1,
+      clipBehavior: Clip.antiAlias,
+      child: Column(children: children),
+    );
+  }
+
+  Widget _buildSwitchTile({
+    required String title,
+    String? subtitle,
+    required bool value,
+    required ValueChanged<bool>? onChanged,
+    IconData? icon,
+  }) {
+    return ListTile(
+      contentPadding: const EdgeInsets.symmetric(
+        horizontal: 20,
+        vertical: 10,
+      ),
+      leading: icon == null ? null : Icon(icon),
+      title: Text(
+        title,
+        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+      ),
+      subtitle: subtitle == null
+          ? null
+          : Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Text(
+                subtitle,
+                style: const TextStyle(fontSize: 12),
+              ),
+            ),
+      trailing: Switch(value: value, onChanged: onChanged),
+    );
+  }
+
+  Widget _buildActionTile({
+    required String title,
+    required String subtitle,
+    required VoidCallback onPressed,
+    IconData? icon,
+  }) {
+    return ListTile(
+      contentPadding: const EdgeInsets.symmetric(
+        horizontal: 20,
+        vertical: 10,
+      ),
+      leading: icon == null ? null : Icon(icon),
+      title: Text(
+        title,
+        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+      ),
+      subtitle: Padding(
+        padding: const EdgeInsets.only(top: 4),
+        child: Text(
+          subtitle,
+          style: const TextStyle(fontSize: 12),
+        ),
+      ),
+      trailing: IconButton(
+        icon: const Icon(Icons.edit_outlined),
+        onPressed: onPressed,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeNotifier = Provider.of<ThemeNotifier>(context);
@@ -110,163 +195,106 @@ class _OptionsPageState extends State<OptionsPage> {
         title: const Text("Options"),
       ),
       body: ListView(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
         children: [
-          Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12.0),
+          _buildSectionTitle("Appearance"),
+          _buildOptionsCard([
+            _buildSwitchTile(
+              icon: Icons.dark_mode_outlined,
+              title: "Dark Mode",
+              value: Theme.of(context).brightness == Brightness.dark,
+              onChanged: (value) {
+                themeNotifier.toggleTheme();
+              },
             ),
-            elevation: 5,
-            child: Column(
-              children: [
-                ListTile(
-                  contentPadding: const EdgeInsets.symmetric(
-                    vertical: 12.0,
-                    horizontal: 20.0,
-                  ),
-                  title: const Text(
-                    "Dark Mode",
-                    style: TextStyle(fontSize: 18),
-                  ),
-                  trailing: Switch(
-                    value: Theme.of(context).brightness == Brightness.dark,
-                    onChanged: (value) {
-                      themeNotifier.toggleTheme();
-                    },
-                  ),
-                ),
-                const Divider(height: 1),
-                const ThemeSelector(),
-                const Divider(height: 1),
-                ListTile(
-                  contentPadding: const EdgeInsets.symmetric(
-                    vertical: 12.0,
-                    horizontal: 20.0,
-                  ),
-                  title: const Text(
-                    "Auto-sync Leaderboard",
-                    style: TextStyle(fontSize: 18),
-                  ),
-                  subtitle: syncOnLaunch
-                      ? const Text(
-                          "Disabled when Sync on Launch is enabled",
-                          style: TextStyle(fontSize: 12),
-                        )
-                      : null,
-                  trailing: Switch(
-                    value: autoPost,
-                    onChanged: syncOnLaunch
-                        ? null
-                        : (value) {
-                            settingsBox.put(
-                                AppConstants.leaderboardAutoPostSetting, value);
-                            if (value) {
-                              // Disable sync on launch when auto-sync is enabled
-                              settingsBox.put(
-                                  AppConstants.leaderboardSyncOnLaunchSetting,
-                                  false);
-                            }
-                            setState(() {});
-                          },
-                  ),
-                ),
-                const Divider(height: 1),
-                ListTile(
-                  contentPadding: const EdgeInsets.symmetric(
-                    vertical: 12.0,
-                    horizontal: 20.0,
-                  ),
-                  title: const Text(
-                    "Sync Leaderboard on Launch",
-                    style: TextStyle(fontSize: 18),
-                  ),
-                  subtitle: autoPost
-                      ? const Text(
-                          "Disabled when Auto-sync is enabled",
-                          style: TextStyle(fontSize: 12),
-                        )
-                      : null,
-                  trailing: Switch(
-                    value: syncOnLaunch,
-                    onChanged: autoPost
-                        ? null
-                        : (value) {
-                            settingsBox.put(
-                                AppConstants.leaderboardSyncOnLaunchSetting,
-                                value);
-                            if (value) {
-                              // Disable auto-sync when sync on launch is enabled
-                              settingsBox.put(
-                                  AppConstants.leaderboardAutoPostSetting,
-                                  false);
-                            }
-                            setState(() {});
-                          },
-                  ),
-                ),
-                const Divider(height: 1),
-                ListTile(
-                  contentPadding: const EdgeInsets.symmetric(
-                    vertical: 12.0,
-                    horizontal: 20.0,
-                  ),
-                  title: const Text(
-                    "Check for Updates at Startup",
-                    style: TextStyle(fontSize: 18),
-                  ),
-                  trailing: Switch(
-                    value: checkUpdates,
-                    onChanged: (value) {
+            const Divider(height: 1),
+            const ThemeSelector(),
+          ]),
+          const SizedBox(height: 16),
+          _buildSectionTitle("Leaderboard"),
+          _buildOptionsCard([
+            _buildSwitchTile(
+              icon: Icons.leaderboard_outlined,
+              title: "Auto-Sync Leaderboard",
+              subtitle: syncOnLaunch
+                  ? "Disabled when Sync Leaderboard at Launch is enabled"
+                  : null,
+              value: autoPost,
+              onChanged: syncOnLaunch
+                  ? null
+                  : (value) {
                       settingsBox.put(
-                          AppConstants.checkUpdatesAtStartupSetting, value);
+                        AppConstants.leaderboardAutoPostSetting,
+                        value,
+                      );
+                      if (value) {
+                        settingsBox.put(
+                          AppConstants.leaderboardSyncOnLaunchSetting,
+                          false,
+                        );
+                      }
                       setState(() {});
                     },
-                  ),
-                ),
-                const Divider(height: 1),
-                ListTile(
-                  contentPadding: const EdgeInsets.symmetric(
-                    vertical: 12.0,
-                    horizontal: 20.0,
-                  ),
-                  title: const Text(
-                    "Backup on App Start",
-                    style: TextStyle(fontSize: 18),
-                  ),
-                  subtitle: const Text(
-                    "Automatically upload to GitHub when app launches",
-                    style: TextStyle(fontSize: 12),
-                  ),
-                  trailing: Switch(
-                    value: backupOnStart,
-                    onChanged: (value) {
-                      settingsBox.put(AppConstants.backupOnStartSetting, value);
-                      setState(() {});
-                    },
-                  ),
-                ),
-                const Divider(height: 1),
-                ListTile(
-                  contentPadding: const EdgeInsets.symmetric(
-                    vertical: 12.0,
-                    horizontal: 20.0,
-                  ),
-                  title: const Text(
-                    "Backup Gist File Name",
-                    style: TextStyle(fontSize: 18),
-                  ),
-                  subtitle: Text(
-                    backupProvider.backupFileName,
-                    style: const TextStyle(fontSize: 12),
-                  ),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.edit_outlined),
-                    onPressed: () => _editGistBackupFileName(backupProvider),
-                  ),
-                ),
-              ],
             ),
-          ),
+            const Divider(height: 1),
+            _buildSwitchTile(
+              icon: Icons.sync_outlined,
+              title: "Sync Leaderboard at Launch",
+              subtitle: autoPost
+                  ? "Disabled when Auto-Sync Leaderboard is enabled"
+                  : null,
+              value: syncOnLaunch,
+              onChanged: autoPost
+                  ? null
+                  : (value) {
+                      settingsBox.put(
+                        AppConstants.leaderboardSyncOnLaunchSetting,
+                        value,
+                      );
+                      if (value) {
+                        settingsBox.put(
+                          AppConstants.leaderboardAutoPostSetting,
+                          false,
+                        );
+                      }
+                      setState(() {});
+                    },
+            ),
+          ]),
+          const SizedBox(height: 16),
+          _buildSectionTitle("Updates"),
+          _buildOptionsCard([
+            _buildSwitchTile(
+              icon: Icons.system_update_alt_outlined,
+              title: "Check for Updates at Launch",
+              value: checkUpdates,
+              onChanged: (value) {
+                settingsBox.put(
+                    AppConstants.checkUpdatesAtStartupSetting, value);
+                setState(() {});
+              },
+            ),
+          ]),
+          const SizedBox(height: 16),
+          _buildSectionTitle("Backup"),
+          _buildOptionsCard([
+            _buildSwitchTile(
+              icon: Icons.backup_outlined,
+              title: "Backup at Launch",
+              value: backupOnStart,
+              onChanged: (value) {
+                settingsBox.put(AppConstants.backupOnStartSetting, value);
+                setState(() {});
+              },
+            ),
+            const Divider(height: 1),
+            _buildActionTile(
+              icon: Icons.description_outlined,
+              title: "Backup Gist File Name",
+              subtitle: backupProvider.backupFileName,
+              onPressed: () => _editGistBackupFileName(backupProvider),
+            ),
+          ]),
         ],
       ),
     );
