@@ -62,41 +62,28 @@ class _BackupsPageState extends State<BackupsPage> {
 
   Future<void> _handleDownloadBackup(BackupProvider backupProvider) async {
     try {
-      // Check if local is newer
-      final localNewer = await backupProvider.isLocalNewer();
-
-      if (localNewer && mounted) {
-        final localTime = backupProvider.getLocalLastModified();
-        final remoteTime = await backupProvider.getRemoteLastModified();
-
-        if (!mounted) return;
-
-        final confirm = await showDialog<bool>(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text("Confirm Restore"),
-            content: Text(
-              "Local data was modified more recently "
-              "(${localTime != null ? DateFormat("MMM d, yyyy h:mm a").format(localTime) : "unknown"}).\n\n"
-              "Backup is from ${remoteTime != null ? DateFormat("MMM d, yyyy h:mm a").format(remoteTime) : "unknown"}.\n\n"
-              "Overwrite local data with backup?",
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: const Text("Cancel"),
-              ),
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: const Text("Restore Anyway"),
-              ),
-            ],
+      final confirm = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text("Confirm Restore"),
+          content: const Text(
+            "This will replace all your current counters with the backup from GitHub Gist. Continue?",
           ),
-        );
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text("Restore"),
+            ),
+          ],
+        ),
+      );
 
-        if (confirm != true) {
-          return;
-        }
+      if (confirm != true) {
+        return;
       }
 
       // Proceed with restore
@@ -115,6 +102,23 @@ class _BackupsPageState extends State<BackupsPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           buildAppSnackBar(
             "Restore failed: ${e.toString().replaceFirst('Exception: ', '')}",
+            context: context,
+            success: false,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _handleOpenGist(BackupProvider backupProvider) async {
+    try {
+      final gistUri = await backupProvider.getBackupGistUri();
+      await launchUrl(gistUri, mode: LaunchMode.externalApplication);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          buildAppSnackBar(
+            "Failed to open gist: ${e.toString().replaceFirst('Exception: ', '')}",
             context: context,
             success: false,
           ),
@@ -250,6 +254,19 @@ class _BackupsPageState extends State<BackupsPage> {
                                   : null,
                             ),
                     ),
+                    const Divider(height: 1),
+                    ListTile(
+                      leading: const Icon(Icons.open_in_new),
+                      title: const Text("Open Gist"),
+                      subtitle: const Text("Open backup gist in browser"),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.open_in_new),
+                        onPressed: backupProvider.isAuthenticated &&
+                                !backupProvider.isBusy
+                            ? () => _handleOpenGist(backupProvider)
+                            : null,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -265,9 +282,11 @@ class _BackupsPageState extends State<BackupsPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Icon(
                             Icons.info_outline,
+                            size: 20,
                             color: Theme.of(context)
                                 .colorScheme
                                 .onPrimaryContainer,
@@ -276,6 +295,7 @@ class _BackupsPageState extends State<BackupsPage> {
                           Text(
                             "About Backups",
                             style: TextStyle(
+                              fontSize: 16,
                               fontWeight: FontWeight.bold,
                               color: Theme.of(context)
                                   .colorScheme
