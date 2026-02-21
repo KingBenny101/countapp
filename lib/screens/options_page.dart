@@ -84,7 +84,6 @@ class _OptionsPageState extends State<OptionsPage> {
       buildAppSnackBar(
         "Backup gist file name updated",
         context: context,
-        success: true,
       ),
     );
   }
