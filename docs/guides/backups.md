@@ -63,6 +63,12 @@ To enable backups, you need to create a Personal Access Token (PAT) that gives C
    - You can change the token at any time by typing a new one
    - The token is saved automatically as you type
 
+4. **(Advanced) Backup Gist File Name**
+   - Go to **Options** → **"Backup Gist File Name"**
+   - This setting controls which file key inside your gist Countapp reads/writes
+   - You usually do **not** need to change this
+   - Only change it if you understand gist file structure and intentionally want a different backup file
+
 ## Using Backups
 
 ### Upload Backup
@@ -178,6 +184,12 @@ No, your backup data is stored as plain JSON in the gist. Anyone with the gist U
 ## Viewing Your Backup on GitHub
 
 You can view your backup directly on GitHub:
+
+1. Open **Backups** in Countapp
+2. Tap **"Open Gist"**
+3. Your backup gist opens in your browser
+
+Or manually:
 
 1. Go to [gist.github.com](https://gist.github.com)
 2. Click your profile picture → "Your gists"
