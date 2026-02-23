@@ -76,6 +76,7 @@ class GistBackupService {
       } else if (response.statusCode == 401) {
         throw Exception("Invalid or expired token");
       } else {
+        _checkRateLimit(response.statusCode);
         throw Exception("Failed to validate token: ${response.statusCode}");
       }
     } catch (e) {
@@ -171,31 +172,14 @@ class GistBackupService {
     }
   }
 
-  /// Delete the backup gist if it exists
-  Future<void> _deleteExistingBackupGist() async {
-    if (!isAuthenticated()) {
-      return; // Nothing to delete if not authenticated
-    }
-
-    try {
-      final existingGistId = await _findExistingBackupGistId();
-      if (existingGistId != null) {
-        final response = await http.delete(
-          Uri.parse("$_baseUrl/gists/$existingGistId"),
-          headers: _getHeaders(),
-        );
-
-        if (response.statusCode == 204) {
-          debugPrint("[GistBackup] Deleted existing gist: $existingGistId");
-          _cachedGistId = null; // Clear cache
-        } else if (response.statusCode != 404) {
-          // 404 means gist doesn't exist, which is fine
-          debugPrint("[GistBackup] Warning: Failed to delete gist: ${response.statusCode}");
-        }
-      }
-    } catch (e) {
-      debugPrint("[GistBackup] Error deleting existing gist: $e");
-      // Don't fail if we can't delete
+  /// Check for API rate limiting and throw descriptive error
+  void _checkRateLimit(int statusCode) {
+    if (statusCode == 429) {
+      throw Exception(
+          "GitHub API rate limit exceeded. Please wait before trying again.");
+    } else if (statusCode == 403) {
+      throw Exception(
+          "GitHub API access forbidden. Check your token permissions.");
     }
   }
 
@@ -204,9 +188,6 @@ class GistBackupService {
     if (!isAuthenticated()) {
       throw Exception("Not authenticated. Please enter a GitHub token.");
     }
-
-    // Delete existing gist and create new one
-    await _deleteExistingBackupGist();
 
     final compressionEnabled = _settingsBox?.get(
       AppConstants.compressionEnabledSetting,
@@ -224,36 +205,118 @@ class GistBackupService {
       contentToUpload = jsonData;
     }
 
-    // Create new gist with metadata and data files
+    // Create metadata
     final timestamp = DateTime.now().toIso8601String();
     final metadataContent = json.encode({
       "timestamp": timestamp,
       "appVersion": "1.6.0",
     });
 
-    final response = await http.post(
+    final filesToUpsert = {
+      _backupFileName: {
+        "content": metadataContent,
+      },
+      _backupFileNameWithExtension: {
+        "content": contentToUpload,
+      },
+    };
+
+    // Try to update existing gist first (atomic operation)
+    try {
+      final existingGistId = await _findExistingBackupGistId();
+      if (existingGistId != null) {
+        // When updating, also delete the old format file (if it exists)
+        // to prevent stale data after compression toggle
+        final oldFormatFileName = _backupFileNameWithExtension.endsWith(".gz")
+            ? "$_backupFileName.json"
+            : "$_backupFileName.json.gz";
+
+        // First check what files currently exist in the gist
+        final getResponse = await http.get(
+          Uri.parse("$_baseUrl/gists/$existingGistId"),
+          headers: _getHeaders(),
+        );
+
+        if (getResponse.statusCode != 200) {
+          _checkRateLimit(getResponse.statusCode);
+          debugPrint(
+              "[GistBackup] Failed to fetch existing gist, will create new one");
+          _cachedGistId = null;
+        } else {
+          // Build files object with proper null handling for deletion
+          final filesUpdateBody = <String, dynamic>{};
+          filesUpdateBody[_backupFileName] = filesToUpsert[_backupFileName];
+          filesUpdateBody[_backupFileNameWithExtension] =
+              filesToUpsert[_backupFileNameWithExtension];
+
+          // Only include deletion of old format file if it exists in the current gist
+          final existingGistData =
+              json.decode(getResponse.body) as Map<String, dynamic>;
+          final existingFiles =
+              existingGistData["files"] as Map<String, dynamic>;
+
+          bool deletedOldFormat = false;
+          if (existingFiles.containsKey(oldFormatFileName)) {
+            filesUpdateBody[oldFormatFileName] =
+                null; // This correctly deletes the file
+            debugPrint("[GistBackup] Will delete old format file: $oldFormatFileName");
+            deletedOldFormat = true;
+          }
+
+          final updateResponse = await http.patch(
+            Uri.parse("$_baseUrl/gists/$existingGistId"),
+            headers: _getHeaders(),
+            body: json.encode({"files": filesUpdateBody}),
+          );
+
+          if (updateResponse.statusCode == 200) {
+            _cachedGistId = existingGistId;
+            if (deletedOldFormat) {
+              debugPrint(
+                  "[GistBackup] Updated existing gist: $existingGistId (cleaned old format)");
+            } else {
+              debugPrint("[GistBackup] Updated existing gist: $existingGistId");
+            }
+            return;
+          } else if (updateResponse.statusCode == 404) {
+            // Gist was deleted externally, fall through to create new one
+            debugPrint("[GistBackup] Existing gist not found, creating new one");
+            _cachedGistId = null;
+          } else {
+            // Check for rate limiting
+            _checkRateLimit(updateResponse.statusCode);
+            // Fall through to create new one for other errors
+            debugPrint(
+                "[GistBackup] Failed to update gist (${updateResponse.statusCode}), creating new one");
+            _cachedGistId = null;
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint("[GistBackup] Error finding existing gist: $e, will create new one");
+      _cachedGistId = null;
+    }
+
+    // Create new gist if update failed or didn't exist
+    final createResponse = await http.post(
       Uri.parse("$_baseUrl/gists"),
       headers: _getHeaders(),
       body: json.encode({
         "description": "Countapp backup data",
         "public": false, // Secret gist
-        "files": {
-          _backupFileName: {
-            "content": metadataContent,
-          },
-          _backupFileNameWithExtension: {
-            "content": contentToUpload,
-          },
-        },
+        "files": filesToUpsert,
       }),
     );
 
-    if (response.statusCode == 201) {
-      final data = json.decode(response.body) as Map<String, dynamic>;
+    if (createResponse.statusCode == 201) {
+      final data = json.decode(createResponse.body) as Map<String, dynamic>;
       _cachedGistId = data["id"] as String;
       debugPrint("[GistBackup] Created new backup gist: $_cachedGistId");
     } else {
-      throw Exception("Failed to create backup gist: ${response.statusCode}");
+      // Check for rate limiting
+      _checkRateLimit(createResponse.statusCode);
+      throw Exception(
+          "Failed to create backup gist: ${createResponse.statusCode}");
     }
   }
 
@@ -316,6 +379,7 @@ class GistBackupService {
       debugPrint("[GistBackup] Backup downloaded successfully");
       return content;
     } else {
+      _checkRateLimit(response.statusCode);
       throw Exception("Failed to download backup: ${response.statusCode}");
     }
   }
@@ -346,6 +410,7 @@ class GistBackupService {
         "appVersion": metadata["appVersion"] as String?,
       };
     } else {
+      _checkRateLimit(response.statusCode);
       throw Exception("Failed to get backup metadata: ${response.statusCode}");
     }
   }
@@ -363,6 +428,7 @@ class GistBackupService {
     );
 
     if (response.statusCode != 200) {
+      _checkRateLimit(response.statusCode);
       throw Exception("Failed to list gists: ${response.statusCode}");
     }
 
