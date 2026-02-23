@@ -1,6 +1,6 @@
 import "package:countapp/providers/counter_provider.dart";
+import "package:countapp/utils/constants.dart";
 import "package:flutter/material.dart";
-import "package:intl/intl.dart";
 import "package:provider/provider.dart";
 
 class TapCounterUpdatesPage extends StatefulWidget {
@@ -139,7 +139,7 @@ class _TapCounterUpdatesPageState extends State<TapCounterUpdatesPage> {
         final filteredUpdates = _searchQuery.isEmpty
             ? updates
             : updates
-                .where((date) => DateFormat("MMM d, yyyy (EEEE) - h:mm a")
+                .where((date) => AppConstants.dateTimeFullFormat
                     .format(date.toLocal())
                     .toLowerCase()
                     .contains(_searchQuery.toLowerCase()))
@@ -205,7 +205,7 @@ class _TapCounterUpdatesPageState extends State<TapCounterUpdatesPage> {
 
   Widget _buildUpdateTile(DateTime date, bool isSelected, int originalIndex) {
     final formattedDate =
-        DateFormat("MMM d, yyyy (EEEE) - h:mm a").format(date.toLocal());
+        AppConstants.dateTimeFullFormat.format(date.toLocal());
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -291,7 +291,7 @@ class DateSearchDelegate extends SearchDelegate {
     final suggestions = query.isEmpty
         ? data
         : data.where((date) {
-            final formattedDate = DateFormat("MMM d, yyyy (EEEE) - h:mm a")
+            final formattedDate = AppConstants.dateTimeFullFormat
                 .format(date.toLocal());
             return formattedDate.toLowerCase().contains(query.toLowerCase());
           }).toList();
@@ -306,7 +306,7 @@ class DateSearchDelegate extends SearchDelegate {
 
   Widget _buildUpdateTile(BuildContext context, DateTime date) {
     final formattedDate =
-        DateFormat("MMM d, yyyy (EEEE) - h:mm a").format(date.toLocal());
+        AppConstants.dateTimeFullFormat.format(date.toLocal());
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
