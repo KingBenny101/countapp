@@ -19,6 +19,7 @@ class TapCounterUpdatesPage extends StatefulWidget {
 class _TapCounterUpdatesPageState extends State<TapCounterUpdatesPage> {
   String _searchQuery = "";
   final Set<int> _selectedIndices = {};
+  late List<DateTime> _filteredUpdates = [];
 
   void _searchDate(String query) {
     setState(() {
@@ -136,7 +137,9 @@ class _TapCounterUpdatesPageState extends State<TapCounterUpdatesPage> {
       builder: (context, provider, child) {
         final counter = provider.counters[widget.counterIndex];
         final updates = counter.updates;
-        final filteredUpdates = _searchQuery.isEmpty
+        
+        // Update cached filtered list based on current search query
+        _filteredUpdates = _searchQuery.isEmpty
             ? updates
             : updates
                 .where((date) => AppConstants.dateTimeFullFormat
@@ -189,9 +192,9 @@ class _TapCounterUpdatesPageState extends State<TapCounterUpdatesPage> {
             ],
           ),
           body: ListView.builder(
-            itemCount: filteredUpdates.length,
+            itemCount: _filteredUpdates.length,
             itemBuilder: (context, index) {
-              final date = filteredUpdates[index];
+              final date = _filteredUpdates[index];
               final originalIndex = updates.indexOf(date);
               final isSelected = _selectedIndices.contains(originalIndex);
 

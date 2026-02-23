@@ -22,6 +22,7 @@ class SeriesCounterUpdatesPage extends StatefulWidget {
 class _SeriesCounterUpdatesPageState extends State<SeriesCounterUpdatesPage> {
   String _searchQuery = "";
   final Set<int> _selectedIndices = {};
+  late List<int> _filteredIndices = [];
 
   void _searchDate(String query) {
     setState(() {
@@ -201,7 +202,8 @@ class _SeriesCounterUpdatesPageState extends State<SeriesCounterUpdatesPage> {
         final updates = counter.updates;
         final values = counter.seriesValues;
 
-        final List<int> filteredIndices = [];
+        // Update cached filtered indices based on current search query
+        _filteredIndices = [];
         for (int i = 0; i < updates.length; i++) {
           final dateStr = AppConstants.dateTimeFullFormat
               .format(updates[i].toLocal());
@@ -209,7 +211,7 @@ class _SeriesCounterUpdatesPageState extends State<SeriesCounterUpdatesPage> {
           if (_searchQuery.isEmpty ||
               dateStr.toLowerCase().contains(_searchQuery.toLowerCase()) ||
               valStr.contains(_searchQuery)) {
-            filteredIndices.add(i);
+            _filteredIndices.add(i);
           }
         }
 
@@ -258,9 +260,9 @@ class _SeriesCounterUpdatesPageState extends State<SeriesCounterUpdatesPage> {
             ],
           ),
           body: ListView.builder(
-            itemCount: filteredIndices.length,
+            itemCount: _filteredIndices.length,
             itemBuilder: (context, index) {
-              final dataIndex = filteredIndices[index];
+              final dataIndex = _filteredIndices[index];
               final isSelected = _selectedIndices.contains(dataIndex);
               return _buildUpdateTile(
                   updates[dataIndex], values[dataIndex], isSelected, dataIndex);
