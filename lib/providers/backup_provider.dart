@@ -95,15 +95,9 @@ class BackupProvider with ChangeNotifier {
       final counters =
           _counterProvider!.counters.map((c) => c.toJson()).toList();
 
-      // Wrap with metadata
-      final backupData = {
-        "timestamp": DateTime.now().toIso8601String(),
-        "appVersion": "1.6.0",
-        "counters": counters,
-      };
-
-      // Upload to gist
-      await _gistService.uploadBackup(json.encode(backupData));
+      // Upload raw counters JSON to gist
+      final countersJson = json.encode(counters);
+      await _gistService.uploadBackup(countersJson);
 
       lastBackupTime = DateTime.now();
       // Persist last backup time
@@ -139,10 +133,19 @@ class BackupProvider with ChangeNotifier {
     try {
       // Download backup
       final jsonData = await _gistService.downloadBackup();
-      final backupData = json.decode(jsonData) as Map<String, dynamic>;
+      final decodedData = json.decode(jsonData);
 
-      // Extract counters array
-      final countersData = backupData["counters"] as List<dynamic>;
+      // Handle both old wrapped format and new raw format
+      final List<dynamic> countersData;
+      if (decodedData is List) {
+        // New format: raw counters list
+        countersData = decodedData;
+      } else if (decodedData is Map<String, dynamic>) {
+        // Old format: wrapped with metadata
+        countersData = decodedData["counters"] as List<dynamic>;
+      } else {
+        throw Exception("Invalid backup format");
+      }
 
       // Convert to proper format using factory
       final List<Map<String, dynamic>> counters = countersData.map((data) {

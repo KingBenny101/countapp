@@ -1,5 +1,6 @@
 import "dart:convert";
 
+import "package:archive/archive_io.dart";
 import "package:countapp/utils/constants.dart";
 import "package:flutter/foundation.dart";
 import "package:hive_ce/hive.dart";
@@ -7,13 +8,12 @@ import "package:http/http.dart" as http;
 
 /// Service for managing GitHub Gist backups
 class GistBackupService {
-  static const String _baseUrl = "https://api.github.com";
-  static const String _defaultBackupFileName = "countapp_backup";
-  static final GistBackupService _instance = GistBackupService._();
-
   factory GistBackupService() => _instance;
 
   GistBackupService._();
+  static const String _baseUrl = "https://api.github.com";
+  static const String _defaultBackupFileName = "countapp_backup";
+  static final GistBackupService _instance = GistBackupService._();
 
   String? _token;
   Box? _settingsBox;
@@ -138,6 +138,12 @@ class GistBackupService {
 
   /// Create a new secret backup gist
   Future<String> _createBackupGist() async {
+    final timestamp = DateTime.now().toIso8601String();
+    final metadataContent = json.encode({
+      "timestamp": timestamp,
+      "appVersion": "1.6.0",
+    });
+
     final response = await http.post(
       Uri.parse("$_baseUrl/gists"),
       headers: _getHeaders(),
@@ -145,12 +151,11 @@ class GistBackupService {
         "description": "Countapp backup data",
         "public": false, // Secret gist
         "files": {
+          _backupFileName: {
+            "content": metadataContent,
+          },
           _backupFileNameWithExtension: {
-            "content": json.encode({
-              "timestamp": DateTime.now().toIso8601String(),
-              "appVersion": "1.6.0",
-              "counters": [],
-            }),
+            "content": json.encode([]),
           },
         },
       }),
@@ -166,26 +171,89 @@ class GistBackupService {
     }
   }
 
+  /// Delete the backup gist if it exists
+  Future<void> _deleteExistingBackupGist() async {
+    if (!isAuthenticated()) {
+      return; // Nothing to delete if not authenticated
+    }
+
+    try {
+      final existingGistId = await _findExistingBackupGistId();
+      if (existingGistId != null) {
+        final response = await http.delete(
+          Uri.parse("$_baseUrl/gists/$existingGistId"),
+          headers: _getHeaders(),
+        );
+
+        if (response.statusCode == 204) {
+          debugPrint("[GistBackup] Deleted existing gist: $existingGistId");
+          _cachedGistId = null; // Clear cache
+        } else if (response.statusCode != 404) {
+          // 404 means gist doesn't exist, which is fine
+          debugPrint("[GistBackup] Warning: Failed to delete gist: ${response.statusCode}");
+        }
+      }
+    } catch (e) {
+      debugPrint("[GistBackup] Error deleting existing gist: $e");
+      // Don't fail if we can't delete
+    }
+  }
+
   /// Upload backup data to the gist
   Future<void> uploadBackup(String jsonData) async {
-    final gistId = await getOrCreateBackupGist();
+    if (!isAuthenticated()) {
+      throw Exception("Not authenticated. Please enter a GitHub token.");
+    }
 
-    final response = await http.patch(
-      Uri.parse("$_baseUrl/gists/$gistId"),
+    // Delete existing gist and create new one
+    await _deleteExistingBackupGist();
+
+    final compressionEnabled = _settingsBox?.get(
+      AppConstants.compressionEnabledSetting,
+      defaultValue: false,
+    ) as bool? ?? false;
+
+    final String contentToUpload;
+    if (compressionEnabled) {
+      // Compress the JSON data and encode as base64
+      final bytes = utf8.encode(jsonData);
+      const encoder = GZipEncoder();
+      final compressedBytes = encoder.encode(bytes);
+      contentToUpload = base64Encode(compressedBytes);
+    } else {
+      contentToUpload = jsonData;
+    }
+
+    // Create new gist with metadata and data files
+    final timestamp = DateTime.now().toIso8601String();
+    final metadataContent = json.encode({
+      "timestamp": timestamp,
+      "appVersion": "1.6.0",
+    });
+
+    final response = await http.post(
+      Uri.parse("$_baseUrl/gists"),
       headers: _getHeaders(),
       body: json.encode({
+        "description": "Countapp backup data",
+        "public": false, // Secret gist
         "files": {
+          _backupFileName: {
+            "content": metadataContent,
+          },
           _backupFileNameWithExtension: {
-            "content": jsonData,
+            "content": contentToUpload,
           },
         },
       }),
     );
 
-    if (response.statusCode == 200) {
-      debugPrint("[GistBackup] Backup uploaded successfully");
+    if (response.statusCode == 201) {
+      final data = json.decode(response.body) as Map<String, dynamic>;
+      _cachedGistId = data["id"] as String;
+      debugPrint("[GistBackup] Created new backup gist: $_cachedGistId");
     } else {
-      throw Exception("Failed to upload backup: ${response.statusCode}");
+      throw Exception("Failed to create backup gist: ${response.statusCode}");
     }
   }
 
@@ -201,13 +269,50 @@ class GistBackupService {
     if (response.statusCode == 200) {
       final data = json.decode(response.body) as Map<String, dynamic>;
       final files = data["files"] as Map<String, dynamic>;
-      final backupFile =
-          files[_backupFileNameWithExtension] as Map<String, dynamic>?;
-      if (backupFile == null) {
-        throw Exception(
-            "Backup file '$_backupFileNameWithExtension' not found in gist");
+
+      // Find the data file (handles both .json and .json.gz)
+      String? content;
+      String? foundFileName;
+
+      // First try to find the file with current compression setting
+      for (final fileName in files.keys) {
+        if (fileName == _backupFileNameWithExtension) {
+          content =
+              (files[fileName] as Map<String, dynamic>)["content"] as String;
+          foundFileName = fileName;
+          break;
+        }
       }
-      final content = backupFile["content"] as String;
+
+      // If not found, try to find the other format (backward compatibility)
+      if (content == null) {
+        final otherFormat = _backupFileNameWithExtension.endsWith(".gz")
+            ? "$_backupFileName.json"
+            : "$_backupFileName.json.gz";
+        if (files.containsKey(otherFormat)) {
+          content =
+              (files[otherFormat] as Map<String, dynamic>)["content"] as String;
+          foundFileName = otherFormat;
+        }
+      }
+
+      if (content == null) {
+        throw Exception("Backup file not found in gist");
+      }
+
+      // Decompress if the file is compressed
+      if (foundFileName?.endsWith(".gz") ?? false) {
+        try {
+          final decodedBytes = base64Decode(content);
+          const decoder = GZipDecoder();
+          final decompressedBytes = decoder.decodeBytes(decodedBytes);
+          content = utf8.decode(decompressedBytes);
+        } catch (e) {
+          debugPrint("[GistBackup] Failed to decompress backup: $e");
+          rethrow;
+        }
+      }
+
       debugPrint("[GistBackup] Backup downloaded successfully");
       return content;
     } else {
@@ -215,14 +320,34 @@ class GistBackupService {
     }
   }
 
-  /// Get backup metadata (timestamp)
+  /// Get backup metadata (timestamp) from metadata file
   Future<Map<String, dynamic>> getBackupMetadata() async {
-    final jsonData = await downloadBackup();
-    final data = json.decode(jsonData) as Map<String, dynamic>;
-    return {
-      "timestamp": data["timestamp"] as String?,
-      "appVersion": data["appVersion"] as String?,
-    };
+    final gistId = await getExistingBackupGist();
+
+    final response = await http.get(
+      Uri.parse("$_baseUrl/gists/$gistId"),
+      headers: _getHeaders(),
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body) as Map<String, dynamic>;
+      final files = data["files"] as Map<String, dynamic>;
+      final metadataFile = files[_backupFileName] as Map<String, dynamic>?;
+
+      if (metadataFile == null) {
+        return {};
+      }
+
+      final content = metadataFile["content"] as String;
+      final metadata = json.decode(content) as Map<String, dynamic>;
+
+      return {
+        "timestamp": metadata["timestamp"] as String?,
+        "appVersion": metadata["appVersion"] as String?,
+      };
+    } else {
+      throw Exception("Failed to get backup metadata: ${response.statusCode}");
+    }
   }
 
   /// Get the URL of the backup gist
@@ -246,15 +371,35 @@ class GistBackupService {
     for (final gist in gists) {
       final gistMap = gist as Map<String, dynamic>;
       final files = gistMap["files"] as Map<String, dynamic>?;
-      if (files != null && files.containsKey(_backupFileNameWithExtension)) {
-        return gistMap["id"] as String;
+      if (files != null) {
+        for (final fileName in files.keys) {
+          if (_isBackupFile(fileName)) {
+            return gistMap["id"] as String;
+          }
+        }
       }
     }
 
     return null;
   }
 
-  String get _backupFileNameWithExtension => "$_backupFileName.json";
+  String get _backupFileNameWithExtension {
+    final compressionEnabled = _settingsBox?.get(
+          AppConstants.compressionEnabledSetting,
+          defaultValue: false,
+        ) as bool? ??
+        false;
+
+    return compressionEnabled
+        ? "$_backupFileName.json.gz"
+        : "$_backupFileName.json";
+  }
+
+  bool _isBackupFile(String fileName) {
+    return fileName == _backupFileName ||
+        fileName == "$_backupFileName.json" ||
+        fileName == "$_backupFileName.json.gz";
+  }
 
   String _sanitizeBackupFileName(String? fileName) {
     final trimmed = fileName?.trim() ?? "";

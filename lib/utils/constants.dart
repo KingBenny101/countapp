@@ -16,6 +16,7 @@ class AppConstants {
   static const String backupOnStartSetting = "backupOnStart";
   static const String lastBackupTimeSetting = "lastBackupTime";
   static const String gistBackupFileNameSetting = "gistBackupFileName";
+  static const String compressionEnabledSetting = "compressionEnabled";
 
   // URLs
   static const String backupDocsUrl =
