@@ -626,64 +626,69 @@ class _DeleteButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final counterProvider = context.watch<CounterProvider>();
-    final homePageState = context.findAncestorStateOfType<HomePageState>()!;
+    return Selector<CounterProvider, int>(
+      selector: (_, provider) => provider.counters.length,
+      builder: (context, countersLength, _) {
+        final homePageState = context.findAncestorStateOfType<HomePageState>()!;
 
-    return ElevatedButton(
-      onPressed: () async {
-        // Show confirmation dialog before deleting
-        final bool? confirmDelete = await showDialog<bool>(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text("Confirm Deletion"),
-              content: const Text("Delete the selected Counters?"),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(false);
-                  },
-                  child: const Text("Cancel"),
-                ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(true);
-                  },
-                  child: const Text("Confirm"),
-                ),
-              ],
+        return ElevatedButton(
+          onPressed: () async {
+            final counterProvider = context.read<CounterProvider>();
+            // Show confirmation dialog before deleting
+            final bool? confirmDelete = await showDialog<bool>(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text("Confirm Deletion"),
+                  content: const Text("Delete the selected Counters?"),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(false);
+                      },
+                      child: const Text("Cancel"),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(true);
+                      },
+                      child: const Text("Confirm"),
+                    ),
+                  ],
+                );
+              },
             );
+
+            if (confirmDelete == true) {
+              final selectedIndices = <int>[];
+              for (int i = 0; i < homePageState._selectedCounters.length; i++) {
+                if (homePageState._selectedCounters[i]) {
+                  selectedIndices.add(i);
+                }
+              }
+
+              if (selectedIndices.isNotEmpty) {
+                await counterProvider.removeCounters(selectedIndices);
+                homePageState._resetSelection(countersLength);
+
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    buildAppSnackBar(
+                      "${selectedIndices.length} Counters Deleted Successfully!",
+                      context: context,
+                    ),
+                  );
+                }
+              }
+            }
           },
+          style: ElevatedButton.styleFrom(
+            padding: const EdgeInsets.all(16),
+            shape: const CircleBorder(),
+          ),
+          child: const Icon(Icons.delete, size: 30),
         );
-
-        if (confirmDelete == true) {
-          final selectedIndices = <int>[];
-          for (int i = 0; i < homePageState._selectedCounters.length; i++) {
-            if (homePageState._selectedCounters[i]) {
-              selectedIndices.add(i);
-            }
-          }
-
-          if (selectedIndices.isNotEmpty) {
-            await counterProvider.removeCounters(selectedIndices);
-            homePageState._resetSelection(counterProvider.counters.length);
-
-            if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                buildAppSnackBar(
-                  "${selectedIndices.length} Counters Deleted Successfully!",
-                  context: context,
-                ),
-              );
-            }
-          }
-        }
       },
-      style: ElevatedButton.styleFrom(
-        padding: const EdgeInsets.all(16),
-        shape: const CircleBorder(),
-      ),
-      child: const Icon(Icons.delete, size: 30),
     );
   }
 }
