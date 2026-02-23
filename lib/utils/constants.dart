@@ -42,4 +42,12 @@ class AppConstants {
   static final DateFormat timeFormatHourMin = DateFormat("h:mm a");
   static final DateFormat dateTimeFullDateOnly =
       DateFormat("E, MMM d, yyyy hh:mm a");
+  static final DateFormat timeFormat24Hour = DateFormat("HH:mm");
+  static final DateFormat dateFormatMonthDaySingle = DateFormat("MMM d");
+  static final DateFormat dateFormatDayMonthYear = DateFormat("dd/MM/yy");
+  static final DateFormat backupFileFormat = DateFormat("yyyy-MM-dd_HH-mm-ss");
+  static final DateFormat leaderboardDateTimeFormat =
+      DateFormat("yyyy-MM-dd HH:mm");
+  static final DateFormat dateFormatMonthDayYearWithTime =
+      DateFormat("MMM d, yyyy h:mm a");
 }

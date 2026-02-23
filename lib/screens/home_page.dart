@@ -8,7 +8,6 @@ import "package:countapp/utils/widgets.dart";
 import "package:file_picker/file_picker.dart";
 import "package:flutter/material.dart";
 import "package:hive_ce/hive.dart";
-import "package:intl/intl.dart";
 import "package:provider/provider.dart";
 
 class HomePage extends StatefulWidget {
@@ -439,9 +438,7 @@ class HomePageState extends State<HomePage> {
                       final formKey = GlobalKey<FormState>();
 
                       final DateTime now = DateTime.now();
-                      final DateFormat formatter =
-                          DateFormat("yyyy-MM-dd_HH-mm-ss");
-                      final String fileNameLabel = formatter.format(now);
+                      final String fileNameLabel = AppConstants.backupFileFormat.format(now);
 
                       final settingsBox = Hive.box(AppConstants.settingsBox);
                       final compressionEnabled = settingsBox.get(
