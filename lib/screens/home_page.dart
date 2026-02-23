@@ -2,10 +2,12 @@ import "package:countapp/providers/counter_provider.dart";
 import "package:countapp/screens/leaderboards_page.dart";
 import "package:countapp/screens/selection_page.dart";
 import "package:countapp/services/update_service.dart";
+import "package:countapp/utils/constants.dart";
 import "package:countapp/utils/files.dart";
 import "package:countapp/utils/widgets.dart";
 import "package:file_picker/file_picker.dart";
 import "package:flutter/material.dart";
+import "package:hive_ce/hive.dart";
 import "package:intl/intl.dart";
 import "package:provider/provider.dart";
 
@@ -385,7 +387,7 @@ class HomePageState extends State<HomePage> {
                     final FilePickerResult? result =
                         await FilePicker.platform.pickFiles(
                       type: FileType.custom,
-                      allowedExtensions: ["json"],
+                      allowedExtensions: ["json", "gz"],
                     );
 
                     if (result != null) {
@@ -440,6 +442,12 @@ class HomePageState extends State<HomePage> {
                       final DateFormat formatter =
                           DateFormat("yyyy-MM-dd_HH-mm-ss");
                       final String fileNameLabel = formatter.format(now);
+                      
+                      final settingsBox = Hive.box(AppConstants.settingsBox);
+                      final compressionEnabled = settingsBox.get(
+                          AppConstants.compressionEnabledSetting,
+                          defaultValue: false) as bool;
+                      final fileExtension = compressionEnabled ? ".json.gz" : ".json";
 
                       if (!context.mounted) return;
 
@@ -454,7 +462,7 @@ class HomePageState extends State<HomePage> {
                                 controller: fileNameController,
                                 decoration: InputDecoration(
                                   labelText: "File Name",
-                                  hintText: "$fileNameLabel.json",
+                                  hintText: "$fileNameLabel$fileExtension",
                                 ),
                                 validator: (value) {
                                   final invalidCharacters =
@@ -496,8 +504,19 @@ class HomePageState extends State<HomePage> {
                           fileName = fileNameLabel;
                         }
 
-                        if (!fileName.endsWith(".json")) {
-                          fileName += ".json";
+                        // Add the appropriate extension if not already present
+                        if (compressionEnabled) {
+                          if (!fileName.endsWith(".json.gz")) {
+                            fileName = fileName
+                                .replaceAll(RegExp(r"\.json$"), "")
+                                .replaceAll(RegExp(r"\.gz$"), "");
+                            fileName += ".json.gz";
+                          }
+                        } else {
+                          if (!fileName.endsWith(".json")) {
+                            fileName = fileName.replaceAll(RegExp(r"\.gz$"), "");
+                            fileName += ".json";
+                          }
                         }
 
                         final exportFilePath = "$selectedDirectory/$fileName";

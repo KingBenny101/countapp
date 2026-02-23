@@ -186,6 +186,9 @@ class _OptionsPageState extends State<OptionsPage> {
         defaultValue: true) as bool;
     final backupOnStart = settingsBox.get(AppConstants.backupOnStartSetting,
         defaultValue: false) as bool;
+    final compressionEnabled = settingsBox.get(
+        AppConstants.compressionEnabledSetting,
+        defaultValue: false) as bool;
 
     return Scaffold(
       appBar: AppBar(
@@ -268,6 +271,19 @@ class _OptionsPageState extends State<OptionsPage> {
               onChanged: (value) {
                 settingsBox.put(
                     AppConstants.checkUpdatesAtStartupSetting, value);
+                setState(() {});
+              },
+            ),
+          ]),
+          const SizedBox(height: 16),
+          _buildSectionTitle("Data"),
+          _buildOptionsCard([
+            _buildSwitchTile(
+              icon: Icons.compress_outlined,
+              title: "Enable Compression",
+              value: compressionEnabled,
+              onChanged: (value) {
+                settingsBox.put(AppConstants.compressionEnabledSetting, value);
                 setState(() {});
               },
             ),
