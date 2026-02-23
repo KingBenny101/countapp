@@ -497,12 +497,20 @@ class HomePageState extends State<HomePage> {
                           );
                         },
                       );
-
                       if (confirmExport == true) {
                         String fileName = fileNameController.text.trim();
 
                         if (fileName.isEmpty) {
                           fileName = fileNameLabel;
+                        }
+
+                        // Sanitize filename - remove or replace invalid characters
+                        // Keep only alphanumeric, spaces, underscores, hyphens, and dots
+                        fileName = fileName.replaceAll(RegExp(r"[^a-zA-Z0-9\s_\-.]"), "");
+                        fileName = fileName.replaceAll(RegExp(r"\s+"), "_"); // Replace spaces with underscores
+
+                        if (fileName.isEmpty) {
+                          fileName = fileNameLabel; // Fallback if sanitization removed everything
                         }
 
                         // Add the appropriate extension if not already present

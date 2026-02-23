@@ -147,11 +147,21 @@ class BackupProvider with ChangeNotifier {
         throw Exception("Invalid backup format");
       }
 
-      // Convert to proper format using factory
-      final List<Map<String, dynamic>> counters = countersData.map((data) {
-        final jsonMap = Map<String, dynamic>.from(data as Map);
-        return CounterFactory.fromJson(jsonMap).toJson();
-      }).toList();
+      // Validate and convert to proper format using factory BEFORE clearing
+      final List<Map<String, dynamic>> counters = <Map<String, dynamic>>[];
+      try {
+        for (final data in countersData) {
+          final jsonMap = Map<String, dynamic>.from(data as Map);
+          final counter = CounterFactory.fromJson(jsonMap);
+          counters.add(counter.toJson());
+        }
+      } catch (e) {
+        throw Exception("Backup data is corrupted or incompatible: $e");
+      }
+
+      if (counters.isEmpty) {
+        throw Exception("Backup contains no counters");
+      }
 
       // Clear and restore to Hive box
       final box = Hive.isBoxOpen(AppConstants.countersBox)

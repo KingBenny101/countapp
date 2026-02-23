@@ -1,3 +1,4 @@
+import "dart:async";
 import "dart:convert";
 
 import "package:archive/archive_io.dart";
@@ -13,6 +14,7 @@ class GistBackupService {
   GistBackupService._();
   static const String _baseUrl = "https://api.github.com";
   static const String _defaultBackupFileName = "countapp_backup";
+  static const Duration _httpTimeout = Duration(seconds: 30);
   static final GistBackupService _instance = GistBackupService._();
 
   String? _token;
@@ -53,6 +55,67 @@ class GistBackupService {
     _cachedGistId = null;
   }
 
+  /// Check for API rate limiting and throw descriptive error
+  void _checkRateLimit(int statusCode) {
+    if (statusCode == 429) {
+      throw Exception(
+          "GitHub API rate limit exceeded. Please wait before trying again.");
+    } else if (statusCode == 403) {
+      throw Exception(
+          "GitHub API access forbidden. Check your token permissions.");
+    }
+  }
+
+  /// Safe JSON decode with error handling
+  Map<String, dynamic> _safeJsonDecode(String jsonString) {
+    try {
+      final decoded = json.decode(jsonString);
+      return decoded is Map<String, dynamic>
+          ? decoded
+          : <String, dynamic>{};
+    } on FormatException catch (e) {
+      debugPrint("[GistBackup] JSON decode error: $e");
+      throw Exception("Invalid JSON format in backup data. Backup may be corrupted.");
+    }
+  }
+
+  /// Execute HTTP request with exponential backoff retry for transient failures
+  Future<http.Response> _executeWithRetry(
+    Future<http.Response> Function() request, {
+    int maxRetries = 3,
+  }) async {
+    int attempt = 0;
+    Duration delay = const Duration(seconds: 1);
+
+    while (true) {
+      try {
+        final response = await request();
+
+        // Retry on 5xx errors (server errors)
+        if (response.statusCode >= 500 && attempt < maxRetries) {
+          attempt++;
+          debugPrint(
+              "[GistBackup] Transient error (${response.statusCode}), retrying in ${delay.inSeconds}s (attempt $attempt/$maxRetries)");
+          await Future.delayed(delay);
+          delay = Duration(seconds: delay.inSeconds * 2); // Exponential backoff
+          continue;
+        }
+
+        return response;
+      } catch (e) {
+        if (attempt < maxRetries) {
+          attempt++;
+          debugPrint(
+              "[GistBackup] Request failed with error: $e, retrying in ${delay.inSeconds}s (attempt $attempt/$maxRetries)");
+          await Future.delayed(delay);
+          delay = Duration(seconds: delay.inSeconds * 2);
+          continue;
+        }
+        rethrow;
+      }
+    }
+  }
+
   /// Check if user is authenticated
   bool isAuthenticated() {
     return _token != null && _token!.isNotEmpty;
@@ -65,17 +128,20 @@ class GistBackupService {
     }
 
     try {
-      final response = await http.get(
-        Uri.parse("$_baseUrl/user"),
-        headers: _getHeaders(),
+      final response = await _executeWithRetry(
+        () => http.get(
+          Uri.parse("$_baseUrl/user"),
+          headers: _getHeaders(),
+        ).timeout(_httpTimeout),
       );
 
       if (response.statusCode == 200) {
-        final data = json.decode(response.body) as Map<String, dynamic>;
+        final data = _safeJsonDecode(response.body);
         return data["login"] as String;
       } else if (response.statusCode == 401) {
         throw Exception("Invalid or expired token");
       } else {
+        _checkRateLimit(response.statusCode);
         throw Exception("Failed to validate token: ${response.statusCode}");
       }
     } catch (e) {
@@ -171,47 +237,17 @@ class GistBackupService {
     }
   }
 
-  /// Delete the backup gist if it exists
-  Future<void> _deleteExistingBackupGist() async {
-    if (!isAuthenticated()) {
-      return; // Nothing to delete if not authenticated
-    }
-
-    try {
-      final existingGistId = await _findExistingBackupGistId();
-      if (existingGistId != null) {
-        final response = await http.delete(
-          Uri.parse("$_baseUrl/gists/$existingGistId"),
-          headers: _getHeaders(),
-        );
-
-        if (response.statusCode == 204) {
-          debugPrint("[GistBackup] Deleted existing gist: $existingGistId");
-          _cachedGistId = null; // Clear cache
-        } else if (response.statusCode != 404) {
-          // 404 means gist doesn't exist, which is fine
-          debugPrint("[GistBackup] Warning: Failed to delete gist: ${response.statusCode}");
-        }
-      }
-    } catch (e) {
-      debugPrint("[GistBackup] Error deleting existing gist: $e");
-      // Don't fail if we can't delete
-    }
-  }
-
   /// Upload backup data to the gist
   Future<void> uploadBackup(String jsonData) async {
     if (!isAuthenticated()) {
       throw Exception("Not authenticated. Please enter a GitHub token.");
     }
 
-    // Delete existing gist and create new one
-    await _deleteExistingBackupGist();
-
     final compressionEnabled = _settingsBox?.get(
-      AppConstants.compressionEnabledSetting,
-      defaultValue: false,
-    ) as bool? ?? false;
+          AppConstants.compressionEnabledSetting,
+          defaultValue: false,
+        ) as bool? ??
+        false;
 
     final String contentToUpload;
     if (compressionEnabled) {
@@ -224,36 +260,145 @@ class GistBackupService {
       contentToUpload = jsonData;
     }
 
-    // Create new gist with metadata and data files
+    // Create metadata
     final timestamp = DateTime.now().toIso8601String();
     final metadataContent = json.encode({
       "timestamp": timestamp,
       "appVersion": "1.6.0",
     });
 
-    final response = await http.post(
+    final filesToUpsert = {
+      _backupFileName: {
+        "content": metadataContent,
+      },
+      _backupFileNameWithExtension: {
+        "content": contentToUpload,
+      },
+    };
+
+    // Try to update existing gist first (atomic operation)
+    try {
+      final existingGistId = await _findExistingBackupGistId();
+      if (existingGistId != null) {
+        // When updating, also delete the old format file (if it exists)
+        // to prevent stale data after compression toggle
+        final oldFormatFileName = _backupFileNameWithExtension.endsWith(".gz")
+            ? "$_backupFileName.json"
+            : "$_backupFileName.json.gz";
+
+        // First check what files currently exist in the gist
+        final getResponse = await http.get(
+          Uri.parse("$_baseUrl/gists/$existingGistId"),
+          headers: _getHeaders(),
+        ).timeout(_httpTimeout);
+
+        if (getResponse.statusCode != 200) {
+          _checkRateLimit(getResponse.statusCode);
+          debugPrint(
+              "[GistBackup] Failed to fetch existing gist, will create new one");
+          _cachedGistId = null;
+        } else {
+          // Build files object with proper null handling for deletion
+          final filesUpdateBody = <String, dynamic>{};
+          filesUpdateBody[_backupFileName] = filesToUpsert[_backupFileName];
+          filesUpdateBody[_backupFileNameWithExtension] =
+              filesToUpsert[_backupFileNameWithExtension];
+
+          // Only include deletion of old format file if it exists in the current gist
+          final existingGistData = _safeJsonDecode(getResponse.body);
+          final existingFiles =
+              existingGistData["files"] as Map<String, dynamic>;
+
+          bool deletedOldFormat = false;
+          if (existingFiles.containsKey(oldFormatFileName)) {
+            filesUpdateBody[oldFormatFileName] =
+                null; // This correctly deletes the file
+            debugPrint(
+                "[GistBackup] Will delete old format file: $oldFormatFileName");
+            deletedOldFormat = true;
+          }
+
+          final updateResponse = await _executeWithRetry(
+            () => http.patch(
+              Uri.parse("$_baseUrl/gists/$existingGistId"),
+              headers: _getHeaders(),
+              body: json.encode({"files": filesUpdateBody}),
+            ).timeout(_httpTimeout),
+          );
+
+          if (updateResponse.statusCode == 200) {
+            // Verify the update was actually applied
+            final verifyResponse = await _executeWithRetry(
+              () => http.get(
+                Uri.parse("$_baseUrl/gists/$existingGistId"),
+                headers: _getHeaders(),
+              ).timeout(_httpTimeout),
+            );
+
+            if (verifyResponse.statusCode == 200) {
+              final verifyData = _safeJsonDecode(verifyResponse.body);
+              final verifyFiles = verifyData["files"] as Map<String, dynamic>;
+              
+              // Verify old format file was deleted if it should have been
+              if (deletedOldFormat && verifyFiles.containsKey(oldFormatFileName)) {
+                debugPrint(
+                    "[GistBackup] Warning: Old format file still exists, will retry");
+                _cachedGistId = null; // Force retry on next backup
+              } else {
+                _cachedGistId = existingGistId;
+                if (deletedOldFormat) {
+                  debugPrint(
+                      "[GistBackup] Updated existing gist: $existingGistId (cleaned old format)");
+                } else {
+                  debugPrint("[GistBackup] Updated existing gist: $existingGistId");
+                }
+              }
+            } else {
+              // Verification failed, but update seemed successful
+              _cachedGistId = existingGistId;
+              debugPrint("[GistBackup] Updated gist but verification failed: ${verifyResponse.statusCode}");
+            }
+            return;
+          } else if (updateResponse.statusCode == 404) {
+            // Gist was deleted externally, fall through to create new one
+            debugPrint("[GistBackup] Existing gist not found, creating new one");
+            _cachedGistId = null;
+          } else {
+            // Check for rate limiting
+            _checkRateLimit(updateResponse.statusCode);
+            // Fall through to create new one for other errors
+            debugPrint(
+                "[GistBackup] Failed to update gist (${updateResponse.statusCode}), creating new one");
+            _cachedGistId = null;
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint(
+          "[GistBackup] Error finding existing gist: $e, will create new one");
+      _cachedGistId = null;
+    }
+
+    // Create new gist if update failed or didn't exist
+    final createResponse = await http.post(
       Uri.parse("$_baseUrl/gists"),
       headers: _getHeaders(),
       body: json.encode({
         "description": "Countapp backup data",
         "public": false, // Secret gist
-        "files": {
-          _backupFileName: {
-            "content": metadataContent,
-          },
-          _backupFileNameWithExtension: {
-            "content": contentToUpload,
-          },
-        },
+        "files": filesToUpsert,
       }),
-    );
+    ).timeout(_httpTimeout);
 
-    if (response.statusCode == 201) {
-      final data = json.decode(response.body) as Map<String, dynamic>;
+    if (createResponse.statusCode == 201) {
+      final data = _safeJsonDecode(createResponse.body);
       _cachedGistId = data["id"] as String;
       debugPrint("[GistBackup] Created new backup gist: $_cachedGistId");
     } else {
-      throw Exception("Failed to create backup gist: ${response.statusCode}");
+      // Check for rate limiting
+      _checkRateLimit(createResponse.statusCode);
+      throw Exception(
+          "Failed to create backup gist: ${createResponse.statusCode}");
     }
   }
 
@@ -261,14 +406,18 @@ class GistBackupService {
   Future<String> downloadBackup() async {
     final gistId = await getExistingBackupGist();
 
-    final response = await http.get(
-      Uri.parse("$_baseUrl/gists/$gistId"),
-      headers: _getHeaders(),
+    final response = await _executeWithRetry(
+      () => http.get(
+        Uri.parse("$_baseUrl/gists/$gistId"),
+        headers: _getHeaders(),
+      ).timeout(_httpTimeout),
     );
 
     if (response.statusCode == 200) {
-      final data = json.decode(response.body) as Map<String, dynamic>;
-      final files = data["files"] as Map<String, dynamic>;
+      final data = _safeJsonDecode(response.body);
+      final files = data["files"] as Map<String, dynamic>?
+          ??
+          <String, dynamic>{};
 
       // Find the data file (handles both .json and .json.gz)
       String? content;
@@ -309,13 +458,22 @@ class GistBackupService {
           content = utf8.decode(decompressedBytes);
         } catch (e) {
           debugPrint("[GistBackup] Failed to decompress backup: $e");
-          rethrow;
+          throw Exception("Backup file is corrupted or has invalid compression. Error: $e");
         }
+      }
+      
+      // Verify the content is valid JSON
+      try {
+        json.decode(content);
+      } catch (e) {
+        debugPrint("[GistBackup] Downloaded content is not valid JSON: $e");
+        throw Exception("Backup data is corrupted or invalid.");
       }
 
       debugPrint("[GistBackup] Backup downloaded successfully");
       return content;
     } else {
+      _checkRateLimit(response.statusCode);
       throw Exception("Failed to download backup: ${response.statusCode}");
     }
   }
@@ -324,28 +482,33 @@ class GistBackupService {
   Future<Map<String, dynamic>> getBackupMetadata() async {
     final gistId = await getExistingBackupGist();
 
-    final response = await http.get(
-      Uri.parse("$_baseUrl/gists/$gistId"),
-      headers: _getHeaders(),
+    final response = await _executeWithRetry(
+      () => http.get(
+        Uri.parse("$_baseUrl/gists/$gistId"),
+        headers: _getHeaders(),
+      ).timeout(_httpTimeout),
     );
 
     if (response.statusCode == 200) {
-      final data = json.decode(response.body) as Map<String, dynamic>;
-      final files = data["files"] as Map<String, dynamic>;
+      final data = _safeJsonDecode(response.body);
+      final files = data["files"] as Map<String, dynamic>?
+          ??
+          <String, dynamic>{};
       final metadataFile = files[_backupFileName] as Map<String, dynamic>?;
 
       if (metadataFile == null) {
-        return {};
+        throw Exception("Backup metadata file not found. Backup may be corrupted.");
       }
 
       final content = metadataFile["content"] as String;
-      final metadata = json.decode(content) as Map<String, dynamic>;
+      final metadata = _safeJsonDecode(content);
 
       return {
         "timestamp": metadata["timestamp"] as String?,
         "appVersion": metadata["appVersion"] as String?,
       };
     } else {
+      _checkRateLimit(response.statusCode);
       throw Exception("Failed to get backup metadata: ${response.statusCode}");
     }
   }
@@ -357,27 +520,38 @@ class GistBackupService {
   }
 
   Future<String?> _findExistingBackupGistId() async {
-    final response = await http.get(
-      Uri.parse("$_baseUrl/gists"),
-      headers: _getHeaders(),
-    );
+    int page = 1;
+    const pageSize = 30;
+    
+    while (true) {
+      final response = await http.get(
+        Uri.parse("$_baseUrl/gists?page=$page&per_page=$pageSize"),
+        headers: _getHeaders(),
+      ).timeout(_httpTimeout);
 
-    if (response.statusCode != 200) {
-      throw Exception("Failed to list gists: ${response.statusCode}");
-    }
+      if (response.statusCode != 200) {
+        _checkRateLimit(response.statusCode);
+        throw Exception("Failed to list gists: ${response.statusCode}");
+      }
 
-    final gists = json.decode(response.body) as List;
+      final gists = json.decode(response.body) as List;
+      
+      // If empty, we've reached the end
+      if (gists.isEmpty) break;
 
-    for (final gist in gists) {
-      final gistMap = gist as Map<String, dynamic>;
-      final files = gistMap["files"] as Map<String, dynamic>?;
-      if (files != null) {
-        for (final fileName in files.keys) {
-          if (_isBackupFile(fileName)) {
-            return gistMap["id"] as String;
+      for (final gist in gists) {
+        final gistMap = gist as Map<String, dynamic>;
+        final files = gistMap["files"] as Map<String, dynamic>?;
+        if (files != null) {
+          for (final fileName in files.keys) {
+            if (_isBackupFile(fileName)) {
+              return gistMap["id"] as String;
+            }
           }
         }
       }
+      
+      page++;
     }
 
     return null;
@@ -407,9 +581,19 @@ class GistBackupService {
       return _defaultBackupFileName;
     }
 
-    final withoutExtension =
-        trimmed.replaceAll(RegExp(r"\.json$", caseSensitive: false), "");
+    // Remove extensions if present
+    final withoutExtension = trimmed
+        .replaceAll(RegExp(r"\.json$", caseSensitive: false), "")
+        .replaceAll(RegExp(r"\.gz$", caseSensitive: false), "");
+    
     if (withoutExtension.isEmpty) {
+      return _defaultBackupFileName;
+    }
+
+    // Validate against GitHub gist naming restrictions (alphanumeric, dash, underscore)
+    if (!RegExp(r"^[a-zA-Z0-9_-]+$").hasMatch(withoutExtension)) {
+      debugPrint(
+          "[GistBackup] Invalid characters in backup filename: $withoutExtension");
       return _defaultBackupFileName;
     }
 
