@@ -1,5 +1,6 @@
 import "dart:convert";
 
+import "package:archive/archive_io.dart";
 import "package:countapp/utils/constants.dart";
 import "package:flutter/foundation.dart";
 import "package:hive_ce/hive.dart";
@@ -7,13 +8,13 @@ import "package:http/http.dart" as http;
 
 /// Service for managing GitHub Gist backups
 class GistBackupService {
-  static const String _baseUrl = "https://api.github.com";
-  static const String _defaultBackupFileName = "countapp_backup";
-  static final GistBackupService _instance = GistBackupService._();
 
   factory GistBackupService() => _instance;
 
   GistBackupService._();
+  static const String _baseUrl = "https://api.github.com";
+  static const String _defaultBackupFileName = "countapp_backup";
+  static final GistBackupService _instance = GistBackupService._();
 
   String? _token;
   Box? _settingsBox;
@@ -169,6 +170,22 @@ class GistBackupService {
   /// Upload backup data to the gist
   Future<void> uploadBackup(String jsonData) async {
     final gistId = await getOrCreateBackupGist();
+    
+    final compressionEnabled = _settingsBox?.get(
+      AppConstants.compressionEnabledSetting,
+      defaultValue: false,
+    ) as bool? ?? false;
+
+    final String contentToUpload;
+    if (compressionEnabled) {
+      // Compress the JSON data and encode as base64
+      final bytes = utf8.encode(jsonData);
+      const encoder = GZipEncoder();
+      final compressedBytes = encoder.encode(bytes);
+      contentToUpload = base64Encode(compressedBytes);
+    } else {
+      contentToUpload = jsonData;
+    }
 
     final response = await http.patch(
       Uri.parse("$_baseUrl/gists/$gistId"),
@@ -176,7 +193,7 @@ class GistBackupService {
       body: json.encode({
         "files": {
           _backupFileNameWithExtension: {
-            "content": jsonData,
+            "content": contentToUpload,
           },
         },
       }),
@@ -201,13 +218,50 @@ class GistBackupService {
     if (response.statusCode == 200) {
       final data = json.decode(response.body) as Map<String, dynamic>;
       final files = data["files"] as Map<String, dynamic>;
-      final backupFile =
-          files[_backupFileNameWithExtension] as Map<String, dynamic>?;
-      if (backupFile == null) {
+      
+      // Try to find the backup file with the correct extension
+      String? content;
+      String? foundFileName;
+      
+      // First try to find the file with exact extension
+      for (final fileName in files.keys) {
+        if (fileName == _backupFileNameWithExtension) {
+          content = (files[fileName] as Map<String, dynamic>)["content"] as String;
+          foundFileName = fileName;
+          break;
+        }
+      }
+      
+      // If not found, try to find any file with the backup file name (for backward compatibility)
+      if (content == null) {
+        for (final fileName in files.keys) {
+          if (fileName.startsWith(_backupFileName)) {
+            content = (files[fileName] as Map<String, dynamic>)["content"] as String;
+            foundFileName = fileName;
+            break;
+          }
+        }
+      }
+      
+      if (content == null) {
         throw Exception(
             "Backup file '$_backupFileNameWithExtension' not found in gist");
       }
-      final content = backupFile["content"] as String;
+      
+      // Decompress if the file is compressed
+      if (foundFileName?.endsWith(".gz") ?? false) {
+        try {
+          final decodedBytes = base64Decode(content);
+          const decoder = GZipDecoder();
+          final decompressedBytes = decoder.decodeBytes(decodedBytes);
+          content = utf8.decode(decompressedBytes);
+        } catch (e) {
+          debugPrint("[GistBackup] Failed to decompress backup: $e");
+          // If decompression fails, assume it's plain JSON
+          rethrow;
+        }
+      }
+      
       debugPrint("[GistBackup] Backup downloaded successfully");
       return content;
     } else {
@@ -246,15 +300,30 @@ class GistBackupService {
     for (final gist in gists) {
       final gistMap = gist as Map<String, dynamic>;
       final files = gistMap["files"] as Map<String, dynamic>?;
-      if (files != null && files.containsKey(_backupFileNameWithExtension)) {
-        return gistMap["id"] as String;
+      if (files != null) {
+        for (final fileName in files.keys) {
+          if (_isBackupFile(fileName)) {
+            return gistMap["id"] as String;
+          }
+        }
       }
     }
 
     return null;
   }
 
-  String get _backupFileNameWithExtension => "$_backupFileName.json";
+  String get _backupFileNameWithExtension {
+    final compressionEnabled = _settingsBox?.get(
+      AppConstants.compressionEnabledSetting,
+      defaultValue: false,
+    ) as bool? ?? false;
+    
+    return compressionEnabled ? "$_backupFileName.json.gz" : "$_backupFileName.json";
+  }
+  
+  bool _isBackupFile(String fileName) {
+    return fileName == "$_backupFileName.json" || fileName == "$_backupFileName.json.gz";
+  }
 
   String _sanitizeBackupFileName(String? fileName) {
     final trimmed = fileName?.trim() ?? "";
