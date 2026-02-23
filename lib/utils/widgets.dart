@@ -1,6 +1,6 @@
 import "package:countapp/theme/theme_notifier.dart";
+import "package:countapp/utils/constants.dart";
 import "package:flutter/material.dart";
-import "package:intl/intl.dart";
 import "package:provider/provider.dart";
 
 Widget buildStepCard(String step) {
@@ -42,7 +42,7 @@ Widget buildInfoCard(String infoName, String infoValue) {
 
 Widget buildCustomListTile(DateTime date) {
   final formattedDate =
-      DateFormat("MMM d, yyyy (EEEE) - h:mm a").format(date.toLocal());
+      AppConstants.dateTimeFullFormat.format(date.toLocal());
 
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 8.0),
