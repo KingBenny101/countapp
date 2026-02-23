@@ -69,8 +69,6 @@ class _OptionsPageState extends State<OptionsPage> {
       ),
     );
 
-    controller.dispose();
-
     if (value == null) {
       return;
     }
