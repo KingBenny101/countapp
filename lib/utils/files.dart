@@ -18,11 +18,11 @@ Future<bool> exportJSON(String exportFilePath) async {
     final settingsBox = Hive.isBoxOpen(AppConstants.settingsBox)
         ? Hive.box(AppConstants.settingsBox)
         : await Hive.openBox(AppConstants.settingsBox);
-    
+
     final file = File(exportFilePath);
     final counters = box.values.toList();
     final jsonCounters = json.encode(counters);
-    
+
     final compressionEnabled = settingsBox.get(
       AppConstants.compressionEnabledSetting,
       defaultValue: false,
@@ -51,13 +51,13 @@ Future<void> importJSON(
       ? Hive.box(AppConstants.countersBox)
       : await Hive.openBox(AppConstants.countersBox);
   final file = File(importFilePath);
-  
+
   // Try to detect if file is compressed
   String jsonCounters;
   try {
     // First try reading as compressed
     final bytes = await file.readAsBytes();
-    
+
     // Check if file is gzip compressed (magic bytes: 1f 8b)
     if (bytes.length >= 2 && bytes[0] == 0x1f && bytes[1] == 0x8b) {
       // File is gzip compressed
@@ -72,7 +72,7 @@ Future<void> importJSON(
     // If gzip decoding fails, fall back to reading as string
     jsonCounters = await file.readAsString();
   }
-  
+
   final countersData = json.decode(jsonCounters) as List<dynamic>;
 
   // Convert each JSON object to BaseCounter using factory

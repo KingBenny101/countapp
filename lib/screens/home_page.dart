@@ -442,12 +442,13 @@ class HomePageState extends State<HomePage> {
                       final DateFormat formatter =
                           DateFormat("yyyy-MM-dd_HH-mm-ss");
                       final String fileNameLabel = formatter.format(now);
-                      
+
                       final settingsBox = Hive.box(AppConstants.settingsBox);
                       final compressionEnabled = settingsBox.get(
                           AppConstants.compressionEnabledSetting,
                           defaultValue: false) as bool;
-                      final fileExtension = compressionEnabled ? ".json.gz" : ".json";
+                      final fileExtension =
+                          compressionEnabled ? ".json.gz" : ".json";
 
                       if (!context.mounted) return;
 
@@ -514,7 +515,8 @@ class HomePageState extends State<HomePage> {
                           }
                         } else {
                           if (!fileName.endsWith(".json")) {
-                            fileName = fileName.replaceAll(RegExp(r"\.gz$"), "");
+                            fileName =
+                                fileName.replaceAll(RegExp(r"\.gz$"), "");
                             fileName += ".json";
                           }
                         }
