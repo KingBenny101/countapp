@@ -3,7 +3,6 @@ import "package:countapp/utils/constants.dart";
 import "package:countapp/utils/widgets.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
-import "package:intl/intl.dart";
 import "package:provider/provider.dart";
 import "package:url_launcher/url_launcher.dart";
 
@@ -237,7 +236,7 @@ class _BackupsPageState extends State<BackupsPage> {
                       title: const Text("Upload Backup"),
                       subtitle: backupProvider.lastBackupTime != null
                           ? Text(
-                              "Last backup: ${DateFormat("MMM d, yyyy h:mm a").format(backupProvider.lastBackupTime!)}",
+                              "Last backup: ${AppConstants.dateFormatMonthDayYearWithTime.format(backupProvider.lastBackupTime!)}",
                             )
                           : null,
                       trailing: backupProvider.isBusy

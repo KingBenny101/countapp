@@ -8,7 +8,6 @@ import "package:countapp/utils/widgets.dart";
 import "package:file_picker/file_picker.dart";
 import "package:flutter/material.dart";
 import "package:hive_ce/hive.dart";
-import "package:intl/intl.dart";
 import "package:provider/provider.dart";
 
 class HomePage extends StatefulWidget {
@@ -439,9 +438,8 @@ class HomePageState extends State<HomePage> {
                       final formKey = GlobalKey<FormState>();
 
                       final DateTime now = DateTime.now();
-                      final DateFormat formatter =
-                          DateFormat("yyyy-MM-dd_HH-mm-ss");
-                      final String fileNameLabel = formatter.format(now);
+                      final String fileNameLabel =
+                          AppConstants.backupFileFormat.format(now);
 
                       final settingsBox = Hive.box(AppConstants.settingsBox);
                       final compressionEnabled = settingsBox.get(
@@ -506,11 +504,14 @@ class HomePageState extends State<HomePage> {
 
                         // Sanitize filename - remove or replace invalid characters
                         // Keep only alphanumeric, spaces, underscores, hyphens, and dots
-                        fileName = fileName.replaceAll(RegExp(r"[^a-zA-Z0-9\s_\-.]"), "");
-                        fileName = fileName.replaceAll(RegExp(r"\s+"), "_"); // Replace spaces with underscores
+                        fileName = fileName.replaceAll(
+                            RegExp(r"[^a-zA-Z0-9\s_\-.]"), "");
+                        fileName = fileName.replaceAll(RegExp(r"\s+"),
+                            "_"); // Replace spaces with underscores
 
                         if (fileName.isEmpty) {
-                          fileName = fileNameLabel; // Fallback if sanitization removed everything
+                          fileName =
+                              fileNameLabel; // Fallback if sanitization removed everything
                         }
 
                         // Add the appropriate extension if not already present
@@ -625,64 +626,69 @@ class _DeleteButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final counterProvider = context.watch<CounterProvider>();
-    final homePageState = context.findAncestorStateOfType<HomePageState>()!;
+    return Selector<CounterProvider, int>(
+      selector: (_, provider) => provider.counters.length,
+      builder: (context, countersLength, _) {
+        final homePageState = context.findAncestorStateOfType<HomePageState>()!;
 
-    return ElevatedButton(
-      onPressed: () async {
-        // Show confirmation dialog before deleting
-        final bool? confirmDelete = await showDialog<bool>(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text("Confirm Deletion"),
-              content: const Text("Delete the selected Counters?"),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(false);
-                  },
-                  child: const Text("Cancel"),
-                ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(true);
-                  },
-                  child: const Text("Confirm"),
-                ),
-              ],
+        return ElevatedButton(
+          onPressed: () async {
+            final counterProvider = context.read<CounterProvider>();
+            // Show confirmation dialog before deleting
+            final bool? confirmDelete = await showDialog<bool>(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text("Confirm Deletion"),
+                  content: const Text("Delete the selected Counters?"),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(false);
+                      },
+                      child: const Text("Cancel"),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(true);
+                      },
+                      child: const Text("Confirm"),
+                    ),
+                  ],
+                );
+              },
             );
+
+            if (confirmDelete == true) {
+              final selectedIndices = <int>[];
+              for (int i = 0; i < homePageState._selectedCounters.length; i++) {
+                if (homePageState._selectedCounters[i]) {
+                  selectedIndices.add(i);
+                }
+              }
+
+              if (selectedIndices.isNotEmpty) {
+                await counterProvider.removeCounters(selectedIndices);
+                homePageState._resetSelection(countersLength);
+
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    buildAppSnackBar(
+                      "${selectedIndices.length} Counters Deleted Successfully!",
+                      context: context,
+                    ),
+                  );
+                }
+              }
+            }
           },
+          style: ElevatedButton.styleFrom(
+            padding: const EdgeInsets.all(16),
+            shape: const CircleBorder(),
+          ),
+          child: const Icon(Icons.delete, size: 30),
         );
-
-        if (confirmDelete == true) {
-          final selectedIndices = <int>[];
-          for (int i = 0; i < homePageState._selectedCounters.length; i++) {
-            if (homePageState._selectedCounters[i]) {
-              selectedIndices.add(i);
-            }
-          }
-
-          if (selectedIndices.isNotEmpty) {
-            await counterProvider.removeCounters(selectedIndices);
-            homePageState._resetSelection(counterProvider.counters.length);
-
-            if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                buildAppSnackBar(
-                  "${selectedIndices.length} Counters Deleted Successfully!",
-                  context: context,
-                ),
-              );
-            }
-          }
-        }
       },
-      style: ElevatedButton.styleFrom(
-        padding: const EdgeInsets.all(16),
-        shape: const CircleBorder(),
-      ),
-      child: const Icon(Icons.delete, size: 30),
     );
   }
 }

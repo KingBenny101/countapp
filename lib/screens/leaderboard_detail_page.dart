@@ -6,7 +6,6 @@ import "package:countapp/utils/constants.dart";
 import "package:countapp/utils/widgets.dart";
 import "package:flutter/material.dart";
 import "package:hive_ce/hive.dart";
-import "package:intl/intl.dart";
 
 class LeaderboardDetailPage extends StatefulWidget {
   const LeaderboardDetailPage({super.key, required this.code});
@@ -145,7 +144,7 @@ class _LeaderboardDetailPageState extends State<LeaderboardDetailPage> {
                   itemCount: _board!.leaderboard.length,
                   itemBuilder: (context, index) {
                     final e = _board!.leaderboard[index];
-                    final dateStr = DateFormat("yyyy-MM-dd HH:mm")
+                    final dateStr = AppConstants.leaderboardDateTimeFormat
                         .format(e.timestamp.toLocal());
                     return Card(
                       elevation: 2,

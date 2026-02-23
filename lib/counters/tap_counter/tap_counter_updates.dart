@@ -1,6 +1,6 @@
 import "package:countapp/providers/counter_provider.dart";
+import "package:countapp/utils/constants.dart";
 import "package:flutter/material.dart";
-import "package:intl/intl.dart";
 import "package:provider/provider.dart";
 
 class TapCounterUpdatesPage extends StatefulWidget {
@@ -19,6 +19,7 @@ class TapCounterUpdatesPage extends StatefulWidget {
 class _TapCounterUpdatesPageState extends State<TapCounterUpdatesPage> {
   String _searchQuery = "";
   final Set<int> _selectedIndices = {};
+  late List<DateTime> _filteredUpdates = [];
 
   void _searchDate(String query) {
     setState(() {
@@ -136,10 +137,12 @@ class _TapCounterUpdatesPageState extends State<TapCounterUpdatesPage> {
       builder: (context, provider, child) {
         final counter = provider.counters[widget.counterIndex];
         final updates = counter.updates;
-        final filteredUpdates = _searchQuery.isEmpty
+
+        // Update cached filtered list based on current search query
+        _filteredUpdates = _searchQuery.isEmpty
             ? updates
             : updates
-                .where((date) => DateFormat("MMM d, yyyy (EEEE) - h:mm a")
+                .where((date) => AppConstants.dateTimeFullFormat
                     .format(date.toLocal())
                     .toLowerCase()
                     .contains(_searchQuery.toLowerCase()))
@@ -189,9 +192,9 @@ class _TapCounterUpdatesPageState extends State<TapCounterUpdatesPage> {
             ],
           ),
           body: ListView.builder(
-            itemCount: filteredUpdates.length,
+            itemCount: _filteredUpdates.length,
             itemBuilder: (context, index) {
-              final date = filteredUpdates[index];
+              final date = _filteredUpdates[index];
               final originalIndex = updates.indexOf(date);
               final isSelected = _selectedIndices.contains(originalIndex);
 
@@ -205,7 +208,7 @@ class _TapCounterUpdatesPageState extends State<TapCounterUpdatesPage> {
 
   Widget _buildUpdateTile(DateTime date, bool isSelected, int originalIndex) {
     final formattedDate =
-        DateFormat("MMM d, yyyy (EEEE) - h:mm a").format(date.toLocal());
+        AppConstants.dateTimeFullFormat.format(date.toLocal());
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -291,8 +294,8 @@ class DateSearchDelegate extends SearchDelegate {
     final suggestions = query.isEmpty
         ? data
         : data.where((date) {
-            final formattedDate = DateFormat("MMM d, yyyy (EEEE) - h:mm a")
-                .format(date.toLocal());
+            final formattedDate =
+                AppConstants.dateTimeFullFormat.format(date.toLocal());
             return formattedDate.toLowerCase().contains(query.toLowerCase());
           }).toList();
 
@@ -306,7 +309,7 @@ class DateSearchDelegate extends SearchDelegate {
 
   Widget _buildUpdateTile(BuildContext context, DateTime date) {
     final formattedDate =
-        DateFormat("MMM d, yyyy (EEEE) - h:mm a").format(date.toLocal());
+        AppConstants.dateTimeFullFormat.format(date.toLocal());
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

@@ -1,8 +1,8 @@
 import "package:countapp/counters/series_counter/series_counter.dart";
 import "package:countapp/providers/counter_provider.dart";
+import "package:countapp/utils/constants.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
-import "package:intl/intl.dart";
 import "package:provider/provider.dart";
 
 class SeriesCounterUpdatesPage extends StatefulWidget {
@@ -22,6 +22,7 @@ class SeriesCounterUpdatesPage extends StatefulWidget {
 class _SeriesCounterUpdatesPageState extends State<SeriesCounterUpdatesPage> {
   String _searchQuery = "";
   final Set<int> _selectedIndices = {};
+  late List<int> _filteredIndices = [];
 
   void _searchDate(String query) {
     setState(() {
@@ -117,7 +118,7 @@ class _SeriesCounterUpdatesPageState extends State<SeriesCounterUpdatesPage> {
               children: [
                 ListTile(
                   title: const Text("Date & Time"),
-                  subtitle: Text(DateFormat("MMM d, yyyy - h:mm a")
+                  subtitle: Text(AppConstants.dateTimeFullFormat
                       .format(selectedDate.toLocal())),
                   onTap: () async {
                     final pickedDate = await showDatePicker(
@@ -201,15 +202,16 @@ class _SeriesCounterUpdatesPageState extends State<SeriesCounterUpdatesPage> {
         final updates = counter.updates;
         final values = counter.seriesValues;
 
-        final List<int> filteredIndices = [];
+        // Update cached filtered indices based on current search query
+        _filteredIndices = [];
         for (int i = 0; i < updates.length; i++) {
-          final dateStr = DateFormat("MMM d, yyyy (EEEE) - h:mm a")
-              .format(updates[i].toLocal());
+          final dateStr =
+              AppConstants.dateTimeFullFormat.format(updates[i].toLocal());
           final valStr = values[i].toString();
           if (_searchQuery.isEmpty ||
               dateStr.toLowerCase().contains(_searchQuery.toLowerCase()) ||
               valStr.contains(_searchQuery)) {
-            filteredIndices.add(i);
+            _filteredIndices.add(i);
           }
         }
 
@@ -258,9 +260,9 @@ class _SeriesCounterUpdatesPageState extends State<SeriesCounterUpdatesPage> {
             ],
           ),
           body: ListView.builder(
-            itemCount: filteredIndices.length,
+            itemCount: _filteredIndices.length,
             itemBuilder: (context, index) {
-              final dataIndex = filteredIndices[index];
+              final dataIndex = _filteredIndices[index];
               final isSelected = _selectedIndices.contains(dataIndex);
               return _buildUpdateTile(
                   updates[dataIndex], values[dataIndex], isSelected, dataIndex);
@@ -303,7 +305,7 @@ class _SeriesCounterUpdatesPageState extends State<SeriesCounterUpdatesPage> {
             ),
           ),
           subtitle: Text(
-            DateFormat("MMM d, yyyy (EEEE) - h:mm a").format(date.toLocal()),
+            AppConstants.dateTimeFullFormat.format(date.toLocal()),
             style: const TextStyle(fontSize: 14),
           ),
           onTap: () {
@@ -365,8 +367,8 @@ class SeriesSearchDelegate extends SearchDelegate {
   Widget buildSuggestions(BuildContext context) {
     final suggestions = <int>[];
     for (int i = 0; i < updates.length; i++) {
-      final formattedDate = DateFormat("MMM d, yyyy (EEEE) - h:mm a")
-          .format(updates[i].toLocal());
+      final formattedDate =
+          AppConstants.dateTimeFullFormat.format(updates[i].toLocal());
       final formattedValue = values[i].toStringAsFixed(2);
       if (query.isEmpty ||
           formattedDate.toLowerCase().contains(query.toLowerCase()) ||
@@ -410,7 +412,7 @@ class SeriesSearchDelegate extends SearchDelegate {
             ),
           ),
           subtitle: Text(
-            DateFormat("MMM d, yyyy (EEEE) - h:mm a").format(date.toLocal()),
+            AppConstants.dateTimeFullFormat.format(date.toLocal()),
             style: const TextStyle(fontSize: 14),
           ),
         ),
