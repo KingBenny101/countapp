@@ -137,7 +137,7 @@ class _TapCounterUpdatesPageState extends State<TapCounterUpdatesPage> {
       builder: (context, provider, child) {
         final counter = provider.counters[widget.counterIndex];
         final updates = counter.updates;
-        
+
         // Update cached filtered list based on current search query
         _filteredUpdates = _searchQuery.isEmpty
             ? updates
@@ -294,8 +294,8 @@ class DateSearchDelegate extends SearchDelegate {
     final suggestions = query.isEmpty
         ? data
         : data.where((date) {
-            final formattedDate = AppConstants.dateTimeFullFormat
-                .format(date.toLocal());
+            final formattedDate =
+                AppConstants.dateTimeFullFormat.format(date.toLocal());
             return formattedDate.toLowerCase().contains(query.toLowerCase());
           }).toList();
 

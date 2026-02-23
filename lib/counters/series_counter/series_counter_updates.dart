@@ -205,8 +205,8 @@ class _SeriesCounterUpdatesPageState extends State<SeriesCounterUpdatesPage> {
         // Update cached filtered indices based on current search query
         _filteredIndices = [];
         for (int i = 0; i < updates.length; i++) {
-          final dateStr = AppConstants.dateTimeFullFormat
-              .format(updates[i].toLocal());
+          final dateStr =
+              AppConstants.dateTimeFullFormat.format(updates[i].toLocal());
           final valStr = values[i].toString();
           if (_searchQuery.isEmpty ||
               dateStr.toLowerCase().contains(_searchQuery.toLowerCase()) ||
@@ -367,8 +367,8 @@ class SeriesSearchDelegate extends SearchDelegate {
   Widget buildSuggestions(BuildContext context) {
     final suggestions = <int>[];
     for (int i = 0; i < updates.length; i++) {
-      final formattedDate = AppConstants.dateTimeFullFormat
-          .format(updates[i].toLocal());
+      final formattedDate =
+          AppConstants.dateTimeFullFormat.format(updates[i].toLocal());
       final formattedValue = values[i].toStringAsFixed(2);
       if (query.isEmpty ||
           formattedDate.toLowerCase().contains(query.toLowerCase()) ||

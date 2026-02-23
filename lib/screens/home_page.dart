@@ -438,7 +438,8 @@ class HomePageState extends State<HomePage> {
                       final formKey = GlobalKey<FormState>();
 
                       final DateTime now = DateTime.now();
-                      final String fileNameLabel = AppConstants.backupFileFormat.format(now);
+                      final String fileNameLabel =
+                          AppConstants.backupFileFormat.format(now);
 
                       final settingsBox = Hive.box(AppConstants.settingsBox);
                       final compressionEnabled = settingsBox.get(
@@ -503,11 +504,14 @@ class HomePageState extends State<HomePage> {
 
                         // Sanitize filename - remove or replace invalid characters
                         // Keep only alphanumeric, spaces, underscores, hyphens, and dots
-                        fileName = fileName.replaceAll(RegExp(r"[^a-zA-Z0-9\s_\-.]"), "");
-                        fileName = fileName.replaceAll(RegExp(r"\s+"), "_"); // Replace spaces with underscores
+                        fileName = fileName.replaceAll(
+                            RegExp(r"[^a-zA-Z0-9\s_\-.]"), "");
+                        fileName = fileName.replaceAll(RegExp(r"\s+"),
+                            "_"); // Replace spaces with underscores
 
                         if (fileName.isEmpty) {
-                          fileName = fileNameLabel; // Fallback if sanitization removed everything
+                          fileName =
+                              fileNameLabel; // Fallback if sanitization removed everything
                         }
 
                         // Add the appropriate extension if not already present

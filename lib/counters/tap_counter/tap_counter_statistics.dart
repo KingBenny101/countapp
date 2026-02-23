@@ -238,7 +238,8 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
 
     final sortedUpdates = List<DateTime>.from(updatesData)..sort();
     final lastUpdate = sortedUpdates.last;
-    final lastUpdateDateStr = AppConstants.dateFormatMonthDayYear.format(lastUpdate);
+    final lastUpdateDateStr =
+        AppConstants.dateFormatMonthDayYear.format(lastUpdate);
     final lastUpdateTimeStr = AppConstants.timeFormatHourMin.format(lastUpdate);
 
     return Card(
@@ -515,8 +516,8 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
 
     final plotData = updatesPerDay.sublist(startIndex, endIndex);
     final chartData = _getHistogramData(daysPerUpdateCount);
-    final bool hasAttachedLeaderboard = allLeaderboards
-        .any((lb) => lb.attachedCounterId == counter.id);
+    final bool hasAttachedLeaderboard =
+        allLeaderboards.any((lb) => lb.attachedCounterId == counter.id);
 
     return Scaffold(
       appBar: AppBar(
@@ -855,8 +856,8 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
               return Container();
             }
 
-            final String formattedDate =
-                AppConstants.dateFormatMonthDay.format(DateTime.parse(dates[index].key));
+            final String formattedDate = AppConstants.dateFormatMonthDay
+                .format(DateTime.parse(dates[index].key));
             return RotatedBox(
               quarterTurns: 3,
               child: Text(

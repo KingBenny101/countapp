@@ -176,7 +176,7 @@ class SeriesCounter extends BaseCounter {
                   decoration: const InputDecoration(
                     labelText: "Value",
                     border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.numbers),
+                    prefixIcon: Icon(Icons.numbers),  // Note: Icon inside InputDecoration
                   ),
                   keyboardType:
                       const TextInputType.numberWithOptions(decimal: true),

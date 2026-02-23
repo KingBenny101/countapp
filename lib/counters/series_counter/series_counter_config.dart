@@ -35,7 +35,7 @@ class SeriesCounterConfigPageState extends State<SeriesCounterConfigPage> {
                   decoration: const InputDecoration(
                     labelText: "Counter Name",
                     border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.edit),
+                    prefixIcon: Icon(Icons.edit),  // Note: Icon inside InputDecoration
                   ),
                   onChanged: (value) {
                     _name = value;
@@ -52,7 +52,7 @@ class SeriesCounterConfigPageState extends State<SeriesCounterConfigPage> {
                   decoration: const InputDecoration(
                     labelText: "Description (Optional)",
                     border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.description),
+                    prefixIcon: Icon(Icons.description),  // Note: Icon inside InputDecoration
                   ),
                   onChanged: (value) {
                     _description = value;
@@ -63,7 +63,7 @@ class SeriesCounterConfigPageState extends State<SeriesCounterConfigPage> {
                   decoration: const InputDecoration(
                     labelText: "Initial Value",
                     border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.looks_one),
+                    prefixIcon: Icon(Icons.looks_one),  // Note: Icon inside InputDecoration
                   ),
                   keyboardType:
                       const TextInputType.numberWithOptions(decimal: true),
