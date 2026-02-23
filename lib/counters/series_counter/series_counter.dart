@@ -2,10 +2,10 @@
 
 import "package:countapp/counters/base/base_counter.dart";
 import "package:countapp/counters/series_counter/series_counter_statistics.dart";
+import "package:countapp/utils/constants.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
 import "package:hive_ce/hive.dart";
-import "package:intl/intl.dart";
 import "package:uuid/uuid.dart";
 
 part "series_counter.g.dart";
@@ -152,7 +152,7 @@ class SeriesCounter extends BaseCounter {
     final formKey = GlobalKey<FormState>();
 
     final lastUpdatedParsed = lastUpdated != null
-        ? DateFormat("E, MMM d, yyyy hh:mm a").format(lastUpdated!)
+        ? AppConstants.dateTimeFullDateOnly.format(lastUpdated!)
         : "Never";
 
     final double? result = await showDialog<double>(
