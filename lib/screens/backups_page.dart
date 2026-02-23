@@ -2,7 +2,7 @@ import "package:countapp/providers/backup_provider.dart";
 import "package:countapp/utils/constants.dart";
 import "package:countapp/utils/widgets.dart";
 import "package:flutter/material.dart";
-import "package:intl/intl.dart";
+import "package:flutter/services.dart";
 import "package:provider/provider.dart";
 import "package:url_launcher/url_launcher.dart";
 
@@ -33,6 +33,18 @@ class _BackupsPageState extends State<BackupsPage> {
   Future<void> _openDocumentation() async {
     final uri = Uri.parse(AppConstants.backupDocsUrl);
     await launchUrl(uri, mode: LaunchMode.externalApplication);
+  }
+
+  Future<void> _copyToken() async {
+    await Clipboard.setData(ClipboardData(text: _tokenController.text));
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        buildAppSnackBar(
+          "Token copied to clipboard",
+          context: context,
+        ),
+      );
+    }
   }
 
   Future<void> _handleUploadBackup(BackupProvider backupProvider) async {
@@ -139,7 +151,7 @@ class _BackupsPageState extends State<BackupsPage> {
               // GitHub Token Configuration Card
               Card(
                 child: Padding(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -164,12 +176,20 @@ class _BackupsPageState extends State<BackupsPage> {
                       TextField(
                         controller: _tokenController,
                         obscureText: true,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           labelText: "Token",
                           hintText: "ghp_...",
-                          border: OutlineInputBorder(),
+                          border: const OutlineInputBorder(),
+                          suffixIcon: _tokenController.text.isNotEmpty
+                              ? IconButton(
+                                  icon: const Icon(Icons.copy),
+                                  tooltip: "Copy token",
+                                  onPressed: _copyToken,
+                                )
+                              : null,
                         ),
                         onChanged: (value) {
+                          setState(() {}); // To update the suffixIcon
                           backupProvider.updateToken(value);
                         },
                       ),
@@ -216,7 +236,7 @@ class _BackupsPageState extends State<BackupsPage> {
                       title: const Text("Upload Backup"),
                       subtitle: backupProvider.lastBackupTime != null
                           ? Text(
-                              "Last backup: ${DateFormat("MMM d, yyyy h:mm a").format(backupProvider.lastBackupTime!)}",
+                              "Last backup: ${AppConstants.dateFormatMonthDayYearWithTime.format(backupProvider.lastBackupTime!)}",
                             )
                           : null,
                       trailing: backupProvider.isBusy
@@ -275,7 +295,7 @@ class _BackupsPageState extends State<BackupsPage> {
               Card(
                 color: Theme.of(context).colorScheme.primaryContainer,
                 child: Padding(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

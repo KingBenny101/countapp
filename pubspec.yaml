@@ -1,12 +1,13 @@
 name: countapp
 description: 'A simple application to help users keep track of their counts effortlessly.'
 publish_to: 'none'
-version: 1.6.1
+version: 1.6.2
 
 environment:
   sdk: '>=3.3.3 <4.0.0'
 
 dependencies:
+  archive: ^4.0.0
   connectivity_plus: ^7.0.0
   file_picker: ^10.3.2
   fl_chart: ^1.1.0

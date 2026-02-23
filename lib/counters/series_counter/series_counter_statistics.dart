@@ -2,9 +2,9 @@ import "package:countapp/counters/series_counter/series_counter.dart";
 import "package:countapp/counters/series_counter/series_counter_updates.dart";
 import "package:countapp/providers/counter_provider.dart";
 import "package:countapp/services/leaderboard_service.dart";
+import "package:countapp/utils/constants.dart";
 import "package:countapp/utils/widgets.dart";
 import "package:flutter/material.dart";
-import "package:intl/intl.dart";
 import "package:provider/provider.dart";
 import "package:syncfusion_flutter_charts/charts.dart";
 
@@ -145,10 +145,11 @@ class SeriesCounterStatisticsPageState
       );
     }
 
+    final allLeaderboards = LeaderboardService.getAll(); // Cache once
     final lineData = _getLineChartData(counter);
     final hasData = lineData.isNotEmpty;
-    final bool hasAttachedLeaderboard = LeaderboardService.getAll()
-        .any((lb) => lb.attachedCounterId == counter.id);
+    final bool hasAttachedLeaderboard =
+        allLeaderboards.any((lb) => lb.attachedCounterId == counter.id);
 
     final weeklyAvg = counter.getWeeklyAverage();
     final monthlyAvg = counter.getMonthlyAverage();
@@ -209,10 +210,10 @@ class SeriesCounterStatisticsPageState
                       primaryXAxis: DateTimeAxis(
                         labelRotation: -65,
                         dateFormat: _selectedRange == "1D"
-                            ? DateFormat("HH:mm")
+                            ? AppConstants.timeFormat24Hour
                             : (_selectedRange == "1W" || _selectedRange == "1M")
-                                ? DateFormat("MMM d")
-                                : DateFormat("dd/MM/yy"),
+                                ? AppConstants.dateFormatMonthDaySingle
+                                : AppConstants.dateFormatDayMonthYear,
                         majorGridLines: const MajorGridLines(width: 0.5),
                         edgeLabelPlacement: EdgeLabelPlacement.shift,
                         labelIntersectAction: AxisLabelIntersectAction.rotate45,

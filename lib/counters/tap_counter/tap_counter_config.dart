@@ -36,7 +36,7 @@ class TapCounterConfigPageState extends State<TapCounterConfigPage> {
                   decoration: const InputDecoration(
                     labelText: "Counter Name",
                     border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.edit),
+                    prefixIcon: Icon(Icons.edit),  // Note: Icon inside InputDecoration
                   ),
                   onChanged: (value) {
                     _name = value;
@@ -53,7 +53,7 @@ class TapCounterConfigPageState extends State<TapCounterConfigPage> {
                   decoration: const InputDecoration(
                     labelText: "Step Size",
                     border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.add_circle_outline_rounded),
+                    prefixIcon: Icon(Icons.add_circle_outline_rounded),  // Note: Icon inside InputDecoration
                   ),
                   keyboardType: TextInputType.number,
                   inputFormatters: <TextInputFormatter>[
@@ -70,7 +70,7 @@ class TapCounterConfigPageState extends State<TapCounterConfigPage> {
                   decoration: const InputDecoration(
                     labelText: "Initial Count",
                     border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.looks_one),
+                    prefixIcon: Icon(Icons.looks_one),  // Note: Icon inside InputDecoration
                   ),
                   keyboardType: TextInputType.number,
                   inputFormatters: <TextInputFormatter>[

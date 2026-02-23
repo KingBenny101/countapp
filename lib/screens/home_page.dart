@@ -2,11 +2,12 @@ import "package:countapp/providers/counter_provider.dart";
 import "package:countapp/screens/leaderboards_page.dart";
 import "package:countapp/screens/selection_page.dart";
 import "package:countapp/services/update_service.dart";
+import "package:countapp/utils/constants.dart";
 import "package:countapp/utils/files.dart";
 import "package:countapp/utils/widgets.dart";
 import "package:file_picker/file_picker.dart";
 import "package:flutter/material.dart";
-import "package:intl/intl.dart";
+import "package:hive_ce/hive.dart";
 import "package:provider/provider.dart";
 
 class HomePage extends StatefulWidget {
@@ -385,7 +386,7 @@ class HomePageState extends State<HomePage> {
                     final FilePickerResult? result =
                         await FilePicker.platform.pickFiles(
                       type: FileType.custom,
-                      allowedExtensions: ["json"],
+                      allowedExtensions: ["json", "gz"],
                     );
 
                     if (result != null) {
@@ -437,9 +438,15 @@ class HomePageState extends State<HomePage> {
                       final formKey = GlobalKey<FormState>();
 
                       final DateTime now = DateTime.now();
-                      final DateFormat formatter =
-                          DateFormat("yyyy-MM-dd_HH-mm-ss");
-                      final String fileNameLabel = formatter.format(now);
+                      final String fileNameLabel =
+                          AppConstants.backupFileFormat.format(now);
+
+                      final settingsBox = Hive.box(AppConstants.settingsBox);
+                      final compressionEnabled = settingsBox.get(
+                          AppConstants.compressionEnabledSetting,
+                          defaultValue: false) as bool;
+                      final fileExtension =
+                          compressionEnabled ? ".json.gz" : ".json";
 
                       if (!context.mounted) return;
 
@@ -454,7 +461,7 @@ class HomePageState extends State<HomePage> {
                                 controller: fileNameController,
                                 decoration: InputDecoration(
                                   labelText: "File Name",
-                                  hintText: "$fileNameLabel.json",
+                                  hintText: "$fileNameLabel$fileExtension",
                                 ),
                                 validator: (value) {
                                   final invalidCharacters =
@@ -488,7 +495,6 @@ class HomePageState extends State<HomePage> {
                           );
                         },
                       );
-
                       if (confirmExport == true) {
                         String fileName = fileNameController.text.trim();
 
@@ -496,8 +502,32 @@ class HomePageState extends State<HomePage> {
                           fileName = fileNameLabel;
                         }
 
-                        if (!fileName.endsWith(".json")) {
-                          fileName += ".json";
+                        // Sanitize filename - remove or replace invalid characters
+                        // Keep only alphanumeric, spaces, underscores, hyphens, and dots
+                        fileName = fileName.replaceAll(
+                            RegExp(r"[^a-zA-Z0-9\s_\-.]"), "");
+                        fileName = fileName.replaceAll(RegExp(r"\s+"),
+                            "_"); // Replace spaces with underscores
+
+                        if (fileName.isEmpty) {
+                          fileName =
+                              fileNameLabel; // Fallback if sanitization removed everything
+                        }
+
+                        // Add the appropriate extension if not already present
+                        if (compressionEnabled) {
+                          if (!fileName.endsWith(".json.gz")) {
+                            fileName = fileName
+                                .replaceAll(RegExp(r"\.json$"), "")
+                                .replaceAll(RegExp(r"\.gz$"), "");
+                            fileName += ".json.gz";
+                          }
+                        } else {
+                          if (!fileName.endsWith(".json")) {
+                            fileName =
+                                fileName.replaceAll(RegExp(r"\.gz$"), "");
+                            fileName += ".json";
+                          }
                         }
 
                         final exportFilePath = "$selectedDirectory/$fileName";
@@ -596,64 +626,69 @@ class _DeleteButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final counterProvider = context.watch<CounterProvider>();
-    final homePageState = context.findAncestorStateOfType<HomePageState>()!;
+    return Selector<CounterProvider, int>(
+      selector: (_, provider) => provider.counters.length,
+      builder: (context, countersLength, _) {
+        final homePageState = context.findAncestorStateOfType<HomePageState>()!;
 
-    return ElevatedButton(
-      onPressed: () async {
-        // Show confirmation dialog before deleting
-        final bool? confirmDelete = await showDialog<bool>(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text("Confirm Deletion"),
-              content: const Text("Delete the selected Counters?"),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(false);
-                  },
-                  child: const Text("Cancel"),
-                ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(true);
-                  },
-                  child: const Text("Confirm"),
-                ),
-              ],
+        return ElevatedButton(
+          onPressed: () async {
+            final counterProvider = context.read<CounterProvider>();
+            // Show confirmation dialog before deleting
+            final bool? confirmDelete = await showDialog<bool>(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text("Confirm Deletion"),
+                  content: const Text("Delete the selected Counters?"),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(false);
+                      },
+                      child: const Text("Cancel"),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(true);
+                      },
+                      child: const Text("Confirm"),
+                    ),
+                  ],
+                );
+              },
             );
+
+            if (confirmDelete == true) {
+              final selectedIndices = <int>[];
+              for (int i = 0; i < homePageState._selectedCounters.length; i++) {
+                if (homePageState._selectedCounters[i]) {
+                  selectedIndices.add(i);
+                }
+              }
+
+              if (selectedIndices.isNotEmpty) {
+                await counterProvider.removeCounters(selectedIndices);
+                homePageState._resetSelection(countersLength);
+
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    buildAppSnackBar(
+                      "${selectedIndices.length} Counters Deleted Successfully!",
+                      context: context,
+                    ),
+                  );
+                }
+              }
+            }
           },
+          style: ElevatedButton.styleFrom(
+            padding: const EdgeInsets.all(16),
+            shape: const CircleBorder(),
+          ),
+          child: const Icon(Icons.delete, size: 30),
         );
-
-        if (confirmDelete == true) {
-          final selectedIndices = <int>[];
-          for (int i = 0; i < homePageState._selectedCounters.length; i++) {
-            if (homePageState._selectedCounters[i]) {
-              selectedIndices.add(i);
-            }
-          }
-
-          if (selectedIndices.isNotEmpty) {
-            await counterProvider.removeCounters(selectedIndices);
-            homePageState._resetSelection(counterProvider.counters.length);
-
-            if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                buildAppSnackBar(
-                  "${selectedIndices.length} Counters Deleted Successfully!",
-                  context: context,
-                ),
-              );
-            }
-          }
-        }
       },
-      style: ElevatedButton.styleFrom(
-        padding: const EdgeInsets.all(16),
-        shape: const CircleBorder(),
-      ),
-      child: const Icon(Icons.delete, size: 30),
     );
   }
 }

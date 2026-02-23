@@ -1,4 +1,4 @@
-import "package:intl/intl.dart";
+import "package:countapp/utils/constants.dart";
 
 /// Result of time window analysis
 class TimeWindowResult {
@@ -12,9 +12,7 @@ class TimeWindowResult {
   final DateTime windowEnd;
 
   String toFormattedString() {
-    final DateFormat dateFormat = DateFormat("MMM d, yyyy");
-    final DateFormat timeFormat = DateFormat("h:mm a");
-    return "$count|${dateFormat.format(windowStart)}|${timeFormat.format(windowStart)} - ${timeFormat.format(windowEnd)}";
+    return "$count|${AppConstants.dateFormatMonthDayYear.format(windowStart)}|${AppConstants.timeFormatHourMin.format(windowStart)} - ${AppConstants.timeFormatHourMin.format(windowEnd)}";
   }
 }
 
@@ -25,10 +23,9 @@ class DateStatistics {
   /// Group DateTime list by date, returning a map of date strings to update counts
   static Map<String, int> groupUpdatesByDay(List<DateTime> updates) {
     final Map<String, int> updatesPerDay = {};
-    final DateFormat formatter = DateFormat("yyyy-MM-dd");
 
     for (final update in updates) {
-      final dateKey = formatter.format(update);
+      final dateKey = AppConstants.dateFormatYearMonthDay.format(update);
       updatesPerDay[dateKey] = (updatesPerDay[dateKey] ?? 0) + 1;
     }
 

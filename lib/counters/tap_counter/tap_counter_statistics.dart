@@ -2,10 +2,10 @@ import "package:countapp/counters/tap_counter/tap_counter.dart";
 import "package:countapp/counters/tap_counter/tap_counter_updates.dart";
 import "package:countapp/providers/counter_provider.dart";
 import "package:countapp/services/leaderboard_service.dart";
+import "package:countapp/utils/constants.dart";
 import "package:countapp/utils/widgets.dart";
 import "package:fl_chart/fl_chart.dart";
 import "package:flutter/material.dart";
-import "package:intl/intl.dart";
 import "package:ml_arima/ml_arima.dart" as ml_arima;
 import "package:provider/provider.dart";
 import "package:syncfusion_flutter_charts/charts.dart";
@@ -228,18 +228,19 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
             _predictNextUpdateSimple(updatesData);
 
     final bool isToday =
-        DateFormat("yyyy-MM-dd").format(nextUpdatePrediction) ==
-            DateFormat("yyyy-MM-dd").format(DateTime.now());
+        AppConstants.dateFormatYearMonthDay.format(nextUpdatePrediction) ==
+            AppConstants.dateFormatYearMonthDay.format(DateTime.now());
 
     final dateStr = isToday
         ? "Today"
-        : DateFormat("MMM dd, yyyy").format(nextUpdatePrediction);
-    final timeStr = DateFormat("h:mm a").format(nextUpdatePrediction);
+        : AppConstants.dateFormatMonthDayYear.format(nextUpdatePrediction);
+    final timeStr = AppConstants.timeFormatHourMin.format(nextUpdatePrediction);
 
     final sortedUpdates = List<DateTime>.from(updatesData)..sort();
     final lastUpdate = sortedUpdates.last;
-    final lastUpdateDateStr = DateFormat("MMM dd, yyyy").format(lastUpdate);
-    final lastUpdateTimeStr = DateFormat("h:mm a").format(lastUpdate);
+    final lastUpdateDateStr =
+        AppConstants.dateFormatMonthDayYear.format(lastUpdate);
+    final lastUpdateTimeStr = AppConstants.timeFormatHourMin.format(lastUpdate);
 
     return Card(
       elevation: 4,
@@ -379,7 +380,7 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
   List<_DayPoint> _buildLinePoints(List<MapEntry<String, int>> updatesPerDay) {
     if (updatesPerDay.isEmpty) return [];
 
-    final formatter = DateFormat("MMM dd");
+    final formatter = AppConstants.dateFormatMonthDay;
 
     // Get first and last dates
     final firstDate = DateTime.parse(updatesPerDay.first.key);
@@ -396,7 +397,7 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
     int index = 0;
 
     while (current.isBefore(lastDate) || current.isAtSameMomentAs(lastDate)) {
-      final dateStr = DateFormat("yyyy-MM-dd").format(current);
+      final dateStr = AppConstants.dateFormatYearMonthDay.format(current);
       final value = updatesMap[dateStr] ?? 0;
 
       points.add(_DayPoint(
@@ -487,6 +488,7 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
     final counterName = counter.name;
     final updatesData = counter.updates;
     final statsWidget = counter.generateStatisticsWidgets();
+    final allLeaderboards = LeaderboardService.getAll(); // Cache once
 
     final updatesPerDay = Map<String, int>.fromEntries(
       counter.getUpdatesPerDay().entries.toList()
@@ -514,8 +516,8 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
 
     final plotData = updatesPerDay.sublist(startIndex, endIndex);
     final chartData = _getHistogramData(daysPerUpdateCount);
-    final bool hasAttachedLeaderboard = LeaderboardService.getAll()
-        .any((lb) => lb.attachedCounterId == counter.id);
+    final bool hasAttachedLeaderboard =
+        allLeaderboards.any((lb) => lb.attachedCounterId == counter.id);
 
     return Scaffold(
       appBar: AppBar(
@@ -854,8 +856,8 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
               return Container();
             }
 
-            final String formattedDate =
-                DateFormat("MMM dd").format(DateTime.parse(dates[index].key));
+            final String formattedDate = AppConstants.dateFormatMonthDay
+                .format(DateTime.parse(dates[index].key));
             return RotatedBox(
               quarterTurns: 3,
               child: Text(

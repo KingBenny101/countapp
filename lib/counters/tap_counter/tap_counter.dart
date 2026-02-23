@@ -2,11 +2,11 @@
 
 import "package:countapp/counters/base/base_counter.dart";
 import "package:countapp/counters/tap_counter/tap_counter_statistics.dart";
+import "package:countapp/utils/constants.dart";
 import "package:countapp/utils/statistics.dart";
 import "package:countapp/utils/widgets.dart";
 import "package:flutter/material.dart";
 import "package:hive_ce/hive.dart";
-import "package:intl/intl.dart";
 import "package:uuid/uuid.dart";
 
 part "tap_counter.g.dart";
@@ -174,7 +174,7 @@ class TapCounter extends BaseCounter {
   /// Show confirmation dialog before updating
   Future<bool> _showConfirmationDialog(BuildContext context) async {
     final lastUpdatedParsed = lastUpdated != null
-        ? DateFormat("E, MMM d, yyyy hh:mm a").format(lastUpdated!)
+        ? AppConstants.dateTimeFullDateOnly.format(lastUpdated!)
         : "Never";
 
     final bool? confirmUpdate = await showDialog<bool>(
