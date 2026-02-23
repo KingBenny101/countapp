@@ -145,9 +145,10 @@ class SeriesCounterStatisticsPageState
       );
     }
 
+    final allLeaderboards = LeaderboardService.getAll(); // Cache once
     final lineData = _getLineChartData(counter);
     final hasData = lineData.isNotEmpty;
-    final bool hasAttachedLeaderboard = LeaderboardService.getAll()
+    final bool hasAttachedLeaderboard = allLeaderboards
         .any((lb) => lb.attachedCounterId == counter.id);
 
     final weeklyAvg = counter.getWeeklyAverage();

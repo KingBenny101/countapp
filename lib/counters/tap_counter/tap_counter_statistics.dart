@@ -487,6 +487,7 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
     final counterName = counter.name;
     final updatesData = counter.updates;
     final statsWidget = counter.generateStatisticsWidgets();
+    final allLeaderboards = LeaderboardService.getAll(); // Cache once
 
     final updatesPerDay = Map<String, int>.fromEntries(
       counter.getUpdatesPerDay().entries.toList()
@@ -514,7 +515,7 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
 
     final plotData = updatesPerDay.sublist(startIndex, endIndex);
     final chartData = _getHistogramData(daysPerUpdateCount);
-    final bool hasAttachedLeaderboard = LeaderboardService.getAll()
+    final bool hasAttachedLeaderboard = allLeaderboards
         .any((lb) => lb.attachedCounterId == counter.id);
 
     return Scaffold(
