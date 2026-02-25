@@ -207,7 +207,6 @@ class GistBackupService {
     final timestamp = DateTime.now().toIso8601String();
     final metadataContent = json.encode({
       "timestamp": timestamp,
-      "appVersion": "1.6.0",
     });
 
     final response = await http.post(
@@ -264,7 +263,6 @@ class GistBackupService {
     final timestamp = DateTime.now().toIso8601String();
     final metadataContent = json.encode({
       "timestamp": timestamp,
-      "appVersion": "1.6.0",
     });
 
     final filesToUpsert = {
@@ -505,7 +503,6 @@ class GistBackupService {
 
       return {
         "timestamp": metadata["timestamp"] as String?,
-        "appVersion": metadata["appVersion"] as String?,
       };
     } else {
       _checkRateLimit(response.statusCode);
