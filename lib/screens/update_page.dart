@@ -38,9 +38,9 @@ class _UpdatePageState extends State<UpdatePage> {
     if (!checkInternet) {
       setState(() {
         _updateText = "No internet connection. Please check your connection!";
+        _isLoading = false;
+        _checkFailed = true;
       });
-      _isLoading = false;
-      _checkFailed = true;
       return;
     }
 
@@ -50,9 +50,9 @@ class _UpdatePageState extends State<UpdatePage> {
     if (latestVersion == Version.parse("0.0.0")) {
       setState(() {
         _updateText = "Failed to check for updates. Please try again later!";
+        _isLoading = false;
+        _checkFailed = true;
       });
-      _isLoading = false;
-      _checkFailed = true;
       return;
     }
 
