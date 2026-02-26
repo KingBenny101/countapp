@@ -1,6 +1,7 @@
 import "dart:async";
 
 import "package:countapp/counters/base/base_counter.dart";
+import "package:countapp/models/leaderboard.dart";
 import "package:countapp/providers/counter_provider.dart";
 import "package:countapp/screens/leaderboard_detail_page.dart";
 import "package:countapp/services/leaderboard_service.dart";
@@ -115,14 +116,53 @@ class _LeaderboardsPageState extends State<LeaderboardsPage> {
             ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          await _showAddDialog(context, counterProvider);
+          await _showChoiceDialog(context, counterProvider);
         },
         child: const Icon(Icons.add),
       ),
     );
   }
 
-  Future<void> _showAddDialog(
+  Future<void> _showChoiceDialog(
+      BuildContext context, CounterProvider counterProvider) async {
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text("Add Leaderboard"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.login),
+              title: const Text("Join Leaderboard"),
+              subtitle: const Text("Enter an existing code to join"),
+              onTap: () {
+                Navigator.of(dialogContext).pop();
+                _showJoinDialog(context, counterProvider);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.add_box_outlined),
+              title: const Text("Create Leaderboard"),
+              subtitle: const Text("Start a new leaderboard and get a code"),
+              onTap: () {
+                Navigator.of(dialogContext).pop();
+                _showCreateDialog(context, counterProvider);
+              },
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text("Cancel"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _showJoinDialog(
       BuildContext context, CounterProvider counterProvider) async {
     final codeController = TextEditingController();
     final userController = TextEditingController();
@@ -149,7 +189,10 @@ class _LeaderboardsPageState extends State<LeaderboardsPage> {
                   TextFormField(
                     controller: codeController,
                     decoration: const InputDecoration(
-                        labelText: "Code (6 chars, A-Z0-9)"),
+                      labelText: "Code (6 chars, A-Z0-9)",
+                      prefixIcon: Icon(Icons.vpn_key_outlined),
+                      border: OutlineInputBorder(),
+                    ),
                     textCapitalization: TextCapitalization.characters,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -163,10 +206,14 @@ class _LeaderboardsPageState extends State<LeaderboardsPage> {
                     },
                     enabled: !isLoading,
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 12),
                   TextFormField(
                     controller: userController,
-                    decoration: const InputDecoration(labelText: "Your name"),
+                    decoration: const InputDecoration(
+                      labelText: "Your Name",
+                      prefixIcon: Icon(Icons.person_outline),
+                      border: OutlineInputBorder(),
+                    ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return "Required";
@@ -175,7 +222,7 @@ class _LeaderboardsPageState extends State<LeaderboardsPage> {
                     },
                     enabled: !isLoading,
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 12),
                   if (counterProvider.counters.isEmpty)
                     const Text("No counters available. Create a counter first.")
                   else
@@ -197,7 +244,10 @@ class _LeaderboardsPageState extends State<LeaderboardsPage> {
                         return null;
                       },
                       decoration:
-                          const InputDecoration(labelText: "Attach Counter"),
+                          const InputDecoration(
+                        labelText: "Attach Counter",
+                        border: OutlineInputBorder(),
+                      ),
                     ),
                 ],
               ),
@@ -284,5 +334,161 @@ class _LeaderboardsPageState extends State<LeaderboardsPage> {
     if (result == true) {
       setState(() {});
     }
+  }
+
+  Future<void> _showCreateDialog(
+      BuildContext context, CounterProvider counterProvider) async {
+    final nameController = TextEditingController();
+    final joiningNameController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+
+    BaseCounter? selected;
+    if (counterProvider.counters.isNotEmpty) {
+      selected = counterProvider.counters.first;
+    }
+
+    bool isLoading = false;
+    final parentContext = context;
+
+    await showDialog<void>(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(builder: (context, setState) {
+          return AlertDialog(
+            title: const Text("Create Leaderboard"),
+            content: Form(
+              key: formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextFormField(
+                    controller: nameController,
+                    decoration: const InputDecoration(
+                      labelText: "Leaderboard Name",
+                      prefixIcon: Icon(Icons.label_outline),
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return "Required";
+                      }
+                      return null;
+                    },
+                    enabled: !isLoading,
+                  ),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: joiningNameController,
+                    decoration: const InputDecoration(
+                      labelText: "Your Name",
+                      prefixIcon: Icon(Icons.person_outline),
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return "Required";
+                      }
+                      return null;
+                    },
+                    enabled: !isLoading,
+                  ),
+                  const SizedBox(height: 12),
+                  if (counterProvider.counters.isEmpty)
+                    const Text("No counters available. Create a counter first.")
+                  else
+                    DropdownButtonFormField<BaseCounter>(
+                      initialValue: selected,
+                      items: counterProvider.counters
+                          .map((c) => DropdownMenuItem<BaseCounter>(
+                                value: c,
+                                child: Text(c.name),
+                              ))
+                          .toList(),
+                      onChanged: isLoading
+                          ? null
+                          : (v) {
+                              setState(() => selected = v);
+                            },
+                      validator: (value) {
+                        if (value == null) return "Must select a counter";
+                        return null;
+                      },
+                      decoration:
+                          const InputDecoration(
+                        labelText: "Attach Counter",
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  const SizedBox(height: 12),
+                  Text(
+                    "Counter type will be locked to the selected counter's type.",
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: isLoading ? null : () => Navigator.of(context).pop(),
+                child: const Text("Cancel"),
+              ),
+              TextButton(
+                onPressed: isLoading
+                    ? null
+                    : () async {
+                        if (!formKey.currentState!.validate()) return;
+                        if (selected == null) return;
+
+                        setState(() => isLoading = true);
+
+                        final resultMap =
+                            await LeaderboardService.createLeaderboard(
+                          leaderboardName: nameController.text.trim(),
+                          joiningName: joiningNameController.text.trim(),
+                          counter: selected!,
+                          attachedCounterId: selected?.id,
+                        );
+
+                        setState(() => isLoading = false);
+
+                        if (resultMap["success"] == true &&
+                            resultMap["leaderboard"] != null) {
+                          final lb = resultMap["leaderboard"] as Leaderboard;
+                          final code = lb.code;
+                          if (parentContext.mounted) {
+                            Navigator.of(parentContext).pop();
+                            ScaffoldMessenger.of(parentContext).showSnackBar(
+                              buildAppSnackBar(
+                                  "Leaderboard created! Code: $code",
+                                  context: parentContext),
+                            );
+                          }
+                        } else {
+                          final msg = resultMap["message"] as String? ??
+                              "Failed to create leaderboard";
+                          debugPrint("Create leaderboard failed: $msg");
+                          if (parentContext.mounted) {
+                            Navigator.of(parentContext).pop();
+                            ScaffoldMessenger.of(parentContext).showSnackBar(
+                              buildAppSnackBar(msg,
+                                  success: false, context: parentContext),
+                            );
+                          }
+                        }
+                      },
+                child: isLoading
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2))
+                    : const Text("Create"),
+              ),
+            ],
+          );
+        });
+      },
+    );
   }
 }
