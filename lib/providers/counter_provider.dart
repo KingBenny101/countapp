@@ -262,4 +262,14 @@ class CounterProvider with ChangeNotifier {
     await box.putAt(index, counter.toJson());
     notifyListeners();
   }
+
+  /// Persist edited counter metadata (name, description, configuration fields)
+  /// directly to storage without triggering interaction logic or leaderboard sync.
+  Future<void> saveCounterMetadata(int index) async {
+    if (index < 0 || index >= _counters.length) return;
+
+    final box = await _getBox();
+    await box.putAt(index, _counters[index].toJson());
+    notifyListeners();
+  }
 }
