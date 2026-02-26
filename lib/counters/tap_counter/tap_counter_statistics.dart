@@ -931,31 +931,24 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
                     ),
                     const SizedBox(height: 12),
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Icon(Icons.swap_vert, size: 20),
-                        const SizedBox(width: 8),
-                        const Text("Direction:"),
-                        const Spacer(),
-                        SegmentedButton<bool>(
-                          segments: const [
-                            ButtonSegment(
-                              value: true,
-                              label: Text("Increment"),
-                              icon: Icon(Icons.add),
-                            ),
-                            ButtonSegment(
-                              value: false,
-                              label: Text("Decrement"),
-                              icon: Icon(Icons.remove),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.swap_vert, size: 20),
+                            const SizedBox(width: 8),
+                            Text(
+                              "Direction: ${isIncrement ? 'Increment' : 'Decrement'}",
+                              style: const TextStyle(fontSize: 16),
                             ),
                           ],
-                          selected: {isIncrement},
-                          onSelectionChanged: (selected) {
-                            setState(() => isIncrement = selected.first);
+                        ),
+                        Switch(
+                          value: isIncrement,
+                          onChanged: (value) {
+                            setState(() => isIncrement = value);
                           },
-                          style: const ButtonStyle(
-                            visualDensity: VisualDensity.compact,
-                          ),
                         ),
                       ],
                     ),
