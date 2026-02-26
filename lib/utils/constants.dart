@@ -26,6 +26,7 @@ class AppConstants {
 
   // Hive type IDs
   static const int tapCounterTypeId = 1;
+  static const int seriesCounterTypeId = 2;
   static const int leaderboardEntryTypeId = 10;
   static const int leaderboardTypeId = 11;
 
