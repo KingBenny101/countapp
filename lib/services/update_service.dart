@@ -29,7 +29,9 @@ class UpdateService {
     if (connectivityResult.contains(ConnectivityResult.none)) return;
 
     try {
-      final response = await http.get(Uri.parse(_latestReleaseUrl));
+      final response = await http
+          .get(Uri.parse(_latestReleaseUrl))
+          .timeout(const Duration(seconds: 15));
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body) as Map<String, dynamic>;
         final String latestVersionStr =
