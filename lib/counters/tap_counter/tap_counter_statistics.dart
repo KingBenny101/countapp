@@ -697,8 +697,8 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 OutlinedButton.icon(
-                  onPressed: () => _showEditCounterDialog(
-                      context, counterProvider, counter),
+                  onPressed: () =>
+                      _showEditCounterDialog(context, counterProvider, counter),
                   icon: const Icon(Icons.edit_outlined),
                   label: const Text("Edit"),
                 ),
@@ -786,13 +786,13 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
                   onPressed: () {
                     if (controller.text == counter.name) {
                       counterProvider.toggleCounterLock(widget.index);
-                      Navigator.pop(context);
                       ScaffoldMessenger.of(context).showSnackBar(
                         buildAppSnackBar(
                           "Counter ${isLocked ? 'Unlocked' : 'Locked'} successfully!",
                           context: context,
                         ),
                       );
+                      Navigator.pop(context);
                     } else {
                       setState(() {
                         errorMessage = "Name mismatch! Please try again.";
@@ -972,15 +972,14 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
 
                     final parsedStep = int.tryParse(stepText);
                     if (parsedStep == null || parsedStep <= 0) {
-                      setState(() =>
-                          stepError = "Must be a positive whole number.");
+                      setState(
+                          () => stepError = "Must be a positive whole number.");
                       return;
                     }
 
                     final parsedValue = num.tryParse(valueText);
                     if (parsedValue == null) {
-                      setState(
-                          () => valueError = "Must be a valid number.");
+                      setState(() => valueError = "Must be a valid number.");
                       return;
                     }
 
@@ -990,13 +989,13 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
                     counter.isIncrement = isIncrement;
 
                     counterProvider.saveCounterMetadata(widget.index);
-                    Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(
                       buildAppSnackBar(
                         "Counter updated successfully.",
                         context: context,
                       ),
                     );
+                    Navigator.pop(context);
                   },
                   child: const Text("Save"),
                 ),

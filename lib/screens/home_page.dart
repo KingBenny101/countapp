@@ -210,12 +210,16 @@ class HomePageState extends State<HomePage> {
                             ),
                             title: Row(
                               children: [
-                                Text(
-                                  counter.name,
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: textColor),
+                                Flexible(
+                                  child: Text(
+                                    counter.name,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: textColor),
+                                  ),
                                 ),
                                 if (counter.isLocked) ...[
                                   const SizedBox(width: 8),
@@ -606,7 +610,7 @@ class HomePageState extends State<HomePage> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            _isSelecting = false;
+            setState(() => _isSelecting = false);
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -669,7 +673,7 @@ class _DeleteButton extends StatelessWidget {
 
               if (selectedIndices.isNotEmpty) {
                 await counterProvider.removeCounters(selectedIndices);
-                homePageState._resetSelection(countersLength);
+                homePageState._resetSelection(counterProvider.counters.length);
 
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(

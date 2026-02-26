@@ -14,12 +14,17 @@ Future<Version> getLatestVersion() async {
   const url =
       "https://raw.githubusercontent.com/KingBenny101/countapp/refs/heads/master/pubspec.yaml";
 
-  final response = await http.get(Uri.parse(url));
+  try {
+    final response =
+        await http.get(Uri.parse(url)).timeout(const Duration(seconds: 15));
 
-  if (response.statusCode == 200) {
-    final yamlMap = loadYaml(response.body) as YamlMap;
-    final latestVersion = yamlMap["version"];
-    return Version.parse(latestVersion as String);
+    if (response.statusCode == 200) {
+      final yamlMap = loadYaml(response.body) as YamlMap;
+      final latestVersion = yamlMap["version"];
+      return Version.parse(latestVersion as String);
+    }
+  } catch (_) {
+    // Network error, timeout, or YAML parse failure
   }
   return errorVersion;
 }

@@ -89,13 +89,15 @@ SnackBar buildAppSnackBar(
           size: 20,
         ),
         const SizedBox(width: 12),
-        Text(
-          message,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: textColor,
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
+        Flexible(
+          child: Text(
+            message,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: textColor,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ),
       ],

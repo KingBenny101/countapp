@@ -301,7 +301,7 @@ class _SeriesCounterUpdatesPageState extends State<SeriesCounterUpdatesPage> {
             value.toStringAsFixed(2),
             style: TextStyle(
               fontSize: 18,
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.bold,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             ),
           ),
           subtitle: Text(
