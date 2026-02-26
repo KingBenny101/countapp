@@ -163,7 +163,10 @@ class _LeaderboardDetailPageState extends State<LeaderboardDetailPage> {
                             style:
                                 const TextStyle(fontWeight: FontWeight.bold)),
                         subtitle: Text(dateStr),
-                        trailing: Text("${e.counterValue}",
+                        trailing: Text(
+                            e.counterValue % 1 == 0
+                                ? "${e.counterValue.toInt()}"
+                                : "${e.counterValue}",
                             style: const TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 30)),
                       ),
