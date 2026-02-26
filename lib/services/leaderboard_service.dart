@@ -12,6 +12,7 @@ class LeaderboardService {
   LeaderboardService._();
   static const String _apiUrl =
       "https://script.google.com/macros/s/AKfycbwJiFChM3iXsQjiUDFst874lrGkg3Vqss7MIAnvd9ILeGAMiLyoMeWPI1h7ju9acc25/exec";
+  static const Duration _httpTimeout = Duration(seconds: 30);
 
   static Box _box() => Hive.box(AppConstants.leaderboardsBox);
 
@@ -32,9 +33,8 @@ class LeaderboardService {
   }) async {
     // Check internet connectivity before attempting network call
     final conn = await Connectivity().checkConnectivity();
-    // conn can be a single ConnectivityResult or a list; ignore type warning
-    // ignore: unrelated_type_equality_checks
-    final bool offline = conn == ConnectivityResult.none;
+    final bool offline =
+        conn.contains(ConnectivityResult.none) && conn.length == 1;
     if (offline) {
       debugPrint("addLeaderboard aborted: no internet");
       return {
@@ -149,8 +149,8 @@ class LeaderboardService {
     String? attachedCounterId,
   }) async {
     final conn = await Connectivity().checkConnectivity();
-    // ignore: unrelated_type_equality_checks
-    final bool offline = conn == ConnectivityResult.none;
+    final bool offline =
+        conn.contains(ConnectivityResult.none) && conn.length == 1;
     if (offline) {
       return {
         "success": false,
@@ -228,7 +228,9 @@ class LeaderboardService {
   /// Follows up to 5 redirects. For 307/308, repeats the POST; otherwise follows with GET.
   static Future<http.Response> _postFollow(
       Uri uri, Map<String, String> headers, String body) async {
-    http.Response resp = await http.post(uri, headers: headers, body: body);
+    http.Response resp = await http
+        .post(uri, headers: headers, body: body)
+        .timeout(_httpTimeout);
     int redirects = 0;
     Uri current = uri;
 
@@ -240,10 +242,12 @@ class LeaderboardService {
 
       if (resp.statusCode == 307 || resp.statusCode == 308) {
         // Repeat POST to new location
-        resp = await http.post(next, headers: headers, body: body);
+        resp = await http
+            .post(next, headers: headers, body: body)
+            .timeout(_httpTimeout);
       } else {
         // For 301/302/303, follow with GET
-        resp = await http.get(next, headers: headers);
+        resp = await http.get(next, headers: headers).timeout(_httpTimeout);
       }
 
       current = next;
@@ -290,9 +294,8 @@ class LeaderboardService {
 
     // Check internet connectivity
     final conn = await Connectivity().checkConnectivity();
-    // conn can be a single ConnectivityResult or a list; ignore type warning
-    // ignore: unrelated_type_equality_checks
-    final bool offline = conn == ConnectivityResult.none;
+    final bool offline =
+        conn.contains(ConnectivityResult.none) && conn.length == 1;
     if (offline) {
       debugPrint("postUpdate aborted: no internet for leaderboard ${lb.code}");
       return false;
@@ -318,9 +321,6 @@ class LeaderboardService {
         lb.leaderboardName = updated.leaderboardName;
         lb.counterType = updated.counterType;
         lb.leaderboard = updated.leaderboard;
-        // Ensure attachedCounterId and joinedUserName are preserved
-        lb.attachedCounterId = lb.attachedCounterId ?? lb.attachedCounterId;
-        lb.joinedUserName = lb.joinedUserName ?? lb.joinedUserName;
         // Save the synced value to avoid redundant updates
         lb.lastSyncedValue = counter.value.toDouble();
         await _save(lb);
