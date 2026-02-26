@@ -11,13 +11,13 @@ class LeaderboardEntry {
   factory LeaderboardEntry.fromJson(Map<String, dynamic> json) {
     return LeaderboardEntry(
       userName: json["user_name"] as String,
-      counterValue: (json["counter_value"] as num).toInt(),
+      counterValue: (json["counter_value"] as num).toDouble(),
       timestamp: DateTime.parse(json["timestamp"] as String),
     );
   }
 
   String userName;
-  int counterValue;
+  double counterValue;
   DateTime timestamp;
 
   Map<String, dynamic> toJson() => {
@@ -64,7 +64,7 @@ class Leaderboard {
   String? joinedUserName;
 
   /// The last counter value that was synced to this leaderboard
-  int? lastSyncedValue;
+  double? lastSyncedValue;
 
   Map<String, dynamic> toJson() => {
         "code": code,
@@ -85,7 +85,7 @@ class LeaderboardEntryAdapter extends TypeAdapter<LeaderboardEntry> {
   @override
   LeaderboardEntry read(BinaryReader reader) {
     final userName = reader.readString();
-    final counterValue = reader.readInt();
+    final counterValue = reader.readDouble();
     final timestamp = DateTime.fromMillisecondsSinceEpoch(reader.readInt());
     return LeaderboardEntry(
       userName: userName,
@@ -97,7 +97,7 @@ class LeaderboardEntryAdapter extends TypeAdapter<LeaderboardEntry> {
   @override
   void write(BinaryWriter writer, LeaderboardEntry obj) {
     writer.writeString(obj.userName);
-    writer.writeInt(obj.counterValue);
+    writer.writeDouble(obj.counterValue);
     writer.writeInt(obj.timestamp.millisecondsSinceEpoch);
   }
 }
@@ -122,10 +122,10 @@ class LeaderboardAdapter extends TypeAdapter<Leaderboard> {
       entries.add(entry);
     }
     // Read lastSyncedValue if available (backward compatibility)
-    int? lastSynced;
+    double? lastSynced;
     if (reader.availableBytes > 0) {
       final hasLastSynced = reader.readBool();
-      lastSynced = hasLastSynced ? reader.readInt() : null;
+      lastSynced = hasLastSynced ? reader.readDouble() : null;
     }
     return Leaderboard(
       code: code,
@@ -157,7 +157,7 @@ class LeaderboardAdapter extends TypeAdapter<Leaderboard> {
     }
     writer.writeBool(obj.lastSyncedValue != null);
     if (obj.lastSyncedValue != null) {
-      writer.writeInt(obj.lastSyncedValue!);
+      writer.writeDouble(obj.lastSyncedValue!);
     }
   }
 }
