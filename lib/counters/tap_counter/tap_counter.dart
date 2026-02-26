@@ -71,11 +71,11 @@ class TapCounter extends BaseCounter {
 
   /// Step size for each update
   @HiveField(0)
-  final int stepSize;
+  int stepSize;
 
   /// Direction of updates (true = increment, false = decrement)
   @HiveField(1)
-  final bool isIncrement;
+  bool isIncrement;
 
   /// Whether to show confirmation dialog before updating
   @HiveField(2)
