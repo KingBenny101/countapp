@@ -389,13 +389,13 @@ class SeriesCounterStatisticsPageState
                   onPressed: () {
                     if (controller.text == counter.name) {
                       provider.toggleCounterLock(widget.index);
-                      Navigator.pop(context);
                       ScaffoldMessenger.of(context).showSnackBar(
                         buildAppSnackBar(
                           "Counter ${isLocked ? 'Unlocked' : 'Locked'} successfully!",
                           context: context,
                         ),
                       );
+                      Navigator.pop(context);
                     } else {
                       setState(() {
                         errorMessage = "Name mismatch! Please try again.";
@@ -509,8 +509,7 @@ class SeriesCounterStatisticsPageState
                     final name = nameController.text.trim();
 
                     if (name.isEmpty) {
-                      setState(
-                          () => nameError = "Name cannot be empty.");
+                      setState(() => nameError = "Name cannot be empty.");
                       return;
                     }
 
@@ -518,13 +517,13 @@ class SeriesCounterStatisticsPageState
                     counter.description = descriptionController.text.trim();
 
                     provider.saveCounterMetadata(widget.index);
-                    Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(
                       buildAppSnackBar(
                         "Counter updated successfully.",
                         context: context,
                       ),
                     );
+                    Navigator.pop(context);
                   },
                   child: const Text("Save"),
                 ),
