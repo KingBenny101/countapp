@@ -38,9 +38,9 @@ class _UpdatePageState extends State<UpdatePage> {
     if (!checkInternet) {
       setState(() {
         _updateText = "No internet connection. Please check your connection!";
+        _isLoading = false;
+        _checkFailed = true;
       });
-      _isLoading = false;
-      _checkFailed = true;
       return;
     }
 
@@ -50,9 +50,9 @@ class _UpdatePageState extends State<UpdatePage> {
     if (latestVersion == Version.parse("0.0.0")) {
       setState(() {
         _updateText = "Failed to check for updates. Please try again later!";
+        _isLoading = false;
+        _checkFailed = true;
       });
-      _isLoading = false;
-      _checkFailed = true;
       return;
     }
 
@@ -94,10 +94,9 @@ class _UpdatePageState extends State<UpdatePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Updates"),
-        centerTitle: true,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.all(16.0),
         child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -122,7 +121,6 @@ class _UpdatePageState extends State<UpdatePage> {
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 18,
-                  fontStyle: FontStyle.italic,
                 ),
               ),
               const SizedBox(height: 30),

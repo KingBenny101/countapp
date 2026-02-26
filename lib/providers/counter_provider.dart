@@ -97,9 +97,10 @@ class CounterProvider with ChangeNotifier {
         for (final lb in lbs) {
           // Fetch fresh counter from storage to avoid stale reference
           final freshBox = await _getBox();
-          final freshJson = freshBox.getAt(index) as Map<String, dynamic>?;
-          if (freshJson != null) {
-            final freshCounter = CounterFactory.fromJson(freshJson);
+          final resultMap = freshBox.getAt(index);
+          if (resultMap != null) {
+            final freshCounter = CounterFactory.fromJson(
+                Map<String, dynamic>.from(resultMap as Map));
             // Fire and forget; don't block the UI — log result for debugging
             LeaderboardService.postUpdate(lb: lb, counter: freshCounter)
                 .then((ok) {
@@ -133,10 +134,13 @@ class CounterProvider with ChangeNotifier {
     final item = _counters.removeAt(oldIndex);
     _counters.insert(targetIndex, item);
 
-    // Rebuild the box to reflect the new order
-    await box.clear();
-    for (final counter in _counters) {
-      await box.add(counter.toJson());
+    // Rebuild the box to reflect the new order (write all then trim excess)
+    for (int i = 0; i < _counters.length; i++) {
+      await box.putAt(i, _counters[i].toJson());
+    }
+    // Remove any excess entries if box had more items
+    while (box.length > _counters.length) {
+      await box.deleteAt(box.length - 1);
     }
 
     notifyListeners();
@@ -260,6 +264,16 @@ class CounterProvider with ChangeNotifier {
 
     final box = await _getBox();
     await box.putAt(index, counter.toJson());
+    notifyListeners();
+  }
+
+  /// Persist edited counter metadata (name, description, configuration fields)
+  /// directly to storage without triggering interaction logic or leaderboard sync.
+  Future<void> saveCounterMetadata(int index) async {
+    if (index < 0 || index >= _counters.length) return;
+
+    final box = await _getBox();
+    await box.putAt(index, _counters[index].toJson());
     notifyListeners();
   }
 }

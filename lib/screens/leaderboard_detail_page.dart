@@ -149,7 +149,10 @@ class _LeaderboardDetailPageState extends State<LeaderboardDetailPage> {
                     return Card(
                       elevation: 2,
                       margin: const EdgeInsets.symmetric(
-                          vertical: 6, horizontal: 12),
+                          vertical: 8, horizontal: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                       child: ListTile(
                         contentPadding: const EdgeInsets.all(12),
                         leading: CircleAvatar(
@@ -160,12 +163,21 @@ class _LeaderboardDetailPageState extends State<LeaderboardDetailPage> {
                                   fontWeight: FontWeight.bold)),
                         ),
                         title: Text(e.userName,
-                            style:
-                                const TextStyle(fontWeight: FontWeight.bold)),
-                        subtitle: Text(dateStr),
-                        trailing: Text("${e.counterValue}",
                             style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 30)),
+                                fontWeight: FontWeight.bold, fontSize: 18)),
+                        subtitle:
+                            Text(dateStr, style: const TextStyle(fontSize: 14)),
+                        trailing: Text(
+                            e.counterValue % 1 == 0
+                                ? "${e.counterValue.toInt()}"
+                                : "${e.counterValue}",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 30,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge
+                                    ?.color)),
                       ),
                     );
                   },

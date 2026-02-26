@@ -5,8 +5,11 @@ import "package:provider/provider.dart";
 
 Widget buildStepCard(String step) {
   return Card(
-    margin: const EdgeInsets.symmetric(vertical: 8.0),
-    elevation: 4,
+    margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+    elevation: 2,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12),
+    ),
     child: Padding(
       padding: const EdgeInsets.all(16.0),
       child: Text(
@@ -19,8 +22,11 @@ Widget buildStepCard(String step) {
 
 Widget buildInfoCard(String infoName, String infoValue) {
   return Card(
-    margin: const EdgeInsets.symmetric(vertical: 8.0),
-    elevation: 4,
+    margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+    elevation: 2,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12),
+    ),
     child: Padding(
       padding: const EdgeInsets.all(16.0),
       child: Row(
@@ -28,11 +34,14 @@ Widget buildInfoCard(String infoName, String infoValue) {
         children: [
           Text(
             infoName,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
           ),
           Text(
             infoValue,
-            style: const TextStyle(fontSize: 16),
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ],
       ),
@@ -89,19 +98,21 @@ SnackBar buildAppSnackBar(
           size: 20,
         ),
         const SizedBox(width: 12),
-        Text(
-          message,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: textColor,
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
+        Flexible(
+          child: Text(
+            message,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: textColor,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ),
       ],
     ),
     backgroundColor: backgroundColor,
-    behavior: SnackBarBehavior.fixed,
+    behavior: SnackBarBehavior.floating,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(12),
     ),
@@ -120,9 +131,12 @@ Widget buildSummaryCard({
   return Builder(builder: (context) {
     return Card(
       margin: EdgeInsets.zero,
-      elevation: 4,
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(12.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -150,31 +164,35 @@ Widget buildSummaryCard({
                 ),
               ],
             ),
-            const Spacer(),
+            const SizedBox(height: 8),
             Text(
               count,
               style: const TextStyle(
-                fontSize: 24,
+                fontSize: 22,
                 fontWeight: FontWeight.bold,
                 height: 1.0,
               ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
             const SizedBox(height: 4),
             Text(
               date,
               style: const TextStyle(
-                fontSize: 12,
+                fontSize: 11,
                 color: Colors.grey,
               ),
               overflow: TextOverflow.ellipsis,
+              maxLines: 1,
             ),
             Text(
               timeRange,
               style: const TextStyle(
-                fontSize: 12,
+                fontSize: 11,
                 color: Colors.grey,
               ),
               overflow: TextOverflow.ellipsis,
+              maxLines: 1,
             ),
           ],
         ),
@@ -192,16 +210,16 @@ class ThemeSelector extends StatelessWidget {
 
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(
-        vertical: 12.0,
-        horizontal: 20.0,
+        horizontal: 20,
+        vertical: 10,
       ),
       title: const Text(
         "Color Theme",
-        style: TextStyle(fontSize: 18),
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
       ),
       subtitle: Text(
         _getThemeName(themeNotifier.currentTheme),
-        style: const TextStyle(fontSize: 14),
+        style: const TextStyle(fontSize: 12),
       ),
       trailing: DropdownButton<AppTheme>(
         value: themeNotifier.currentTheme,

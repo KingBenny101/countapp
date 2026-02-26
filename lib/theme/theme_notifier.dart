@@ -116,7 +116,8 @@ class ThemeNotifier extends ChangeNotifier {
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(
         systemNavigationBarColor: backgroundColor,
-        systemNavigationBarIconBrightness: Brightness.light,
+        systemNavigationBarIconBrightness:
+            _themeMode == ThemeMode.dark ? Brightness.light : Brightness.dark,
       ),
     );
   }

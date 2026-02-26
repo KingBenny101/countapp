@@ -223,18 +223,22 @@ class _TapCounterUpdatesPageState extends State<TapCounterUpdatesPage> {
           hoverColor: Colors.transparent,
         ),
         child: ListTile(
+          contentPadding: const EdgeInsets.all(12),
           leading: isSelected
               ? CircleAvatar(
-                  backgroundColor: Theme.of(context).primaryColor,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
                   child: const Icon(Icons.check, color: Colors.white),
                 )
               : CircleAvatar(
-                  backgroundColor: Colors.blueAccent.withAlpha(25),
-                  child: const Icon(Icons.history, color: Colors.blueAccent),
+                  backgroundColor:
+                      Theme.of(context).colorScheme.primaryContainer,
+                  child: Icon(Icons.history,
+                      color: Theme.of(context).colorScheme.onPrimaryContainer),
                 ),
           title: Text(
             formattedDate,
             style: TextStyle(
+              fontSize: 18,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             ),
           ),
@@ -324,13 +328,15 @@ class DateSearchDelegate extends SearchDelegate {
           hoverColor: Colors.transparent,
         ),
         child: ListTile(
+          contentPadding: const EdgeInsets.all(12),
           leading: CircleAvatar(
-            backgroundColor: Colors.blueAccent.withAlpha(25),
-            child: const Icon(Icons.history, color: Colors.blueAccent),
+            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+            child: Icon(Icons.history,
+                color: Theme.of(context).colorScheme.onPrimaryContainer),
           ),
           title: Text(
             formattedDate,
-            style: const TextStyle(fontSize: 16),
+            style: const TextStyle(fontSize: 18),
           ),
         ),
       ),

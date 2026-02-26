@@ -64,14 +64,14 @@ Future<void> _syncLeaderboardsOnLaunch() async {
       for (final lb in attachedLeaderboards) {
         // Check if the counter value has changed since last sync
         if (lb.lastSyncedValue != null &&
-            lb.lastSyncedValue == counter.value.toInt()) {
+            lb.lastSyncedValue == counter.value.toDouble()) {
           debugPrint(
-              "[LeaderboardSync] Skipping sync for counter ${counter.name} to leaderboard ${lb.code} - no change (value: ${counter.value.toInt()})");
+              "[LeaderboardSync] Skipping sync for counter ${counter.name} to leaderboard ${lb.code} - no change (value: ${counter.value})");
           continue;
         }
 
         debugPrint(
-            "[LeaderboardSync] Counter ${counter.name} value changed from ${lb.lastSyncedValue} to ${counter.value.toInt()} - syncing to leaderboard ${lb.code}");
+            "[LeaderboardSync] Counter ${counter.name} value changed from ${lb.lastSyncedValue} to ${counter.value} - syncing to leaderboard ${lb.code}");
 
         // Fire and forget - don't block the UI
         LeaderboardService.postUpdate(lb: lb, counter: counter).then((ok) {

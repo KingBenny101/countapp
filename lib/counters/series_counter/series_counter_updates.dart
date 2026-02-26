@@ -149,7 +149,10 @@ class _SeriesCounterUpdatesPageState extends State<SeriesCounterUpdatesPage> {
                 ),
                 TextFormField(
                   controller: valueController,
-                  decoration: const InputDecoration(labelText: "Value"),
+                  decoration: const InputDecoration(
+                    labelText: "Value",
+                    border: OutlineInputBorder(),
+                  ),
                   keyboardType:
                       const TextInputType.numberWithOptions(decimal: true),
                   inputFormatters: <TextInputFormatter>[
@@ -288,20 +291,23 @@ class _SeriesCounterUpdatesPageState extends State<SeriesCounterUpdatesPage> {
           hoverColor: Colors.transparent,
         ),
         child: ListTile(
+          contentPadding: const EdgeInsets.all(12),
           leading: isSelected
               ? CircleAvatar(
-                  backgroundColor: Theme.of(context).primaryColor,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
                   child: const Icon(Icons.check, color: Colors.white),
                 )
-              : const CircleAvatar(
-                  backgroundColor: Colors.deepPurple,
-                  child: Icon(Icons.show_chart, color: Colors.white),
+              : CircleAvatar(
+                  backgroundColor:
+                      Theme.of(context).colorScheme.primaryContainer,
+                  child: Icon(Icons.show_chart,
+                      color: Theme.of(context).colorScheme.onPrimaryContainer),
                 ),
           title: Text(
             value.toStringAsFixed(2),
             style: TextStyle(
               fontSize: 18,
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.bold,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             ),
           ),
           subtitle: Text(
@@ -400,9 +406,11 @@ class SeriesSearchDelegate extends SearchDelegate {
           hoverColor: Colors.transparent,
         ),
         child: ListTile(
-          leading: const CircleAvatar(
-            backgroundColor: Colors.deepPurple,
-            child: Icon(Icons.show_chart, color: Colors.white),
+          contentPadding: const EdgeInsets.all(12),
+          leading: CircleAvatar(
+            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+            child: Icon(Icons.show_chart,
+                color: Theme.of(context).colorScheme.onPrimaryContainer),
           ),
           title: Text(
             value.toStringAsFixed(2),

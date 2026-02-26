@@ -71,11 +71,11 @@ class TapCounter extends BaseCounter {
 
   /// Step size for each update
   @HiveField(0)
-  final int stepSize;
+  int stepSize;
 
   /// Direction of updates (true = increment, false = decrement)
   @HiveField(1)
-  final bool isIncrement;
+  bool isIncrement;
 
   /// Whether to show confirmation dialog before updating
   @HiveField(2)
@@ -278,7 +278,7 @@ class TapCounter extends BaseCounter {
         childAspectRatio: 1.5,
         mainAxisSpacing: 16,
         crossAxisSpacing: 16,
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
         children: [
           _buildTimeWindowCard("1h Max", window60),
           _buildTimeWindowCard("3h Max", window180),

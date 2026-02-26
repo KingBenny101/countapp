@@ -87,7 +87,7 @@ class WeeklyHeatmapSource extends DataGridSource {
                 ? Text(
                     val.toStringAsFixed(2),
                     style: TextStyle(
-                      fontSize: 7,
+                      fontSize: 8,
                       color: ThemeData.estimateBrightnessForColor(
                                   _colorMapper(val, _maxValue)) ==
                               Brightness.dark
@@ -214,8 +214,12 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
   Widget _buildPredictionCard(TapCounter counter, List<DateTime> updatesData,
       List<MapEntry<String, int>> updatesPerDay) {
     if (updatesData.length < 2) {
-      return const Card(
-        child: Padding(
+      return Card(
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: const Padding(
           padding: EdgeInsets.all(16.0),
           child: Text("Not enough data to predict next update."),
         ),
@@ -243,7 +247,10 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
     final lastUpdateTimeStr = AppConstants.timeFormatHourMin.format(lastUpdate);
 
     return Card(
-      elevation: 4,
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -283,9 +290,10 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
                 const SizedBox(height: 4),
                 Text(
                   "$lastUpdateDateStr at $lastUpdateTimeStr",
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
               ],
@@ -546,7 +554,7 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
                         },
                   child: const Text("Previous"),
                 ),
-                const SizedBox(width: 30),
+                const SizedBox(width: 16),
                 ElevatedButton(
                   onPressed: updatesPerDay.isEmpty
                       ? null
@@ -675,55 +683,65 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
                         ]),
             ),
             const SizedBox(height: _sectionSpacing),
+            Center(
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => TapCounterUpdatesPage(
+                        name: counterName,
+                        counterIndex: widget.index,
+                      ),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.history_rounded),
+                label: const Text("View All Updates"),
+              ),
+            ),
+            const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => TapCounterUpdatesPage(
-                          name: counterName,
-                          counterIndex: widget.index,
-                        ),
-                      ),
-                    );
-                  },
-                  child: const Text("View All Updates"),
+                OutlinedButton.icon(
+                  onPressed: () =>
+                      _showEditCounterDialog(context, counterProvider, counter),
+                  icon: const Icon(Icons.edit_outlined),
+                  label: const Text("Edit"),
                 ),
                 if (hasAttachedLeaderboard) ...[
-                  const SizedBox(width: 12),
-                  ElevatedButton.icon(
+                  const SizedBox(width: 8),
+                  OutlinedButton.icon(
                     onPressed: _syncingLeaderboard
                         ? null
                         : () =>
                             _syncAttachedLeaderboards(counterProvider, counter),
                     icon: _syncingLeaderboard
                         ? const SizedBox(
-                            width: 16,
-                            height: 16,
+                            width: 20,
+                            height: 20,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
                             ),
                           )
                         : const Icon(Icons.sync),
-                    label: Text(_syncingLeaderboard
-                        ? "Syncing..."
-                        : "Sync Leaderboard"),
+                    label: Text(_syncingLeaderboard ? "Syncing..." : "Sync"),
                   ),
                 ],
+                const SizedBox(width: 8),
+                ElevatedButton.icon(
+                  onPressed: () => _showLockConfirmationDialog(
+                      context, counterProvider, counter),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
+                  ),
+                  icon: Icon(
+                      counter.isLocked ? Icons.lock_open : Icons.lock_outline),
+                  label: Text(counter.isLocked ? "Unlock" : "Lock"),
+                ),
               ],
-            ),
-            const SizedBox(height: 12),
-            ElevatedButton(
-              onPressed: () => _showLockConfirmationDialog(
-                  context, counterProvider, counter),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                foregroundColor: Colors.white,
-              ),
-              child: Text(counter.isLocked ? "Unlock Counter" : "Lock Counter"),
             ),
             const SizedBox(height: 24),
           ],
@@ -776,13 +794,13 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
                   onPressed: () {
                     if (controller.text == counter.name) {
                       counterProvider.toggleCounterLock(widget.index);
-                      Navigator.pop(context);
                       ScaffoldMessenger.of(context).showSnackBar(
                         buildAppSnackBar(
                           "Counter ${isLocked ? 'Unlocked' : 'Locked'} successfully!",
                           context: context,
                         ),
                       );
+                      Navigator.pop(context);
                     } else {
                       setState(() {
                         errorMessage = "Name mismatch! Please try again.";
@@ -793,6 +811,194 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
                     isLocked ? "Unlock" : "Lock",
                     style: const TextStyle(color: Colors.red),
                   ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _showEditCounterDialog(BuildContext context,
+      CounterProvider counterProvider, TapCounter counter) async {
+    if (counter.isLocked) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        buildAppSnackBar(
+          "Please unlock the counter before editing its configuration.",
+          context: context,
+        ),
+      );
+      return;
+    }
+
+    final nameController = TextEditingController(text: counter.name);
+    final stepController =
+        TextEditingController(text: counter.stepSize.toString());
+    final valueController =
+        TextEditingController(text: counter.value.toString());
+    bool isIncrement = counter.isIncrement;
+
+    await showDialog(
+      context: context,
+      builder: (context) {
+        String? nameError;
+        String? stepError;
+        String? valueError;
+
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text("Edit Counter"),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.amber.shade100,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.amber.shade600),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(Icons.warning_amber_rounded,
+                              color: Colors.amber.shade800, size: 20),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              "Caution: Modifying counter configuration may result in data inconsistencies or unintended behavior. Proceed only if you are fully aware of the implications of these changes.",
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.amber.shade900,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: nameController,
+                      decoration: InputDecoration(
+                        labelText: "Counter Name",
+                        prefixIcon: const Icon(Icons.edit),
+                        border: const OutlineInputBorder(),
+                        errorText: nameError,
+                      ),
+                      onChanged: (_) {
+                        if (nameError != null) {
+                          setState(() => nameError = null);
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      controller: stepController,
+                      decoration: InputDecoration(
+                        labelText: "Step Size",
+                        prefixIcon:
+                            const Icon(Icons.add_circle_outline_rounded),
+                        border: const OutlineInputBorder(),
+                        errorText: stepError,
+                      ),
+                      keyboardType: TextInputType.number,
+                      onChanged: (_) {
+                        if (stepError != null) {
+                          setState(() => stepError = null);
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      controller: valueController,
+                      decoration: InputDecoration(
+                        labelText: "Current Value",
+                        prefixIcon: const Icon(Icons.looks_one),
+                        border: const OutlineInputBorder(),
+                        errorText: valueError,
+                      ),
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
+                      onChanged: (_) {
+                        if (valueError != null) {
+                          setState(() => valueError = null);
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.swap_vert, size: 20),
+                            const SizedBox(width: 8),
+                            Text(
+                              "Direction: ${isIncrement ? 'Increment' : 'Decrement'}",
+                              style: const TextStyle(fontSize: 16),
+                            ),
+                          ],
+                        ),
+                        Switch(
+                          value: isIncrement,
+                          onChanged: (value) {
+                            setState(() => isIncrement = value);
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text("Cancel"),
+                ),
+                TextButton(
+                  onPressed: () {
+                    final name = nameController.text.trim();
+                    final stepText = stepController.text.trim();
+                    final valueText = valueController.text.trim();
+
+                    if (name.isEmpty) {
+                      setState(() => nameError = "Name cannot be empty.");
+                      return;
+                    }
+
+                    final parsedStep = int.tryParse(stepText);
+                    if (parsedStep == null || parsedStep <= 0) {
+                      setState(
+                          () => stepError = "Must be a positive whole number.");
+                      return;
+                    }
+
+                    final parsedValue = num.tryParse(valueText);
+                    if (parsedValue == null) {
+                      setState(() => valueError = "Must be a valid number.");
+                      return;
+                    }
+
+                    counter.name = name;
+                    counter.stepSize = parsedStep;
+                    counter.value = parsedValue;
+                    counter.isIncrement = isIncrement;
+
+                    counterProvider.saveCounterMetadata(widget.index);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      buildAppSnackBar(
+                        "Counter updated successfully.",
+                        context: context,
+                      ),
+                    );
+                    Navigator.pop(context);
+                  },
+                  child: const Text("Save"),
                 ),
               ],
             );
