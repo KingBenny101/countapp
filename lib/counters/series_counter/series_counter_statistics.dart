@@ -279,26 +279,36 @@ class SeriesCounterStatisticsPageState
             _buildStatCard("All Time Highest", allTimeHigh.toStringAsFixed(2)),
             _buildStatCard("All Time Lowest", allTimeLow.toStringAsFixed(2)),
             const SizedBox(height: _sectionSpacing),
+            Center(
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SeriesCounterUpdatesPage(
+                        name: counterName,
+                        counterIndex: widget.index,
+                      ),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.history_rounded),
+                label: const Text("View All Updates"),
+              ),
+            ),
+            const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => SeriesCounterUpdatesPage(
-                          name: counterName,
-                          counterIndex: widget.index,
-                        ),
-                      ),
-                    );
-                  },
-                  child: const Text("View All Updates"),
+                OutlinedButton.icon(
+                  onPressed: () =>
+                      _showEditCounterDialog(context, counter, provider),
+                  icon: const Icon(Icons.edit_outlined),
+                  label: const Text("Edit"),
                 ),
                 if (hasAttachedLeaderboard) ...[
-                  const SizedBox(width: 12),
-                  ElevatedButton.icon(
+                  const SizedBox(width: 8),
+                  OutlinedButton.icon(
                     onPressed: _syncingLeaderboard
                         ? null
                         : () => _syncAttachedLeaderboards(provider, counter),
@@ -311,22 +321,22 @@ class SeriesCounterStatisticsPageState
                             ),
                           )
                         : const Icon(Icons.sync),
-                    label: Text(_syncingLeaderboard
-                        ? "Syncing..."
-                        : "Sync Leaderboard"),
+                    label: Text(_syncingLeaderboard ? "Syncing..." : "Sync"),
                   ),
                 ],
+                const SizedBox(width: 8),
+                ElevatedButton.icon(
+                  onPressed: () =>
+                      _showLockConfirmationDialog(context, counter, provider),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
+                  ),
+                  icon: Icon(
+                      counter.isLocked ? Icons.lock_open : Icons.lock_outline),
+                  label: Text(counter.isLocked ? "Unlock" : "Lock"),
+                ),
               ],
-            ),
-            const SizedBox(height: 12),
-            ElevatedButton(
-              onPressed: () =>
-                  _showLockConfirmationDialog(context, counter, provider),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                foregroundColor: Colors.white,
-              ),
-              child: Text(counter.isLocked ? "Unlock Counter" : "Lock Counter"),
             ),
             const SizedBox(height: 24),
           ],
@@ -396,6 +406,127 @@ class SeriesCounterStatisticsPageState
                     isLocked ? "Unlock" : "Lock",
                     style: const TextStyle(color: Colors.red),
                   ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _showEditCounterDialog(BuildContext context,
+      SeriesCounter counter, CounterProvider provider) async {
+    if (counter.isLocked) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        buildAppSnackBar(
+          "Please unlock the counter before editing its configuration.",
+          context: context,
+        ),
+      );
+      return;
+    }
+
+    final nameController = TextEditingController(text: counter.name);
+    final descriptionController =
+        TextEditingController(text: counter.description);
+
+    await showDialog(
+      context: context,
+      builder: (context) {
+        String? nameError;
+
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text("Edit Counter"),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.amber.shade100,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.amber.shade600),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(Icons.warning_amber_rounded,
+                              color: Colors.amber.shade800, size: 20),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              "Caution: Modifying counter configuration may result in data inconsistencies or unintended behavior. Proceed only if you are fully aware of the implications of these changes.",
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.amber.shade900,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: nameController,
+                      decoration: InputDecoration(
+                        labelText: "Counter Name",
+                        prefixIcon: const Icon(Icons.edit),
+                        border: const OutlineInputBorder(),
+                        errorText: nameError,
+                      ),
+                      onChanged: (_) {
+                        if (nameError != null) {
+                          setState(() => nameError = null);
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      controller: descriptionController,
+                      decoration: const InputDecoration(
+                        labelText: "Description (optional)",
+                        prefixIcon: Icon(Icons.description),
+                        border: OutlineInputBorder(),
+                      ),
+                      maxLines: 3,
+                      minLines: 1,
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text("Cancel"),
+                ),
+                TextButton(
+                  onPressed: () {
+                    final name = nameController.text.trim();
+
+                    if (name.isEmpty) {
+                      setState(
+                          () => nameError = "Name cannot be empty.");
+                      return;
+                    }
+
+                    counter.name = name;
+                    counter.description = descriptionController.text.trim();
+
+                    provider.saveCounterMetadata(widget.index);
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      buildAppSnackBar(
+                        "Counter updated successfully.",
+                        context: context,
+                      ),
+                    );
+                  },
+                  child: const Text("Save"),
                 ),
               ],
             );
