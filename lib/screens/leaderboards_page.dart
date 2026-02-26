@@ -67,9 +67,12 @@ class _LeaderboardsPageState extends State<LeaderboardsPage> {
                 return Container(
                   key: ValueKey(lb.code),
                   child: Card(
-                    elevation: 4,
+                    elevation: 2,
                     margin:
                         const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     child: ListTile(
                       contentPadding: const EdgeInsets.all(12),
                       leading: const Icon(Icons.leaderboard, size: 36),
@@ -77,10 +80,12 @@ class _LeaderboardsPageState extends State<LeaderboardsPage> {
                         lb.leaderboardName.isNotEmpty
                             ? lb.leaderboardName
                             : lb.code,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 18),
                       ),
-                      subtitle:
-                          Text("${lb.code} - ${lb.leaderboard.length} Joined"),
+                      subtitle: Text(
+                          "${lb.code} - ${lb.leaderboard.length} Joined",
+                          style: const TextStyle(fontSize: 14)),
                       trailing: ReorderableDragStartListener(
                         index: index,
                         child: SizedBox(
@@ -243,8 +248,7 @@ class _LeaderboardsPageState extends State<LeaderboardsPage> {
                         if (value == null) return "Must select a counter";
                         return null;
                       },
-                      decoration:
-                          const InputDecoration(
+                      decoration: const InputDecoration(
                         labelText: "Attach Counter",
                         border: OutlineInputBorder(),
                       ),
@@ -413,8 +417,7 @@ class _LeaderboardsPageState extends State<LeaderboardsPage> {
                         if (value == null) return "Must select a counter";
                         return null;
                       },
-                      decoration:
-                          const InputDecoration(
+                      decoration: const InputDecoration(
                         labelText: "Attach Counter",
                         border: OutlineInputBorder(),
                       ),

@@ -126,7 +126,10 @@ class SeriesCounterStatisticsPageState
   Widget build(BuildContext context) {
     final provider = context.watch<CounterProvider>();
     if (widget.index < 0 || widget.index >= provider.counters.length) {
-      return const Scaffold(body: Center(child: Text("Counter not found")));
+      return Scaffold(
+        appBar: AppBar(title: const Text("Counter Not Found")),
+        body: const Center(child: Text("This counter no longer exists.")),
+      );
     }
 
     final counter = provider.counters[widget.index] as SeriesCounter;
@@ -183,6 +186,9 @@ class SeriesCounterStatisticsPageState
                     DropdownButtonHideUnderline(
                       child: DropdownButton<String>(
                         value: _selectedRange,
+                        isDense: true,
+                        elevation: 2,
+                        focusColor: Colors.transparent,
                         items: <String>["1D", "1W", "1M", "3M", "1Y", "All"]
                             .map((r) => DropdownMenuItem<String>(
                                   value: r,
@@ -202,7 +208,7 @@ class SeriesCounterStatisticsPageState
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 16),
             SizedBox(
               height: 350,
               child: hasData
@@ -241,7 +247,7 @@ class SeriesCounterStatisticsPageState
                           dataSource: lineData,
                           xValueMapper: (point, _) => point.date,
                           yValueMapper: (point, _) => point.value,
-                          color: Colors.deepPurple,
+                          color: Theme.of(context).colorScheme.primary,
                           markerSettings: const MarkerSettings(
                             isVisible: true,
                             height: 6,
@@ -314,8 +320,8 @@ class SeriesCounterStatisticsPageState
                         : () => _syncAttachedLeaderboards(provider, counter),
                     icon: _syncingLeaderboard
                         ? const SizedBox(
-                            width: 16,
-                            height: 16,
+                            width: 20,
+                            height: 20,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
                             ),
@@ -537,8 +543,11 @@ class SeriesCounterStatisticsPageState
 
   Widget _buildStatCard(String label, String value) {
     return Card(
-      elevation: 4,
-      margin: const EdgeInsets.symmetric(vertical: 8.0),
+      elevation: 2,
+      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Row(
@@ -550,10 +559,10 @@ class SeriesCounterStatisticsPageState
             ),
             Text(
               value,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Colors.deepPurple,
+                color: Theme.of(context).colorScheme.primary,
               ),
             ),
           ],

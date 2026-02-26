@@ -87,7 +87,7 @@ class WeeklyHeatmapSource extends DataGridSource {
                 ? Text(
                     val.toStringAsFixed(2),
                     style: TextStyle(
-                      fontSize: 7,
+                      fontSize: 8,
                       color: ThemeData.estimateBrightnessForColor(
                                   _colorMapper(val, _maxValue)) ==
                               Brightness.dark
@@ -214,8 +214,12 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
   Widget _buildPredictionCard(TapCounter counter, List<DateTime> updatesData,
       List<MapEntry<String, int>> updatesPerDay) {
     if (updatesData.length < 2) {
-      return const Card(
-        child: Padding(
+      return Card(
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: const Padding(
           padding: EdgeInsets.all(16.0),
           child: Text("Not enough data to predict next update."),
         ),
@@ -243,7 +247,10 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
     final lastUpdateTimeStr = AppConstants.timeFormatHourMin.format(lastUpdate);
 
     return Card(
-      elevation: 4,
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -283,9 +290,10 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
                 const SizedBox(height: 4),
                 Text(
                   "$lastUpdateDateStr at $lastUpdateTimeStr",
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
               ],
@@ -546,7 +554,7 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
                         },
                   child: const Text("Previous"),
                 ),
-                const SizedBox(width: 30),
+                const SizedBox(width: 16),
                 ElevatedButton(
                   onPressed: updatesPerDay.isEmpty
                       ? null
@@ -711,8 +719,8 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
                             _syncAttachedLeaderboards(counterProvider, counter),
                     icon: _syncingLeaderboard
                         ? const SizedBox(
-                            width: 16,
-                            height: 16,
+                            width: 20,
+                            height: 20,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
                             ),
@@ -923,31 +931,24 @@ class TapCounterStatisticsPageState extends State<TapCounterStatisticsPage> {
                     ),
                     const SizedBox(height: 12),
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Icon(Icons.swap_vert, size: 20),
-                        const SizedBox(width: 8),
-                        const Text("Direction:"),
-                        const Spacer(),
-                        SegmentedButton<bool>(
-                          segments: const [
-                            ButtonSegment(
-                              value: true,
-                              label: Text("Increment"),
-                              icon: Icon(Icons.add),
-                            ),
-                            ButtonSegment(
-                              value: false,
-                              label: Text("Decrement"),
-                              icon: Icon(Icons.remove),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.swap_vert, size: 20),
+                            const SizedBox(width: 8),
+                            Text(
+                              "Direction: ${isIncrement ? 'Increment' : 'Decrement'}",
+                              style: const TextStyle(fontSize: 16),
                             ),
                           ],
-                          selected: {isIncrement},
-                          onSelectionChanged: (selected) {
-                            setState(() => isIncrement = selected.first);
+                        ),
+                        Switch(
+                          value: isIncrement,
+                          onChanged: (value) {
+                            setState(() => isIncrement = value);
                           },
-                          style: const ButtonStyle(
-                            visualDensity: VisualDensity.compact,
-                          ),
                         ),
                       ],
                     ),

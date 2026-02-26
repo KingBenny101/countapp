@@ -195,7 +195,7 @@ class _OptionsPageState extends State<OptionsPage> {
         title: const Text("Options"),
       ),
       body: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+        padding: const EdgeInsets.all(16.0),
         children: [
           _buildSectionTitle("Appearance"),
           _buildOptionsCard([

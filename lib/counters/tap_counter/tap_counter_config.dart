@@ -90,9 +90,16 @@ class TapCounterConfigPageState extends State<TapCounterConfigPage> {
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Text(
-                            "Direction: ${_isIncrement ? 'Increment' : 'Decrement'}",
-                            style: const TextStyle(fontSize: 16),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.swap_vert, size: 20),
+                              const SizedBox(width: 8),
+                              Text(
+                                "Direction: ${_isIncrement ? 'Increment' : 'Decrement'}",
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                            ],
                           ),
                           Switch(
                             value: _isIncrement,
@@ -108,9 +115,16 @@ class TapCounterConfigPageState extends State<TapCounterConfigPage> {
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            "Direction: ${_isIncrement ? 'Increment' : 'Decrement'}",
-                            style: const TextStyle(fontSize: 16),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.swap_vert, size: 20),
+                              const SizedBox(width: 8),
+                              Text(
+                                "Direction: ${_isIncrement ? 'Increment' : 'Decrement'}",
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                            ],
                           ),
                           Switch(
                             value: _isIncrement,

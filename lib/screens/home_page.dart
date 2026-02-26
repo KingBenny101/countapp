@@ -143,10 +143,13 @@ class HomePageState extends State<HomePage> {
                         });
                       },
                       child: Card(
-                        elevation: 4,
+                        elevation: 2,
                         margin: const EdgeInsets.symmetric(
                           vertical: 8,
                           horizontal: 16,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
                         child: Theme(
                           data: Theme.of(context).copyWith(
@@ -216,7 +219,7 @@ class HomePageState extends State<HomePage> {
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
-                                        fontSize: 20,
+                                        fontSize: 18,
                                         fontWeight: FontWeight.bold,
                                         color: textColor),
                                   ),
@@ -466,6 +469,7 @@ class HomePageState extends State<HomePage> {
                                 decoration: InputDecoration(
                                   labelText: "File Name",
                                   hintText: "$fileNameLabel$fileExtension",
+                                  border: const OutlineInputBorder(),
                                 ),
                                 validator: (value) {
                                   final invalidCharacters =
